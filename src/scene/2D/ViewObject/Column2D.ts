@@ -1,8 +1,6 @@
-
 import { computed, reaction } from 'mobx';
 import Column from '../../../scene/Model/Home/Column';
 import Model2DActive from '../../../store/Model2DActive';
-import RouterData from '../../../store/RouterData';
 import { IViewObject } from '../../Interface/IViewObject';
 import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
 import { LayerOrder, layerOrderGroups } from '../Layer/LayerOrder';
@@ -123,7 +121,6 @@ export default class Column2D extends ViewObject implements IViewObject {
       reaction(
         () => [
           this.realHover,
-          RouterData.routeNow,
         ],
         () => this.render(),
       ),
@@ -145,9 +142,6 @@ export default class Column2D extends ViewObject implements IViewObject {
   }
 
   public render() {
-    if (this.children.length && /3DStage/.test(RouterData.routeNow.name)) {
-      return;
-    }
     this.clearChildren();
 
     this.fill();

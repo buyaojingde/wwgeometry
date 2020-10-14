@@ -21,5 +21,4 @@ export interface IScene2D {
   home: Home;
 
   scaleNumber: number;
-  recordDesign();
 }

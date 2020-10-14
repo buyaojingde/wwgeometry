@@ -11,7 +11,6 @@
   import Scene2D from '@/scene/2D';
   import Model2DActive from '@/store/Model2DActive';
   import VueStoreData from '@/store/VueStoreData';
-  import RouterData from '@/store/RouterData';
   import {EModuleType, ERouterStatus} from '@/global/Enum/EnumData';
 
   export default {
@@ -35,7 +34,6 @@
         this.$_scene2d.resetView();
       },
       initScene2D() {
-        RouterData.setModuleType(EModuleType.LayoutDesign);
         this.$_scene2d = Scene2D.getInstance();
         VueStoreData.setEnableStage2D(true);
 

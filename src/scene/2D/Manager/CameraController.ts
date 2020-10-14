@@ -1,6 +1,5 @@
 import { reaction } from 'mobx';
 import CameraData, { ViewType } from '../../../store/CameraData';
-import RouterData from '../../../store/RouterData';
 import VueStoreData from '../../../store/VueStoreData';
 import Container = PIXI.Container;
 import { LayerOrder, layerOrderGroups } from '../Layer/LayerOrder';
@@ -25,8 +24,7 @@ export default class CameraController extends BaseController {
     this.switchArr.push(
       reaction(
         () => {
-          const router = RouterData.routeNow;
-          return router.name === 'Preview';
+          return false;
         },
         enable => {
           this.enable = enable;

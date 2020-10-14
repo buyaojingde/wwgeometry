@@ -1,7 +1,6 @@
 import 'pixi-layers';
 import * as PIXI from 'pixi.js';
 import Stage = PIXI.display.Stage;
-import RouterData from '../../../store/RouterData';
 import ColumnLayer from './ColumnLayer';
 import View2DData from '../../../store/View2DData';
 
@@ -107,10 +106,7 @@ export default class HomePlan2D {
       }
       if (!!layer && !!layer.checkLayerShow) {
         this.hideLayer(layer);
-        const routerNow = RouterData.routeNow;
-        if (routerNow) {
-          layer.checkLayerShow(routerNow.name);
-        }
+        layer.checkLayerShow("");
       }
     });
   }
@@ -126,10 +122,7 @@ export default class HomePlan2D {
         return;
       }
       if (!!layer.checkLeaveLayerShow) {
-        const routerNow = RouterData.routeNow;
-        if (routerNow) {
-          layer.checkLeaveLayerShow(routerNow.name);
-        }
+          layer.checkLeaveLayerShow("");
       }
     });
   }

@@ -2,7 +2,6 @@ import isEmpty from 'lodash/fp/isEmpty';
 import { action, computed, observable, reaction } from 'mobx';
 import { Vector3 } from 'three';
 import { EActiveTypes } from '../global/Enum/EnumData';
-import RouterData from './RouterData';
 import VueStoreData from './VueStoreData';
 
 class ModelActiveData {
@@ -52,23 +51,6 @@ class ModelActiveData {
 
   public constructor() {
     this.initData();
-    // 当路由切换为非3DStage时清除状态
-    reaction(
-      () => VueStoreData && /^3DStage|floorStage|wallStage$/.test(RouterData.routeNow.name),
-      enable => {
-        if (!enable) {
-          // 如果上一个路由是背景墙，则不进行处理
-          if (RouterData.fromPath === '/wallStage' || RouterData.fromPath === '/floorStage') {
-            return;
-          }
-          this.clearEditingModel();
-          VueStoreData.setTextureStraw(false);
-          Object.keys(this.editingData).map(val => {
-            this.clearActive(val as any);
-          });
-        }
-      },
-    );
   }
 
   public setActiveObject(object: any, type: EActiveTypes = EActiveTypes.Draging) {

@@ -4,7 +4,6 @@ import ModelContext from '../model/context/ModelContex';
 import ViewObject from '../scene/2D/ViewObject/ViewObject';
 import { DRAWING_WALL_MODE } from '../scene/Constants/Constant0';
 import ObjectIndex from '../scene/Model/BaseInterface/ObjectIndex';
-import RouterData from './RouterData';
 import Column from '../scene/Model/Home/Column';
 
 class Model2DActive {
@@ -381,18 +380,6 @@ class Model2DActive {
   public setCanvasCursor(str: string) {
     this.canvasCursor = str;
   }
-
-  public setMeasureState(b: boolean) {
-    if (RouterData.routeNow.name !== '2DStage' && RouterData.routeNow.name !== 'ceilStage') {
-      // console.log('no2d , noceil');
-      return;
-    }
-    if (b) {
-      this.init();
-    }
-    this.measureLengthState = b;
-  }
-
 
   public setIsReplaceHoleStone(val: boolean) {
     this.isReplaceHoleStone = val;

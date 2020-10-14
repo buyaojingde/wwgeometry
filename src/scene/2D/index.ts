@@ -7,7 +7,6 @@ import { Application } from 'pixi.js';
 import { Vector2 } from 'three';
 import HomeTypeData from '../../model/HomeTypeData';
 import Model2DActive from '../../store/Model2DActive';
-import RouterData from '../../store/RouterData';
 import View2DData from '../../store/View2DData';
 import VueStoreData from '../../store/VueStoreData';
 import { canvasDPI, IsPC } from '../../utils';
@@ -110,10 +109,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.DOMEventListener.on('resize', this.onWindowResize);
     this.DOMEventListener.on('keydown', this.onKeyDown.bind(this));
 
-    // 重新切换到2D场景，则记录当前户型快照
-    if (!this.homePlan.checkIsEmpty()) {
-      this.recordDesign();
-    }
     this.resize();
 
     this.focus();
@@ -320,17 +315,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
   public clear() {
     // this.home = null;
     this.homePlan.clear();
-    this.recordDesign();
-  }
-
-  /**
-   *记录当前的户型数据，并添加到户型快照到撤销恢复数组中
-   */
-  public recordDesign() {
-    const flag = /^hardCeilStage|wallStage|floorStage|cubeBoxStage$/.test(RouterData.routerNow.name);
-    if (flag) {
-      return;
-    }
   }
 
   public getApplication() {

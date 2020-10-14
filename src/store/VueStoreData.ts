@@ -3,7 +3,6 @@
  **/
 import { action, computed, observable } from 'mobx';
 import { ELightViewType, WallShowType } from '../global/Enum/EnumRender';
-import RouterData from './RouterData';
 
 class VueStoreData {
   @observable
@@ -165,30 +164,6 @@ class VueStoreData {
   @computed
   public get designTabShow() {
     return this._designTabShow;
-  }
-
-  public get cameraViewType() {
-    if (RouterData.routeNow.name === '3DStage') {
-      return this._designTabShow === '3D' ? '3D' : 'Roam';
-    }
-
-    if (
-      RouterData.routeNow.name === 'hardDesign3DStage' ||
-      RouterData.routeNow.name === 'hardCeilingStage' ||
-      RouterData.routeNow.name === 'cubeBoxStage' ||
-      RouterData.routeNow.name === 'wallStage' ||
-      RouterData.routeNow.name === 'floorStage'
-    ) {
-      return '3D';
-    }
-
-    if (RouterData.routeNow.name === 'Preview') {
-      return this.previewTabShow === 'overlook' ? '3D' : 'Roam';
-    }
-
-    if (RouterData.routeNow.name === 'Light') {
-      return '3D';
-    }
   }
 
   /**
