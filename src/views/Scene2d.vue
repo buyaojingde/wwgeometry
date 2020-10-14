@@ -3,7 +3,6 @@
         <div
                 ref="container2d"
                 class="canvas-container"
-                :style="{ cursor: canvasCursor ? `${canvasCursor} !important` : 'auto' }"
         ></div>
     </div>
 </template>

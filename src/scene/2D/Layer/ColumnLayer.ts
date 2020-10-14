@@ -104,17 +104,7 @@ protected checkLayerShow(routeName: string) {
   layerObjects.forEach(object => {
     const column = object.column;
     if (!!column) {
-      switch (routeName) {
-        case 'wallStage':
-        case 'cubeBoxStage':
-          object.visible = false;
-          break;
-        case '2DStage':
-          object.interactive = true;
-          break;
-        default:
-      }
-
+      object.interactive = true;
       object.visible = column.visible;
     }
   });
