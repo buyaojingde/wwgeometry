@@ -1,11 +1,11 @@
 <template>
-  <div class="container2d" id="container2d">
-    <div
-            ref="container2d"
-            class="canvas-container"
-            :style="{ cursor: canvasCursor ? `${canvasCursor} !important` : 'auto' }"
-    ></div>
-  </div>
+    <div class="container2d" id="container2d">
+        <div
+                ref="container2d"
+                class="canvas-container"
+                :style="{ cursor: canvasCursor ? `${canvasCursor} !important` : 'auto' }"
+        ></div>
+    </div>
 </template>
 
 <script>
@@ -13,12 +13,11 @@
   import Model2DActive from '@/store/Model2DActive';
   import VueStoreData from '@/store/VueStoreData';
   import RouterData from '@/store/RouterData';
-  import { EModuleType, ERouterStatus } from '@/global/Enum/EnumData';
+  import {EModuleType, ERouterStatus} from '@/global/Enum/EnumData';
 
   export default {
     name: 'container-2d',
-    components: {
-    },
+    components: {},
     data() {
       return {
         imgUrl: '',
@@ -40,19 +39,6 @@
         RouterData.setModuleType(EModuleType.LayoutDesign);
         this.$_scene2d = Scene2D.getInstance();
         VueStoreData.setEnableStage2D(true);
-
-        if (this.$route.name === '2DStage') {
-          RouterData.needFindFlatWalls = true;
-          RouterData.wallNeedRefresh = true;
-          RouterData.ceilingNeedRefresh = true;
-          RouterData.roomNeedRefresh = true;
-          RouterData.bgWallNeedRefresh = true;
-          RouterData.floorNeedRefresh = true;
-          RouterData.patchRoomRefresh = true;
-          RouterData.matchBoxRefresh = true;
-          RouterData.hole3DRefresh = true;
-          RouterData.cubeRefresh = true;
-        }
 
         // return
         setTimeout(async () => {
@@ -76,3 +62,32 @@
     },
   };
 </script>
+<style>
+
+    .container2d {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #464646;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .canvas-container {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+
+    /*canvas {*/
+    /*    !*pointer-events: none;*!*/
+    /*    position: absolute;*/
+    /*    width: 100%;*/
+    /*    height: 100%;*/
+    /*    top: 0;*/
+    /*    left: 0;*/
+    /*}*/
+
+</style>
