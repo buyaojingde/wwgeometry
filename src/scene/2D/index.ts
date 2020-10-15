@@ -9,7 +9,6 @@ import HomeTypeData from '../../model/HomeTypeData';
 import Model2DActive from '../../store/Model2DActive';
 import View2DData from '../../store/View2DData';
 import VueStoreData from '../../store/VueStoreData';
-import { canvasDPI, IsPC } from '../../utils';
 import LianBoTest from '../../utils/LianBoTest';
 import DOMEventManager from '../3D/Manager/DOMEventManager';
 import { Renderer2D } from '../Base/Renderer';
@@ -75,7 +74,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
   public pickupController: PickupController; // 选择控制器
   public rendererDom: any; // 渲染节点
   public DOMEventListener: DOMEventManager; // Dom监听器
-  public utilsDom: HTMLDivElement;
   protected _homePlan: HomePlan; //
   private scene: Application; // 场景
   private Vue: any; // Vue 模型
@@ -101,7 +99,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     if (!!this.bindNode && !this.bindNode.getElementsByTagName('canvas').length) {
       this.bindNode.appendChild(this.rendererDom);
-      this.bindNode.appendChild(this.utilsDom);
     }
 
     this.initSwitchController();
@@ -147,11 +144,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.rendererDom = document.createElement('div');
     this.rendererDom.setAttribute('tabindex', '1'); // 让元素可以接受keydown事件
     this.rendererDom.appendChild(this.scene.view);
-
-    // 工具类的Dom
-    this.utilsDom = document.createElement('div');
-    this.utilsDom.setAttribute('tabindex', '1');
-    this.utilsDom.setAttribute('id', 'stage-2d-utils');
 
     this.DOMEventListener = new DOMEventManager(this.rendererDom);
 
@@ -214,7 +206,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   public get resolution() {
-    return canvasDPI;
+    return 1;
   }
 
   // @Throttle(200)
@@ -234,8 +226,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
     }
 
     this.scene.renderer.resize(width, height);
-    this.rendererDom.width = width * canvasDPI;
-    this.rendererDom.height = height * canvasDPI;
+    this.rendererDom.width = width * 1;
+    this.rendererDom.height = height * 1;
     // 画布零点位置为摄像机位置，画布零点放置在左上角，是为了墙体处于屏幕中间
     setTimeout(() => this.resetView());
 

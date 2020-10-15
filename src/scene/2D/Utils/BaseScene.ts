@@ -3,7 +3,6 @@
  **/
 import { autorun, observable } from 'mobx';
 import Scene2D from '..';
-import { canvasDPI, validataOS } from '../../../utils';
 import Application = PIXI.Application;
 import HookManager from '../../../utils/HookManager';
 import WebGLRenderer = PIXI.WebGLRenderer;
@@ -62,7 +61,7 @@ export default class BaseScene extends HookManager {
   }
 
   public get resolution() {
-    return canvasDPI;
+    return 1;
   }
 
   get objectType() {
@@ -76,7 +75,7 @@ export default class BaseScene extends HookManager {
     this.app.stage.rotation = Math.PI;
 
     this.app.renderer.plugins.interaction.setTargetElement(this.Scene2D.rendererDom, this.app.renderer.resolution);
-    this.app.renderer.plugins.interaction.resolution = canvasDPI;
+    this.app.renderer.plugins.interaction.resolution = 1;
 
     this.initLayers();
 

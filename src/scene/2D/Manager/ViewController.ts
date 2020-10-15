@@ -1,11 +1,9 @@
 import debounce from 'lodash/debounce';
 import { reaction } from 'mobx';
 import Point = PIXI.Point;
-import KeyMap, { eventAction } from '../../../global/KeyMap';
 import Model2DActive from '../../../store/Model2DActive';
 import ModelActiveData from '../../../store/ModelActiveData';
 import View2DData from '../../../store/View2DData';
-import { validataOS } from '../../../utils';
 import Vector2D from '../../Model/Geometry/Vector2D';
 import { pointToVector, vectorToPoint } from '../Utils';
 import BaseController from './BaseController';
@@ -103,8 +101,6 @@ export default class ViewController extends BaseController {
     });
     this.on('contextmenu', event => event.preventDefault());
 
-    this.on('keydown', event => this.hotKeyEvent(event));
-
     this.on('scale+', event => {
       const scaleResult = Math.min(this.scene.scale.x + this.makeScaleStep(), SCENE_2D_MAX_SCALE);
       this.calculateScaleOffset(event, scaleResult);
@@ -115,44 +111,8 @@ export default class ViewController extends BaseController {
     });
   }
 
-  /**
-   * 快捷键事件
-   * @param event
-   */
-  protected hotKeyEvent(event) {
-    const action = eventAction(event, KeyMap.viewControl);
-    if (action) {
-      const offset = new Vector2D();
-      const offsetLength = 10;
-
-      switch (action) {
-        case 'moveTop':
-          offset.setY(-offsetLength);
-          break;
-
-        case 'moveBottom':
-          offset.setY(offsetLength);
-          break;
-
-        case 'moveLeft':
-          offset.setX(-offsetLength);
-          break;
-
-        case 'moveRight':
-          offset.setX(offsetLength);
-          break;
-
-        default:
-      }
-
-      View2DData.setPosition(pointToVector(this.scene.position).subtract(offset));
-    }
-  }
-
   protected makeScaleStep() {
-    const os = validataOS() as any;
-    const rate = os === 'Mac' ? 0.05 : 0.2;
-
+    const rate=  0.2;
     return this.scene.scale.x * rate;
   }
 

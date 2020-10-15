@@ -4,7 +4,6 @@ import { MultiPolygon, multiPolygon, Polygon, polygon } from '@turf/helpers';
 import intersect from '@turf/intersect';
 import { isEmpty } from 'lodash';
 import { EPolygonContainType } from '../../../global/Enum/EnumData';
-import ClipTsTool from '../../../utils/ClipTsTool';
 import MathHelper from '../Util/MathHelper';
 import MathTool from '../Util/MathTool';
 import Vector2DTool from '../Util/Vector2DTool';
@@ -312,71 +311,6 @@ export default class Polygon2D {
         }
       }
     }
-  }
-
-  /**
-   * 计算包含关系，精度很低，慎用
-   * @param polygonA
-   * @param polygonB
-   * @return EPolygonContainType
-   *
-   * 已经测试错误的用例：
-   * ------------
-   * |    A     |
-   * |  -----   |      -----
-   * |  |   |   |      |   |
-   * |  | B |   |      | B |    这是AB应该贴边的，但结果是：AContainB
-   * ----    ----      -----
-   *     A               B
-   *
-   * ------------
-   * |     |     |
-   * |  A  |  B  |         这是AB应该贴边的，但结果是：AContainB
-   * ------------
-   *
-   * 这里不考虑贴边的情况，
-   */
-  public static calcContainRelation(
-      polygonA: Polygon2D,
-      polygonB: Polygon2D,
-      tolArea: number = 30,
-  ): EPolygonContainType {
-    const ps: Vector2D[][] = [];
-    const vertex1: Vector2D[] = polygonA.vertices;
-    const vertex2: Vector2D[] = polygonB.vertices;
-
-    ps.push(vertex1.slice());
-    ps.push(vertex2.slice());
-    let unionPs: Vector2D[][] = ClipTsTool.unionPath(ps);
-    let length = unionPs.length;
-    if (length > 1) {
-      const unionPsTemp: Vector2D[][] = [];
-      for (const psTemp of unionPs) {
-        if (MathHelper.calcArea(psTemp) > tolArea) {
-          unionPsTemp.push(psTemp);
-        }
-      }
-      unionPs = unionPsTemp;
-    }
-    length = unionPs.length;
-    if (length === 2) {
-      return EPolygonContainType.Split;
-    } else if (length === 1) {
-      // TODO:HYX(计算面积有误差)这里由于精度问题，-30，慎用
-      const unionArea: number = Polygon2D.calculateArea(unionPs[0]) - tolArea;
-      if (unionArea > Math.max(polygonA.area, polygonB.area)) {
-        return EPolygonContainType.Intersection;
-      } else {
-        if (polygonA.area > polygonB.area + tolArea) {
-          return EPolygonContainType.AContainB;
-        } else if (tolArea + polygonA.area < polygonB.area) {
-          return EPolygonContainType.BContainA;
-        } else {
-          return EPolygonContainType.AEqualB;
-        }
-      }
-    }
-    return EPolygonContainType.Split;
   }
 
   public static calculateCenter(vecs: Vector2D[]): Vector2D {

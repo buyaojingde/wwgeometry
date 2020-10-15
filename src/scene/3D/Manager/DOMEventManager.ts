@@ -1,7 +1,6 @@
 import Hammer from 'hammerjs';
 import { Vector2 } from 'three';
 import EventEmitter = PIXI.utils.EventEmitter;
-import { getElementOffset } from '../../../utils';
 
 export default class DOMEventManager extends EventEmitter {
   protected element: HTMLElement;
@@ -115,7 +114,7 @@ export default class DOMEventManager extends EventEmitter {
     const gotElement = document.elementFromPoint(pageX, pageY);
 
     if (this.element.contains(gotElement)) {
-      const pos = getElementOffset(gotElement);
+      const pos = this.getElementOffset(gotElement);
       const touch = event.touches[0] || event.changedTouches[0];
 
       event.offsetX = touch.pageX - pos.x;
@@ -226,6 +225,28 @@ export default class DOMEventManager extends EventEmitter {
     }
   }
 
+
+  public getElementOffset(obj, parent = document.body) {
+    var pos = {
+      top: 0,
+      left: 0,
+    };
+    if (obj.offsetParent !== parent && obj.offsetParent) {
+      while (obj !== parent && obj.offsetParent) {
+        pos.top += obj.offsetTop;
+        pos.left += obj.offsetLeft;
+        obj = obj.offsetParent;
+      }
+    } else if (obj.x) {
+      pos.left += obj.x;
+    } else if (obj.x) {
+      pos.top += obj.y;
+    }
+    return {
+      x: pos.left,
+      y: pos.top,
+    };
+  }
   /**
    * 兼容触摸事件
    * 需要修改为新的srcElement
@@ -234,7 +255,7 @@ export default class DOMEventManager extends EventEmitter {
    */
   protected compatibleTouchAction(event) {
     const touch = event.touches[0] || event.changedTouches[0];
-    const pos = getElementOffset(event.srcElement);
+    const pos = this.getElementOffset(event.srcElement);
 
     event.offsetX = touch.pageX - pos.x;
     event.offsetY = touch.pageY - pos.y;

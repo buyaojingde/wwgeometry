@@ -2,7 +2,6 @@ import Graphics = PIXI.Graphics;
 import { Debounce } from 'lodash-decorators';
 import { computed } from 'mobx';
 import ModelActiveData from '../../../../store/ModelActiveData';
-import { canvasDPI } from '../../../../utils';
 import HookManager from '../../../../utils/HookManager';
 import { IScene2D } from '../../../Interface/IScene';
 import View2DData from '../../../../store/View2DData';
