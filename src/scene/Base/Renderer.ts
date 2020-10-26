@@ -1,8 +1,8 @@
 /**
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
-import { WebGLRenderer as PIXIWebGlRenderer } from 'pixi.js';
-import { WebGLRenderer } from 'three';
+import { Renderer as PIXIWebGlRenderer } from "pixi.js";
+import { WebGLRenderer } from "three";
 
 export const Renderer3D = new WebGLRenderer({
   antialias: true,
@@ -11,7 +11,6 @@ export const Renderer3D = new WebGLRenderer({
 
 export const Renderer2D = new PIXIWebGlRenderer({
   backgroundColor: 0xe8e8e8,
-  forceFXAA: true,
   antialias: true,
 });
 

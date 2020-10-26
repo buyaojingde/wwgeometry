@@ -1,25 +1,25 @@
 /**
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
-import { autorun, observable } from 'mobx';
-import Scene2D from '..';
+import { autorun, observable } from "mobx";
+import Scene2D from "..";
 import Application = PIXI.Application;
-import HookManager from '../../../utils/HookManager';
-import WebGLRenderer = PIXI.WebGLRenderer;
+import HookManager from "../../../utils/HookManager";
+import WebGLRenderer = PIXI.Renderer;
 import Layer = PIXI.display.Layer;
-import BaseEvent2D from '../Events/Base';
+import BaseEvent2D from "../Events/Base";
 import Stage = PIXI.Container;
-import { layerOrderGroups } from '../Layer/LayerOrder';
+import { layerOrderGroups } from "../Layer/LayerOrder";
 
-import { EShapeViewType } from '../../../global/Enum/EnumData';
-import { Renderer2D } from '../../Base/Renderer';
+import { EShapeViewType } from "../../../global/Enum/EnumData";
+import { Renderer2D } from "../../Base/Renderer";
 
 export default class BaseScene extends HookManager {
   @observable
   protected size: number = 750; // canvas的尺寸
 
   public static apps: Set<Application> = new Set(); // 所有2D场景集合
-  protected name: string = 'none';
+  protected name: string = "none";
   protected app: Application;
   protected Vue: any;
   protected bindNode: HTMLElement;
@@ -42,14 +42,14 @@ export default class BaseScene extends HookManager {
     this.app = new Application(options);
 
     if (!(this.app.renderer instanceof WebGLRenderer)) {
-      this.app.renderer.destroy();
+      // this.app.renderer.destroy();
       this.app.renderer = Renderer2D;
     }
 
     this.app.stage = new Stage();
     BaseScene.apps.add(this.app);
     setTimeout(() => {
-      this.app.view.setAttribute('id', this.name);
+      this.app.view.setAttribute("id", this.name);
       this.bindElement(this.Scene2D.rendererDom);
       this.init();
       this.resize();
@@ -74,13 +74,16 @@ export default class BaseScene extends HookManager {
   protected init() {
     this.app.stage.rotation = Math.PI;
 
-    this.app.renderer.plugins.interaction.setTargetElement(this.Scene2D.rendererDom, this.app.renderer.resolution);
+    this.app.renderer.plugins.interaction.setTargetElement(
+      this.Scene2D.rendererDom,
+      this.app.renderer.resolution
+    );
     this.app.renderer.plugins.interaction.resolution = 1;
 
     this.initLayers();
 
     const fn = this.resize.bind(this);
-    this.Scene2D.on('resize', fn);
+    this.Scene2D.on("resize", fn);
 
     this.disposeArr.push(
       autorun(() => {
@@ -94,7 +97,7 @@ export default class BaseScene extends HookManager {
         const { x, y } = this.Scene2D.position;
         this.app.stage.position.set(x, y);
       }),
-      () => this.Scene2D.off('resize', fn),
+      () => this.Scene2D.off("resize", fn)
     );
   }
 
@@ -104,7 +107,7 @@ export default class BaseScene extends HookManager {
   }
 
   public bindElement(bindNode: HTMLElement) {
-    if (!bindNode.querySelector('#' + this.app.view.getAttribute('id'))) {
+    if (!bindNode.querySelector("#" + this.app.view.getAttribute("id"))) {
       bindNode.appendChild(this.app.view);
       this.bindNode = bindNode;
     }

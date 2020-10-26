@@ -1,9 +1,8 @@
 /**
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
 
-import 'pixi-layers';
-import * as PIXI from 'pixi.js';
+import "pixi-layers";
 
 // export class Group {
 //   private _index: number;
@@ -16,7 +15,7 @@ import * as PIXI from 'pixi.js';
 export enum LayerOrder {
   Column = 0,
   Controller,
-  Camera
+  Camera,
 }
 
 const Groups: any = {};

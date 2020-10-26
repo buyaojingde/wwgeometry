@@ -1,39 +1,39 @@
-
-import { Bind, Throttle } from 'lodash-decorators';
-import { autorun, computed, observable, reaction } from 'mobx';
-import * as PIXI from 'pixi.js';
-import 'pixi-layers';
-import { Application } from 'pixi.js';
-import { Vector2 } from 'three';
-import HomeTypeData from '../../model/HomeTypeData';
-import Model2DActive from '../../store/Model2DActive';
-import View2DData from '../../store/View2DData';
-import VueStoreData from '../../store/VueStoreData';
-import LianBoTest from '../../utils/LianBoTest';
-import DOMEventManager from '../3D/Manager/DOMEventManager';
-import { Renderer2D } from '../Base/Renderer';
-import SceneBase from '../Base/SceneBase';
-import { IScene2D } from '../Interface/IScene';
-import { drawGrid } from '../Math/GraphicsUtils';
-import BoundingBox2D from '../Model/Geometry/BoundingBox2D';
-import Vector2D from '../Model/Geometry/Vector2D';
+import { Bind, Throttle } from "lodash-decorators";
+import { autorun, computed, observable, reaction } from "mobx";
+import * as PIXI from "pixi.js";
+import "pixi-layers";
+import { Application } from "pixi.js";
+import { Vector2 } from "three";
+import HomeTypeData from "../../model/HomeTypeData";
+import Model2DActive from "../../store/Model2DActive";
+import View2DData from "../../store/View2DData";
+import VueStoreData from "../../store/VueStoreData";
+import LianBoTest from "../../utils/LianBoTest";
+import DOMEventManager from "../3D/Manager/DOMEventManager";
+import { Renderer2D } from "../Base/Renderer";
+import SceneBase from "../Base/SceneBase";
+import { IScene2D } from "../Interface/IScene";
+import { drawGrid } from "../Math/GraphicsUtils";
+import BoundingBox2D from "../Model/Geometry/BoundingBox2D";
+import Vector2D from "../Model/Geometry/Vector2D";
 import Stage = PIXI.display.Stage;
 import Layer = PIXI.display.Layer;
 import Graphics = PIXI.Graphics;
-import WebGLRenderer = PIXI.WebGLRenderer;
-import BaseEvent2D from './Events/Base';
-import HomePlan from './Layer/HomePlan';
-import { layerOrderGroups } from './Layer/LayerOrder';
-import CameraController from './Manager/CameraController';
-import PickupController from './Manager/PickupController';
-import ViewController from './Manager/ViewController';
-import { pointToVector, vectorToPoint } from './Utils';
-import GraphicsTool from './Utils/GraphicsTool';
-import PointObserve from './Utils/PointObserve';
-import ViewObject from './ViewObject/ViewObject';
-import ColumnMoveAction from './Events/ColumnMoveAction';
-import SelectColumnAction from './Events/SelectColumnAction';
-import EditPositionAction from './Events/EditPositionAction';
+import WebGLRenderer = PIXI.Renderer;
+import BaseEvent2D from "./Events/Base";
+import HomePlan from "./Layer/HomePlan";
+import { layerOrderGroups } from "./Layer/LayerOrder";
+import CameraController from "./Manager/CameraController";
+import PickupController from "./Manager/PickupController";
+import ViewController from "./Manager/ViewController";
+import { pointToVector, vectorToPoint } from "./Utils";
+import GraphicsTool from "./Utils/GraphicsTool";
+import PointObserve from "./Utils/PointObserve";
+import ViewObject from "./ViewObject/ViewObject";
+import ColumnMoveAction from "./Events/ColumnMoveAction";
+import SelectColumnAction from "./Events/SelectColumnAction";
+import EditPositionAction from "./Events/EditPositionAction";
+import { ObservablePoint } from "pixi.js";
 
 export interface IDOMRect {
   width: number;
@@ -98,14 +98,17 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.Vue = Vue;
     this.bindNode = Vue.$refs.container2d;
 
-    if (!!this.bindNode && !this.bindNode.getElementsByTagName('canvas').length) {
+    if (
+      !!this.bindNode &&
+      !this.bindNode.getElementsByTagName("canvas").length
+    ) {
       this.bindNode.appendChild(this.rendererDom);
     }
 
     this.initSwitchController();
     this.scene.start();
-    this.DOMEventListener.on('resize', this.onWindowResize);
-    this.DOMEventListener.on('keydown', this.onKeyDown.bind(this));
+    this.DOMEventListener.on("resize", this.onWindowResize);
+    this.DOMEventListener.on("keydown", this.onKeyDown.bind(this));
 
     this.resize();
 
@@ -119,7 +122,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   public onKeyDown(event) {
-    if (event.code === 'Space') {
+    if (event.code === "Space") {
       this.resetView();
     }
   }
@@ -128,22 +131,27 @@ export default class Scene2D extends SceneBase implements IScene2D {
    * 初始化PIXI
    */
   public init() {
-    const options = { backgroundColor: 0xe8e8e8, forceFXAA: true, antialias: true, resolution: this.resolution };
+    const options = {
+      backgroundColor: 0xe8e8e8,
+      forceFXAA: true,
+      antialias: true,
+      resolution: this.resolution,
+    };
     this.scene = new Application(options);
 
     if (!(this.scene.renderer instanceof WebGLRenderer)) {
-      this.scene.renderer.destroy();
+      // this.scene.renderer.destroy();
       this.scene.renderer = Renderer2D;
     }
     this.stopRender();
     this.scene.stage = new Stage();
-    Object.defineProperty(this.scene.stage, 'scaleNumber', {
+    Object.defineProperty(this.scene.stage, "scaleNumber", {
       get: () => View2DData.scaleNumber,
     });
-    this.scene.stage.name = 'scene2D';
+    this.scene.stage.name = "scene2D";
 
-    this.rendererDom = document.createElement('div');
-    this.rendererDom.setAttribute('tabindex', '1'); // 让元素可以接受keydown事件
+    this.rendererDom = document.createElement("div");
+    this.rendererDom.setAttribute("tabindex", "1"); // 让元素可以接受keydown事件
     this.rendererDom.appendChild(this.scene.view);
 
     this.DOMEventListener = new DOMEventManager(this.rendererDom);
@@ -159,7 +167,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     this.initController();
 
-    this.loadHomeData('local').then(res => {
+    this.loadHomeData("local").then((res) => {
       this.resetView();
     });
 
@@ -171,7 +179,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   public lineWidth: number = 0;
 
   public initSyncEvent() {
-    this.scene.stage.position = new PointObserve();
+    this.scene.stage.position = new ObservablePoint(null, this, 0, 0);
 
     autorun(() => {
       // 同步Scene2D中的scale
@@ -184,7 +192,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     autorun(() => {
       // 同步Scene2D中的scale
       // console.log('this.position:' + this.position);
-      this.scene.stage.position.copy(this.position);
+      this.scene.stage.position.set(this.position.x, this.position.y);
       // Model2DActive.panView2D = true;
     });
 
@@ -193,7 +201,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
       () => this.setBorderLineStyle(),
       {
         fireImmediately: true,
-      },
+      }
     );
   }
 
@@ -223,7 +231,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     // 画布零点位置为摄像机位置，画布零点放置在左上角，是为了墙体处于屏幕中间
     setTimeout(() => this.resetView());
 
-    this.emit('resize', width, height);
+    this.emit("resize", width, height);
   }
 
   /**
@@ -237,7 +245,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     if (!levelBoundingBox) {
       // 若levelBoundingBox为空，返回默认BoundingBox
-      levelBoundingBox = new BoundingBox2D().setFromCenterAndSize(new Vector2(), new Vector2D(1000, 800));
+      levelBoundingBox = new BoundingBox2D().setFromCenterAndSize(
+        new Vector2(),
+        new Vector2D(1000, 800)
+      );
     }
     // const levelBoundingBox = this.home.curLevel.getBondingBox();
     const rect: any = (this.rendererDom as HTMLElement).getBoundingClientRect();
@@ -248,7 +259,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.setResetPosition(levelBoundingBox, rect);
   }
 
-  public resetViewBox(levelBoundingBox: BoundingBox2D = null, rect: IDOMRect = null) {
+  public resetViewBox(
+    levelBoundingBox: BoundingBox2D = null,
+    rect: IDOMRect = null
+  ) {
     if (!rect) {
       rect = (this.rendererDom as HTMLElement).getBoundingClientRect() as any;
     }
@@ -259,7 +273,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.setResetPosition(levelBoundingBox, rect);
   }
 
-  private setResetScale(levelBoundingBox: BoundingBox2D, rect: IDOMRect = null) {
+  private setResetScale(
+    levelBoundingBox: BoundingBox2D,
+    rect: IDOMRect = null
+  ) {
     // calculate the house size
     const sizeVec = levelBoundingBox.getSize(new Vector2());
 
@@ -275,7 +292,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.scale.set(scale);
   }
 
-  private setResetPosition(levelBoundingBox: BoundingBox2D, rect: IDOMRect = null) {
+  private setResetPosition(
+    levelBoundingBox: BoundingBox2D,
+    rect: IDOMRect = null
+  ) {
     // calculate the house center position
     const point = vectorToPoint(levelBoundingBox.getCenter());
     const stage = this.getStage();
@@ -286,7 +306,11 @@ export default class Scene2D extends SceneBase implements IScene2D {
     }
 
     // calculate the screen center position
-    const pointCenter = this.pickupController.getPoint(rect.left + rect.width / 2, rect.top + rect.height / 2, true);
+    const pointCenter = this.pickupController.getPoint(
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2,
+      true
+    );
     if (!Number.isFinite(pointCenter.x) || !Number.isFinite(pointCenter.y)) {
       return;
     }
@@ -335,8 +359,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   public stop() {
-    this.DOMEventListener.off('resize', this.onWindowResize);
-    this.DOMEventListener.off('keydown', this.onKeyDown.bind(this));
+    this.DOMEventListener.off("resize", this.onWindowResize);
+    this.DOMEventListener.off("keydown", this.onKeyDown.bind(this));
     this.stopRender();
     while (this.allEvents.length) {
       this.allEvents.pop().destroy();
@@ -345,10 +369,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
   protected drawBaseInfo() {
     this._grid = new Graphics();
-    drawGrid(this._grid, { lineWidth: parseFloat('' + 1 / this.scale.x) });
+    drawGrid(this._grid, { lineWidth: parseFloat("" + 1 / this.scale.x) });
     this.scene.stage.addChild(this._grid);
     this.scene.stage.addChild(GraphicsTool.drawZeroPoint());
-// this.scene.stage.addChild();
+    // this.scene.stage.addChild();
   }
 
   public remove(object: ViewObject) {
@@ -382,8 +406,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   private initSwitchController() {
-    this.allEvents.push(
-    );
+    this.allEvents.push();
   }
 
   private initController() {
@@ -394,11 +417,11 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     new CameraController(this);
 
-//region column
+    //region column
     new ColumnMoveAction(this);
     new SelectColumnAction(this);
     new EditPositionAction(this);
-//endregion
+    //endregion
   }
 
   public setHomePlan(homePlan: HomePlan) {

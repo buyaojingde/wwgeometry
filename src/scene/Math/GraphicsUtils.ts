@@ -1,4 +1,4 @@
-import { extras, Graphics, Point } from 'pixi.js';
+import { Graphics, Point } from "pixi.js";
 import {
   Box3,
   BoxBufferGeometry,
@@ -23,7 +23,7 @@ import {
   Vector2,
   Vector3,
   VertexColors,
-} from 'three';
+} from "three";
 
 /**
  * Desc: 绘制双向箭头
@@ -47,7 +47,7 @@ export function drawDoubleDirectionArrow(
   bodyLen: number,
   bodyWidth: number,
   arrowLen: number,
-  arrowWidth: number,
+  arrowWidth: number
 ): Shape {
   const Minus = -1;
 
@@ -76,8 +76,20 @@ export function drawDoubleDirectionArrow(
  *
  **/
 
-export function createRingByAngle(outerRadius, innerRadius, angleInRadian, mat?: Material) {
-  const shapeGeometry = new RingBufferGeometry(innerRadius, outerRadius, 32 * 8, 1, 0, angleInRadian);
+export function createRingByAngle(
+  outerRadius,
+  innerRadius,
+  angleInRadian,
+  mat?: Material
+) {
+  const shapeGeometry = new RingBufferGeometry(
+    innerRadius,
+    outerRadius,
+    32 * 8,
+    1,
+    0,
+    angleInRadian
+  );
   mat = mat
     ? mat
     : new MeshBasicMaterial({
@@ -99,7 +111,13 @@ export function createRingByAngle(outerRadius, innerRadius, angleInRadian, mat?:
  * @param startAngle
  * @param angleValue
  */
-export function drawSector(graphics: any, point: any, radius: number, startAngle: number, angleValue: number): void {
+export function drawSector(
+  graphics: any,
+  point: any,
+  radius: number,
+  startAngle: number,
+  angleValue: number
+): void {
   let num2: number = NaN;
   let num3: number = NaN;
   let num4: number = NaN;
@@ -113,7 +131,10 @@ export function drawSector(graphics: any, point: any, radius: number, startAngle
   const num9: any = Math.ceil(Math.abs(angleValue) / 45);
   const num10: any = ((angleValue / num9) * Math.PI) / 180;
   startAngle = (startAngle * Math.PI) / 180;
-  graphics.lineTo(tmpx + tmpradias * Math.cos(startAngle), tmpy + tmpradias * Math.sin(startAngle));
+  graphics.lineTo(
+    tmpx + tmpradias * Math.cos(startAngle),
+    tmpy + tmpradias * Math.sin(startAngle)
+  );
   let num11: number = 1;
   while (num11 <= num9) {
     startAngle = startAngle + num10;
@@ -146,7 +167,7 @@ export function drawLineSector(
   radius: { outerRadius: number; innerRadius: number },
   startAngle: number,
   angleValue: number,
-  lineWidth: number = 1,
+  lineWidth: number = 1
 ): Graphics {
   const tmpx: any = point.x;
   const tmpy: any = point.y;
@@ -203,15 +224,18 @@ export function drawGrid(graphics: Graphics, opt = {}) {
   unitGrid.width = length;
   unitGrid.height = length;
   // row column
-  const items = ['column', 'row'];
+  const items = ["column", "row"];
   for (const item of items) {
     for (let i = 0; i <= unitNum; i++) {
       const offset = i * options.step;
-      unitGrid.lineStyle(options.lineWidth, !(i % 10) ? options.lineColor2 : options.lineColor);
-      if (item === 'row') {
+      unitGrid.lineStyle(
+        options.lineWidth,
+        !(i % 10) ? options.lineColor2 : options.lineColor
+      );
+      if (item === "row") {
         unitGrid.moveTo(0, offset);
         unitGrid.lineTo(length, offset);
-      } else if (item === 'column') {
+      } else if (item === "column") {
         unitGrid.moveTo(offset, 0);
         unitGrid.lineTo(offset, length);
       }
@@ -278,7 +302,11 @@ export const drawDash = (() => {
     return cita;
   }
 
-  function drawDashUnit(graphics: Graphics, dashedLength: number = 20, lineStyle: number[]) {
+  function drawDashUnit(
+    graphics: Graphics,
+    dashedLength: number = 20,
+    lineStyle: number[]
+  ) {
     graphics.clear();
     graphics.lineStyle(...lineStyle);
     graphics.moveTo(0, 0);
@@ -294,7 +322,7 @@ export const drawDash = (() => {
     y1: number,
     lineStyle: number[] = [5, 0xfffff, 1],
     dashedLength: number = 20,
-    graphics = undefined,
+    graphics = undefined
   ) => {
     let dashUnit: any;
 
@@ -309,8 +337,15 @@ export const drawDash = (() => {
     }
 
     const dashedtexture = dashUnit.generateCanvasTexture(1, 1);
-    const linelength = Math.pow(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2), 0.5);
-    const tilingSprite = new extras.TilingSprite(dashedtexture, linelength, lineStyle[0]);
+    const linelength = Math.pow(
+      Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2),
+      0.5
+    );
+    const tilingSprite = new PIXI.TilingSprite(
+      dashedtexture,
+      linelength,
+      lineStyle[0]
+    );
     tilingSprite.x = x0;
     tilingSprite.y = y0;
     tilingSprite.rotation = (angle(x0, y0, x1, y1) * Math.PI) / 180;
@@ -328,7 +363,12 @@ export const drawDash = (() => {
  *
  */
 
-export function drawRotateArrowLeft(innerRadius: number, outerRadius: number, edgeLen: number, mat?: Material): Mesh {
+export function drawRotateArrowLeft(
+  innerRadius: number,
+  outerRadius: number,
+  edgeLen: number,
+  mat?: Material
+): Mesh {
   const shape: Shape = new Shape();
 
   shape.moveTo((innerRadius + outerRadius) * 0.5 - edgeLen * 0.5, 0);
@@ -357,7 +397,12 @@ export function drawRotateArrowLeft(innerRadius: number, outerRadius: number, ed
  *
  */
 
-export function drawRotateArrowRight(innerRadius: number, outerRadius: number, edgeLen: number, mat?: Material): Mesh {
+export function drawRotateArrowRight(
+  innerRadius: number,
+  outerRadius: number,
+  edgeLen: number,
+  mat?: Material
+): Mesh {
   const shape: Shape = new Shape();
 
   shape.moveTo(0, (innerRadius + outerRadius) * 0.5 - edgeLen * 0.5);
@@ -386,36 +431,62 @@ export function drawRotateArrowRight(innerRadius: number, outerRadius: number, e
  * @addAngle：角度增加量，决定了箭头部分长度
  *
  */
-export function drawArrowLeft(minRadius: number, maxRadius: number, addAngle: number): Shape {
+export function drawArrowLeft(
+  minRadius: number,
+  maxRadius: number,
+  addAngle: number
+): Shape {
   const ratio = 1.75;
   const middleRadius = 0.5 * (minRadius + maxRadius);
 
   const shape = new Shape();
 
-  shape.moveTo(minRadius * Math.cos(ratio * Math.PI), minRadius * Math.sin(ratio * Math.PI));
-  shape.lineTo(maxRadius * Math.cos(ratio * Math.PI), maxRadius * Math.sin(ratio * Math.PI));
+  shape.moveTo(
+    minRadius * Math.cos(ratio * Math.PI),
+    minRadius * Math.sin(ratio * Math.PI)
+  );
+  shape.lineTo(
+    maxRadius * Math.cos(ratio * Math.PI),
+    maxRadius * Math.sin(ratio * Math.PI)
+  );
   shape.lineTo(
     middleRadius * Math.cos(ratio * Math.PI + addAngle),
-    middleRadius * Math.sin(ratio * Math.PI + addAngle),
+    middleRadius * Math.sin(ratio * Math.PI + addAngle)
   );
-  shape.lineTo(minRadius * Math.cos(ratio * Math.PI), minRadius * Math.sin(ratio * Math.PI));
+  shape.lineTo(
+    minRadius * Math.cos(ratio * Math.PI),
+    minRadius * Math.sin(ratio * Math.PI)
+  );
 
   return shape;
 }
 
-export function drawArrowRight(minRadius: number, maxRadius: number, addAngle: number): Shape {
+export function drawArrowRight(
+  minRadius: number,
+  maxRadius: number,
+  addAngle: number
+): Shape {
   const middleRadius = 0.5 * (minRadius + maxRadius);
   const quarter = 1.25;
 
   const shape = new Shape();
 
-  shape.moveTo(minRadius * Math.cos(quarter * Math.PI), minRadius * Math.sin(quarter * Math.PI));
-  shape.lineTo(maxRadius * Math.cos(quarter * Math.PI), maxRadius * Math.sin(quarter * Math.PI));
+  shape.moveTo(
+    minRadius * Math.cos(quarter * Math.PI),
+    minRadius * Math.sin(quarter * Math.PI)
+  );
+  shape.lineTo(
+    maxRadius * Math.cos(quarter * Math.PI),
+    maxRadius * Math.sin(quarter * Math.PI)
+  );
   shape.lineTo(
     middleRadius * Math.cos(quarter * Math.PI - addAngle),
-    middleRadius * Math.sin(quarter * Math.PI - addAngle),
+    middleRadius * Math.sin(quarter * Math.PI - addAngle)
   );
-  shape.lineTo(minRadius * Math.cos(quarter * Math.PI), minRadius * Math.sin(quarter * Math.PI));
+  shape.lineTo(
+    minRadius * Math.cos(quarter * Math.PI),
+    minRadius * Math.sin(quarter * Math.PI)
+  );
 
   return shape;
 }
@@ -435,7 +506,7 @@ export function getBoundingBoxSize(object: Object3D): Vector3 {
   let maxZ = Number.MIN_VALUE;
 
   if (object instanceof Object3D) {
-    object.traverse(mesh => {
+    object.traverse((mesh) => {
       if (mesh instanceof Mesh) {
         mesh.geometry.computeBoundingBox();
         const bBox = mesh.geometry.boundingBox;
@@ -468,8 +539,16 @@ export function getBoundingBoxSize(object: Object3D): Vector3 {
  * @param size ：包围盒线框尺寸
  * @param lineMat : 包围盒线框材质
  */
-export function buildBoundingBoxBySize(size: Vector3, lineMat?: LineBasicMaterial, color?: number): LineSegments {
-  const tmpBox: BoxBufferGeometry = new BoxBufferGeometry(size.x, size.y, size.z);
+export function buildBoundingBoxBySize(
+  size: Vector3,
+  lineMat?: LineBasicMaterial,
+  color?: number
+): LineSegments {
+  const tmpBox: BoxBufferGeometry = new BoxBufferGeometry(
+    size.x,
+    size.y,
+    size.z
+  );
   tmpBox.translate(0, size.y * 0.5, 0);
   const edges: EdgesGeometry = new EdgesGeometry(tmpBox, 1);
 
@@ -493,7 +572,10 @@ export function buildBoundingBoxBySize(size: Vector3, lineMat?: LineBasicMateria
  * @param size ：包围盒线框尺寸
  * @param lineMat : 包围盒线框材质
  */
-export function buildBoxGeometryBySize(size: Vector3, lineMat?: MeshBasicMaterial): Mesh {
+export function buildBoxGeometryBySize(
+  size: Vector3,
+  lineMat?: MeshBasicMaterial
+): Mesh {
   const tmpBox: BoxGeometry = new BoxGeometry(size.x, size.y, size.z);
   tmpBox.translate(0, size.y * 0.5, 0);
 
@@ -525,7 +607,10 @@ export function buildTransparencyPlane(): Mesh {
   return new Mesh(planeGeo, meshMat);
 }
 
-const lineSegmentsMaterial = new LineBasicMaterial({ vertexColors: VertexColors, depthWrite: false });
+const lineSegmentsMaterial = new LineBasicMaterial({
+  vertexColors: VertexColors,
+  depthWrite: false,
+});
 export function buildFloorGrid(size, divisions, color1, color2): LineSegments {
   size = 12000;
   divisions = 240;
@@ -558,8 +643,8 @@ export function buildFloorGrid(size, divisions, color1, color2): LineSegments {
   }
 
   const geometry = new BufferGeometry();
-  geometry.addAttribute('position', new Float32BufferAttribute(vertices, 3));
-  geometry.addAttribute('color', new Float32BufferAttribute(colors, 3));
+  geometry.addAttribute("position", new Float32BufferAttribute(vertices, 3));
+  geometry.addAttribute("color", new Float32BufferAttribute(colors, 3));
 
   return new LineSegments(geometry, lineSegmentsMaterial);
 }
@@ -606,12 +691,12 @@ export function drawArrowSimple(options: any = {}, grap: Graphics = null) {
     grap.lineTo(options.length, 0);
     grap.moveTo(
       options.length - options.arrowLength * Math.cos(options.arrowAngle),
-      -options.arrowLength * Math.sin(options.arrowAngle),
+      -options.arrowLength * Math.sin(options.arrowAngle)
     );
     grap.lineTo(options.length, 0);
     grap.lineTo(
       options.length - options.arrowLength * Math.cos(options.arrowAngle),
-      options.arrowLength * Math.sin(options.arrowAngle),
+      options.arrowLength * Math.sin(options.arrowAngle)
     );
   }
 
