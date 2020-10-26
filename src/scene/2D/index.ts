@@ -33,6 +33,7 @@ import PointObserve from './Utils/PointObserve';
 import ViewObject from './ViewObject/ViewObject';
 import ColumnMoveAction from './Events/ColumnMoveAction';
 import SelectColumnAction from './Events/SelectColumnAction';
+import EditPositionAction from './Events/EditPositionAction';
 
 export interface IDOMRect {
   width: number;
@@ -164,12 +165,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     this.initSyncEvent();
 
-  }
-
-  public TEST() {
-    console.log('test');
-    LianBoTest.testMain();
-    return;
+    LianBoTest.init();
   }
 
   public lineWidth: number = 0;
@@ -199,10 +195,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
         fireImmediately: true,
       },
     );
-
-    window['TEST'] = () => {
-      this.TEST();
-    };
   }
 
   public get resolution() {
@@ -405,6 +397,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
 //region column
     new ColumnMoveAction(this);
     new SelectColumnAction(this);
+    new EditPositionAction(this);
 //endregion
   }
 

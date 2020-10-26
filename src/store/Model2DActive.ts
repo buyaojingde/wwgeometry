@@ -1,10 +1,11 @@
-import isEmpty from 'lodash/isEmpty';
-import { action, computed, observable } from 'mobx';
-import ModelContext from '../model/context/ModelContex';
-import ViewObject from '../scene/2D/ViewObject/ViewObject';
-import { DRAWING_WALL_MODE } from '../scene/Constants/Constant0';
-import ObjectIndex from '../scene/Model/BaseInterface/ObjectIndex';
-import Column from '../scene/Model/Home/Column';
+import ObserveVector3D from "@/scene/Model/ObserveMath/ObserveVector3D";
+import isEmpty from "lodash/isEmpty";
+import { action, computed, observable } from "mobx";
+import ModelContext from "../model/context/ModelContex";
+import ViewObject from "../scene/2D/ViewObject/ViewObject";
+import { DRAWING_WALL_MODE } from "../scene/Constants/Constant0";
+import ObjectIndex from "../scene/Model/BaseInterface/ObjectIndex";
+import Column from "../scene/Model/Home/Column";
 
 class Model2DActive {
   @observable
@@ -48,7 +49,7 @@ class Model2DActive {
   @observable
   public drawingOptions: any;
   @observable
-  public actionDrawing = '';
+  public actionDrawing = "";
   @observable
   public settingCopydrawingScale: any; // 设置临摹图比例
   @observable
@@ -66,7 +67,13 @@ class Model2DActive {
   @observable
   public editingPaveTexture = null; // 拖动的铺贴
 
+  @observable text: string = "auto";
+
   private _editingDisposeArr: Array<() => void> = [];
+  @observable
+  editState: boolean;
+
+  public vec3: ObserveVector3D = new ObserveVector3D();
 
   constructor() {
     this.drawingOptions = {
@@ -82,6 +89,11 @@ class Model2DActive {
       popperShow: false,
       popperPosition: null,
     };
+  }
+
+  @action
+  public setText(val: string) {
+    this.text = val;
   }
 
   // 此方法名应该改为 reset...
@@ -101,7 +113,7 @@ class Model2DActive {
     this.drawingWallModeState = false;
     this.drawingRoomModeState = false;
     this.dragingText2D = null;
-    this.actionDrawing = '';
+    this.actionDrawing = "";
     this.isWallDrawing = false;
     this.isRoomDrawing = false;
     this.settingCopydrawingScale.isDrawing = false;
@@ -112,7 +124,11 @@ class Model2DActive {
 
   public setEditingModel(val) {
     let model2D = null;
-    if (val instanceof ViewObject && val.model && val.model instanceof ObjectIndex) {
+    if (
+      val instanceof ViewObject &&
+      val.model &&
+      val.model instanceof ObjectIndex
+    ) {
       model2D = val;
       val = val.model;
     }
@@ -123,7 +139,7 @@ class Model2DActive {
 
     if (val && val.on) {
       // 编辑状态，元素被删除后需要clear
-      const fn = beforeDate => {
+      const fn = (beforeDate) => {
         if (!this.replaceModelState) {
           if (this.editingModel === beforeDate) {
             this.clearEditingModel();
@@ -131,10 +147,10 @@ class Model2DActive {
         }
       };
 
-      val.on('destroy', () => fn(val));
+      val.on("destroy", () => fn(val));
 
       this._editingDisposeArr.push(() => {
-        val.off('destroy', () => fn(val));
+        val.off("destroy", () => fn(val));
       });
     }
 
@@ -144,7 +160,7 @@ class Model2DActive {
 
   public setMovingTexture(textureData: any) {
     if (!textureData.textureId && !textureData.textureID) {
-      return console.warn('选择的模型出错，该模型没有TextureID');
+      return console.warn("选择的模型出错，该模型没有TextureID");
     }
 
     this.editingTexture = textureData;
@@ -160,7 +176,7 @@ class Model2DActive {
       this.drawingRoomModeState = false;
       this.isRoomDrawing = false;
     }
-    this.actionDrawing = state ? 'draw_wall' : '';
+    this.actionDrawing = state ? "draw_wall" : "";
     this.drawingWallModeState = state;
   }
 
@@ -191,7 +207,7 @@ class Model2DActive {
       this.drawingWallModeState = false;
       this.isWallDrawing = false;
     }
-    this.actionDrawing = state ? 'draw_room' : '';
+    this.actionDrawing = state ? "draw_room" : "";
     this.drawingRoomModeState = state;
   }
 
@@ -264,6 +280,10 @@ class Model2DActive {
     this.selectColumn = null;
   }
 
+  @action
+  public setEditState(val) {
+    this.editState = val;
+  }
 
   @computed
   get isEditing() {
