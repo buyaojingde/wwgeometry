@@ -1,6 +1,5 @@
 import { Bind, Throttle } from "lodash-decorators";
 import { autorun, computed, observable, reaction } from "mobx";
-import * as PIXI from "pixi.js";
 import "pixi-layers";
 import { Application } from "pixi.js";
 import { Vector2 } from "three";

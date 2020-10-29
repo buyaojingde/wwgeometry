@@ -1,7 +1,7 @@
-import Segment from './Segment';
-import MathUtils from '../math/MathUtils';
-import Vector2 from './Vector2';
-import Line from './Line';
+import Segment from "./Segment";
+import MathUtils from "../math/MathUtils";
+import Vector2 from "./Vector2";
+import Line from "./Line";
 
 /**
  * @author lianbo
@@ -9,7 +9,7 @@ import Line from './Line';
  * @Description: 表示以一个点，不表示方向，也不是向量
  */
 export default class Point {
-  public readonly zero = new Point(0, 0);
+  public static zero = new Point(0, 0);
   public x: number;
   public y: number;
 
@@ -79,7 +79,10 @@ export default class Point {
     const endV = new Vector2(seg.end, this);
     const startDot = startV.dot(segV);
     const endDot = -endV.dot(segV);
-    if (MathUtils.greaterEqual(startDot, 0) && MathUtils.greaterEqual(endDot, 0)) {
+    if (
+      MathUtils.greaterEqual(startDot, 0) &&
+      MathUtils.greaterEqual(endDot, 0)
+    ) {
       return true;
     }
     return false;
@@ -91,7 +94,8 @@ export default class Point {
    * @Description: 点到线段的距离
    */
   public distanceToSegment(seg: Segment): any {
-    if (seg.start.equalTo(seg.end)) { //线段缩成一个点？
+    if (seg.start.equalTo(seg.end)) {
+      //线段缩成一个点？
       return this.distanceToPoint(seg.start);
     }
     const closestPoint = this.closestPoint(new Line(seg.start, seg.end));
@@ -100,12 +104,17 @@ export default class Point {
     const endV = new Vector2(seg.end, closestPoint);
     const startDot = startV.dot(segV);
     const endDot = -endV.dot(segV);
-    if (MathUtils.greaterEqual(startDot, 0) && MathUtils.greaterEqual(endDot, 0)) {
+    if (
+      MathUtils.greaterEqual(startDot, 0) &&
+      MathUtils.greaterEqual(endDot, 0)
+    ) {
       const dist = this.distanceToPoint(closestPoint);
       return { dis: dist, close: closestPoint };
-    } else if (startDot < 0) {                             /* point is out of scope closer to ps */
+    } else if (startDot < 0) {
+      /* point is out of scope closer to ps */
       return this.distanceToPoint(seg.start);
-    } else {                                               /* point is out of scope closer to pe */
+    } else {
+      /* point is out of scope closer to pe */
       return this.distanceToPoint(seg.end);
     }
   }

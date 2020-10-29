@@ -93,15 +93,6 @@ export default class Column2D extends ViewObject implements IViewObject {
 
   protected _wallType: number;
 
-  // region 标线
-
-  private isDirty: boolean = true;
-  private _visible: boolean = true;
-
-  public containerRenderWebGL(renderer: PIXI.Renderer): void {
-    super.containerRenderWebGL(renderer);
-  }
-
   constructor(column: Column) {
     super(column);
     this._wallType = -1;
@@ -115,18 +106,18 @@ export default class Column2D extends ViewObject implements IViewObject {
       ),
       reaction(
         () => [this.realHover],
-        () => this.render()
+        () => this.renderX()
       ),
       this._data.once("destroy", this.destroy.bind(this)),
-      this._data.on("render", () => this.render()),
+      this._data.on("render", () => this.renderX()),
       this._data.on("reSelect", () => {
         Model2DActive.setEditingModel(this);
       })
     );
-    this.render();
+    this.renderX();
   }
 
-  public render() {
+  public renderX() {
     this.clearChildren();
 
     this.fill();

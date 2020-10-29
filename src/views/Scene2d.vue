@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import * as PIXI from "pixi.js";
 import Scene2D from "@/scene/2D";
 import Model2DActive from "@/store/Model2DActive";
 import VueStoreData from "@/store/VueStoreData";

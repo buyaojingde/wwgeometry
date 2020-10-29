@@ -21,6 +21,9 @@ import GraphicsTool from "../scene/2D/Utils/GraphicsTool";
 import Vector2D from "../scene/Model/Geometry/Vector2D";
 import Polygon2D from "../scene/Model/Geometry/Polygon2D";
 import { autorun, computed, observable } from "mobx";
+import Column2D from "@/scene/2D/ViewObject/Column2D";
+import Column from "@/scene/Model/Home/Column";
+import Point from "./Math/geometry/Point";
 
 class LianBoTest {
   public constructor() {
@@ -31,20 +34,27 @@ class LianBoTest {
 
   public init() {}
 
-  testMain() {
+  testMain(): void {
+    this.testLayer();
     console.log("result");
   }
 
-  public static container: PIXI.Container = new PIXI.Container();
+  public testLayer(): void {
+    const sc = Scene2D.getInstance();
+    const group0 = new PIXI.display.Group(0, true);
+    this.renderTest();
+  }
 
-  public static lineWidth(): number {
+  public container: PIXI.Container = new PIXI.Container();
+
+  public lineWidth(): number {
     let scale = 1.5 / Scene2D.getInstance().scale.x / 2;
     scale = !Number.isFinite(scale) ? 1 : scale;
     return scale;
     // return 1.5 / this.Scene2D.scale.x / 2;
   }
 
-  public static TestMat(): void {
+  public TestMat(): void {
     const v0 = new Vector3(400, 400, 10);
     const v1 = new Vector3(500, 400, 20);
     const v2 = new Vector3(400, 500, 30);
@@ -59,9 +69,9 @@ class LianBoTest {
     console.log(r2);
   }
 
-  public static drawTest(str: string, pos: any, color: string = null) {
+  public drawTest(str: string, pos: any, color: string = null) {
     const style = {
-      fontSize: LianBoTest.lineWidth() * 15,
+      fontSize: this.lineWidth() * 15,
       fill: color ? color : "#ff0000",
     };
     const Text = new PIXI.Text(str, style);
@@ -72,7 +82,7 @@ class LianBoTest {
     this.renderTest();
   }
 
-  public static drawCircle() {
+  public drawCircle() {
     const grp = new PIXI.Graphics();
     grp.lineStyle(0);
     grp.beginFill(0xde3249, 1);
@@ -82,16 +92,16 @@ class LianBoTest {
     this.renderTest();
   }
 
-  public static renderTest() {
+  public renderTest() {
     const stage = Scene2D.getInstance().getStage();
     stage.addChild(this.container);
   }
 
-  public static clearTest() {
+  public clearTest() {
     this.container.removeChildren();
   }
 
-  public static renderBimTest() {
+  public renderBimTest() {
     console.log("test!");
     // const revitObj = require('./lianboJson.json');
     const revitObj = require("./P000001-B0004-F0004.json");
@@ -141,8 +151,8 @@ class LianBoTest {
     const edgesToVer = (edges) => {
       const vers = [];
       for (let i = 0; i < edges.length; i++) {
-        const pointStart = LianBoTest.relativeZero(edges[i].startPoint, firstP);
-        const pointEnd = LianBoTest.relativeZero(edges[i].endPoint, firstP);
+        const pointStart = this.relativeZero(edges[i].startPoint, firstP);
+        const pointEnd = this.relativeZero(edges[i].endPoint, firstP);
         if (vers.length > 0) {
           if (vers[vers.length - 1].equals(pointStart)) {
             vers.push(pointEnd);
@@ -205,23 +215,23 @@ class LianBoTest {
     this.group = group;
   }
 
-  public static group: Group;
-  public static angle = 15;
+  public group: Group;
+  public angle = 15;
 
-  public static rotateGroup() {
+  public rotateGroup() {
     console.log(this.group.rotation);
     this.group.rotateX(this.angle);
     this.angle += 15;
   }
 
-  private static relativeZero(current: any, zero: any): Vector2 {
+  private relativeZero(current: any, zero: any): Vector2 {
     const v3 = new Vector2();
     v3.x = current.X - zero.X;
     v3.y = current.Y - zero.Y;
     return v3;
   }
 
-  private static edgesToVector3(edges: any): any {
+  private edgesToVector3(edges: any): any {
     return edges.map((item) => {
       return {
         startPoint: new Vector3(
@@ -238,7 +248,7 @@ class LianBoTest {
     });
   }
 
-  private static edgeMatrix(edges: any): Matrix4 {
+  private edgeMatrix(edges: any): Matrix4 {
     const matrix = new Matrix4();
     const firstPoint = edges[0].startPoint;
     const v0: Vector3 = edges[0].endPoint.clone().sub(firstPoint);
@@ -251,7 +261,7 @@ class LianBoTest {
     return matrix;
   }
 
-  private static pointsToMatrix(edges: Vector3[]): Matrix4 {
+  private pointsToMatrix(edges: Vector3[]): Matrix4 {
     const matrix = new Matrix4();
     const firstPoint = edges[0];
     const v0: Vector3 = edges[1].clone().sub(firstPoint);
@@ -262,17 +272,17 @@ class LianBoTest {
     return matrix;
   }
 
-  private static worldToLocal(v: Vector3, matrixWorld: Matrix4): Vector3 {
+  private worldToLocal(v: Vector3, matrixWorld: Matrix4): Vector3 {
     const mat = new Matrix4();
     const inverse = mat.getInverse(matrixWorld);
     return v.applyMatrix4(inverse);
   }
 
-  private static localToWorld(v: Vector3, matrixWorld: Matrix4): Vector3 {
+  private localToWorld(v: Vector3, matrixWorld: Matrix4): Vector3 {
     return v.applyMatrix4(matrixWorld);
   }
 
-  public static testWorldToLocal(): Vector3[] {
+  public testWorldToLocal(): Vector3[] {
     const obj = require("./lianboJson.json");
     const result: Vector3[] = [];
     const edgesOfV3 = this.edgesToVector3(obj.edges[0]);
