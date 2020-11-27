@@ -1,7 +1,7 @@
-import Point = PIXI.Point;
-import DisplayObject = PIXI.DisplayObject;
-import { Vector2 } from 'three';
 import Stage = PIXI.Container;
+import DisplayObject = PIXI.DisplayObject;
+import Point = PIXI.Point;
+import { Vector2 } from 'three';
 import BoundingBox2D from '../../Model/Geometry/BoundingBox2D';
 import Vector2D from '../../Model/Geometry/Vector2D';
 
@@ -15,6 +15,7 @@ export function vectorToPoint(point: Vector2): Point {
   return new Point(x, y);
 }
 
+// @ts-ignore
 export function getRootObject(obj: DisplayObject) {
   if (!obj.parent || obj.parent instanceof Stage) {
     return obj;
@@ -27,6 +28,7 @@ export function getRootObject(obj: DisplayObject) {
  * 查询角度是否人体可正常查看
  * 查询角度是否在2、3象限
  */
+// @ts-ignore
 export function checkHumanCanVisible(angle) {
   if (angle >= Math.PI / 2 && angle < Math.PI * (3 / 2)) {
     return false;

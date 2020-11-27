@@ -103,10 +103,11 @@ export default class AH<T> {
     }
     return false;
   }
+
   /**
    * @Description:拉平多维数组
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public static flatArray<T>(a: any[]): any[] {
     return a.reduce((begin, current) => {
@@ -114,10 +115,11 @@ export default class AH<T> {
       return begin;
     }, []);
   }
+
   /**
    * @Description: 二维数组转为一维数组
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public static twoArrToOne<T>(a: T[][]): T[] {
     return Array.prototype.concat.apply([], a);
@@ -135,10 +137,12 @@ export default class AH<T> {
   /**
    * @Description: 取一个数组中最小的一个值
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
+  // @ts-ignore
   public static getMinItem<T>(arr: T[], compare): T {
     if (arr.length < 1) {
+      // @ts-ignore
       return null;
     }
     let minItem = arr[0];
@@ -153,6 +157,7 @@ export default class AH<T> {
   public static arrContact<T>(arr0: T[], arr1: T[]): T[] {
     if (!arr0) {
       if (!arr1) {
+        // @ts-ignore
         return null;
       } else {
         return [...arr1];
@@ -177,8 +182,9 @@ export default class AH<T> {
   /**
    * @Description: 加载贴图数据的克隆方法
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
+  // @ts-ignore
   public static textureItemVOClone(map, id) {
     const result = map.get(id);
     if (result) {

@@ -6,11 +6,19 @@ import MathTool from './MathTool';
 
 /** 几何辅助类 */
 export default class MathHelper {
+  private static aa = 10;
+  private static MIN_ANGLE = 0.2617;
+  private static MIN_ANGLE2 = Math.PI * 2 - 0.2617;
+
   /**
    * 去掉一些无用的点，AB太相近，则A无用
    * @param points
    */
-  public static removeUselessPoints(points: Vector2D[], isLoop: boolean, disTol: number = 0.0001): Vector2D[] {
+  public static removeUselessPoints(
+    points: Vector2D[],
+    isLoop: boolean,
+    disTol: number = 0.0001,
+  ): Vector2D[] {
     try {
       const iCount = points.length;
       let newPs: Vector2D[] = [];
@@ -60,7 +68,11 @@ export default class MathHelper {
    * @param psCut
    * @param exLen
    */
-  public static cutSegsByPoints(iniLinePs: Vector2D[], psCut: Vector2D[], exLen: number = 50): Vector2D[] {
+  public static cutSegsByPoints(
+    iniLinePs: Vector2D[],
+    psCut: Vector2D[],
+    exLen: number = 50,
+  ): Vector2D[] {
     if (iniLinePs.length < 2) {
       console.error('iniLinePs.length<2 ');
     }
@@ -88,7 +100,7 @@ export default class MathHelper {
 
   /**
    *截取求一系列点 ，进来的线必须是这个规则
-    规则：------psStart----->  ------iniLinePs----->  ------psEnd----->
+   规则：------psStart----->  ------iniLinePs----->  ------psEnd----->
    * @param iniLinePs 需要截断的点
    * @param psStart 截断的起始点，类似剪刀功能
    * @param psEnd 截断的结束点，类似剪刀功能
@@ -134,7 +146,10 @@ export default class MathHelper {
       // 反向，延伸，裁剪，,如果没有交叉，采用未延长的点，在再反向
       psToEnd = psToEnd.reverse();
       let psToStart = MathHelper.extendPoints(psToEnd, exLen);
-      const { isCut: isCutStart, points: pointsS } = MathHelper.cutPointsByPoints(psToStart, psStart.reverse());
+      const { isCut: isCutStart, points: pointsS } = MathHelper.cutPointsByPoints(
+        psToStart,
+        psStart.reverse(),
+      );
       if (isCutStart) {
         psToStart = pointsS;
       } else {
@@ -148,6 +163,7 @@ export default class MathHelper {
       return iniLinePs;
     }
   }
+
   /**
    *截取求一系列点
    * @param iniLinePs 需要截断的点
@@ -200,6 +216,7 @@ export default class MathHelper {
     // 如果没有交点，则放弃延长
     psToStart = result[0];
     if (!overExt && !result[1]) {
+      // @ts-ignore
       psToStart = backup;
     }
 
@@ -226,6 +243,7 @@ export default class MathHelper {
       return newPs;
     }
   }
+
   /**
    * 点是否包含在多边形内
    * @param polygonPoints 多边形的点
@@ -281,9 +299,13 @@ export default class MathHelper {
     let j: number = 0;
     const jCount: number = cutLinePs.length;
 
+    // @ts-ignore
     let p1: Vector2D = null;
+    // @ts-ignore
     let p2: Vector2D = null;
+    // @ts-ignore
     let p3: Vector2D = null;
+    // @ts-ignore
     let p4: Vector2D = null;
 
     // var str1:String=Vector2DTool.getCadDebugString(iniLinePs);
@@ -293,6 +315,7 @@ export default class MathHelper {
 
     // const tol = 0.001;
     const resultPs: Vector2D[] = [];
+    // @ts-ignore
     let interP: Vector2D = null;
     for (i = iCount - 1; i > 0; i--) {
       // for (i = 0; i < iCount - 1; i++) {
@@ -328,6 +351,7 @@ export default class MathHelper {
     }
     return { isCut: false, points: iniLinePs };
   }
+
   public static cutPointsByPoints_bak(iniLinePs: Vector2D[], cutLinePs: Vector2D[]): Vector2D[] {
     iniLinePs = iniLinePs.slice();
     cutLinePs = cutLinePs.slice();
@@ -337,9 +361,13 @@ export default class MathHelper {
     let j: number = 0;
     const jCount: number = cutLinePs.length;
 
+    // @ts-ignore
     let p1: Vector2D = null;
+    // @ts-ignore
     let p2: Vector2D = null;
+    // @ts-ignore
     let p3: Vector2D = null;
+    // @ts-ignore
     let p4: Vector2D = null;
 
     // var str1:String=Vector2DTool.getCadDebugString(iniLinePs);
@@ -349,6 +377,7 @@ export default class MathHelper {
 
     // const tol = 0.001;
     const resultPs: Vector2D[] = [];
+    // @ts-ignore
     let interP: Vector2D = null;
     for (i = iCount - 1; i > 0; i--) {
       // for (i = 0; i < iCount - 1; i++) {
@@ -384,6 +413,7 @@ export default class MathHelper {
     }
     return iniLinePs;
   }
+
   /**
    * 点是否包含在多边形内
    * @param polygonPoints 多边形的点
@@ -443,9 +473,13 @@ export default class MathHelper {
     let j: number = 0;
     const jCount: number = cutLinePs.length;
 
+    // @ts-ignore
     let p1: Vector2D = null;
+    // @ts-ignore
     let p2: Vector2D = null;
+    // @ts-ignore
     let p3: Vector2D = null;
+    // @ts-ignore
     let p4: Vector2D = null;
 
     // var str1:String=Vector2DTool.getCadDebugString(iniLinePs);
@@ -455,6 +489,7 @@ export default class MathHelper {
 
     const tol = 0.001;
     const resultPs: Vector2D[] = [];
+    // @ts-ignore
     let interP: Vector2D = null;
     for (i = iCount - 1; i > 0; i--) {
       // for (i = 0; i < iCount - 1; i++) {
@@ -539,6 +574,7 @@ export default class MathHelper {
   ): Vector2D {
     const denom: number = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
     if (denom === 0) {
+      // @ts-ignore
       return null;
     }
     const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
@@ -568,7 +604,10 @@ export default class MathHelper {
    */
   public static isSegumentCorss(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): boolean {
     if (MathHelper.isCorss(p1, p2, p3, p4)) {
-      if (MathHelper.isParallel(p1, p2, p3, p4) && !MathHelper.isSegmentOverlaySegment(p1, p2, p3, p4)) {
+      if (
+        MathHelper.isParallel(p1, p2, p3, p4) &&
+        !MathHelper.isSegmentOverlaySegment(p1, p2, p3, p4)
+      ) {
         return false;
       }
       return true;
@@ -584,7 +623,12 @@ export default class MathHelper {
    * @param p4 线段2端点2
    * @return 如果重合返回true
    */
-  public static isSegmentOverlaySegment(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): boolean {
+  public static isSegmentOverlaySegment(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D,
+  ): boolean {
     if (MathHelper.isParallel(p1, p2, p3, p4)) {
       if (MathHelper.segmentContainsPoint(p1, p2, p3, false)) {
         return true;
@@ -607,7 +651,12 @@ export default class MathHelper {
    * @param hasEndPoint 是否包含端点
    * @return 如果在线上则返回
    */
-  public static segmentContainsPoint(p1: Vector2D, p2: Vector2D, p: Vector2D, hasEndPoint: boolean = true): boolean {
+  public static segmentContainsPoint(
+    p1: Vector2D,
+    p2: Vector2D,
+    p: Vector2D,
+    hasEndPoint: boolean = true,
+  ): boolean {
     return MathHelper.segmentContainsPoint1(p1.x, p1.y, p2.x, p2.y, p.x, p.y, hasEndPoint);
   }
 
@@ -631,7 +680,13 @@ export default class MathHelper {
    * @param p4 线段2端点2
    * @return 如果平行返回true
    */
-  public static isParallel(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D, deviation: number = 0.1): boolean {
+  public static isParallel(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D,
+    deviation: number = 0.1,
+  ): boolean {
     return Math.abs((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x)) < deviation;
   }
 
@@ -736,7 +791,12 @@ export default class MathHelper {
    * @param pCenter
    * @param radius
    */
-  public static checkSegInOrIntersectWithCircle(p1: Vector2D, p2: Vector2D, pCenter: Vector2D, radius: number) {
+  public static checkSegInOrIntersectWithCircle(
+    p1: Vector2D,
+    p2: Vector2D,
+    pCenter: Vector2D,
+    radius: number,
+  ) {
     const disToCenter: number = MathHelper.distancePointWithLine(pCenter, p1, p2);
     const disToP1: number = pCenter.distance(p1);
     const disToP2: number = pCenter.distance(p2);
@@ -766,7 +826,12 @@ export default class MathHelper {
    * @param pCenter
    * @param radius
    */
-  public static checkSegIntersetWithCircle(p1: Vector2D, p2: Vector2D, pCenter: Vector2D, radius: number) {
+  public static checkSegIntersetWithCircle(
+    p1: Vector2D,
+    p2: Vector2D,
+    pCenter: Vector2D,
+    radius: number,
+  ) {
     const disToCenter: number = MathHelper.distancePointWithLine(pCenter, p1, p2);
     const disToP1: number = pCenter.distance(p1);
     const disToP2: number = pCenter.distance(p2);
@@ -803,7 +868,6 @@ export default class MathHelper {
     });
     return true;
   }
-  private static aa = 10;
 
   /**
    * 平移bezier
@@ -820,7 +884,16 @@ export default class MathHelper {
     ctrEnd: Vector2D,
     offset: number,
   ): Vector2D[] {
-    const bLine: Bezier = new Bezier(pStart.x, pStart.y, ctrStart.x, ctrStart.y, ctrEnd.x, ctrEnd.y, pEnd.x, pEnd.y);
+    const bLine: Bezier = new Bezier(
+      pStart.x,
+      pStart.y,
+      ctrStart.x,
+      ctrStart.y,
+      ctrEnd.x,
+      ctrEnd.y,
+      pEnd.x,
+      pEnd.y,
+    );
     let subBs = MathHelper.getBezierSubPoints(bLine);
     subBs = MathHelper.removeUselessPoints(subBs, false);
     subBs = MathHelper.extendPoints(subBs, 10);
@@ -884,7 +957,16 @@ export default class MathHelper {
     ctrEnd: Vector2D,
     tol: number = 0.01,
   ) {
-    const b: Bezier = new Bezier(pStart.x, pStart.y, ctrStart.x, ctrStart.y, ctrEnd.x, ctrEnd.y, pEnd.x, pEnd.y);
+    const b: Bezier = new Bezier(
+      pStart.x,
+      pStart.y,
+      ctrStart.x,
+      ctrStart.y,
+      ctrEnd.x,
+      ctrEnd.y,
+      pEnd.x,
+      pEnd.y,
+    );
     return MathHelper.getBezierSubPoints(b, tol);
   }
 
@@ -900,8 +982,11 @@ export default class MathHelper {
     const newPs: Vector2D[] = [];
     let i: number = 0;
     let iLength: number = psTemp.length;
+    // @ts-ignore
     let preP: Vector2D = null;
+    // @ts-ignore
     let curP: Vector2D = null;
+    // @ts-ignore
     let nextP: Vector2D = null;
     let orDis: number = 0;
     let sampleOk: boolean = false;
@@ -957,6 +1042,7 @@ export default class MathHelper {
         p3 = points[0];
       }
 
+      // @ts-ignore
       const isOnLine = MathHelper.segmentContainsPoint1(p1.x, p1.y, p3.x, p3.y, p2.x, p2.y, false);
       if (isOnLine) {
         pointsNeedRemove.push(p2);
@@ -976,6 +1062,7 @@ export default class MathHelper {
    * @param item 需要被移除的对象
    * @return 返回新数组
    */
+  // @ts-ignore
   public static removeItemFromArray(array: Vector2D[], item): Vector2D[] {
     const index = array.indexOf(item);
     if (index > -1) {
@@ -1011,7 +1098,14 @@ export default class MathHelper {
    * @param y2 线段端点2的x坐标
    * @return 最近的距离
    */
-  public static distancePointWithLine1(x: number, y: number, x1: number, y1: number, x2: number, y2: number): number {
+  public static distancePointWithLine1(
+    x: number,
+    y: number,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+  ): number {
     let cross: number;
     let d2: number;
     let r: number;
@@ -1067,8 +1161,11 @@ export default class MathHelper {
     const center: Vector2D = new Vector2D();
     const center1: Vector2D = new Vector2D();
     const mPos: Vector2D = new Vector2D();
+    // @ts-ignore
     let prevPoint: Vector2D = null;
+    // @ts-ignore
     let nextPoint: Vector2D = null;
+    // @ts-ignore
     let currentPoint: Vector2D = null;
     let i: number = 1;
     const iCount: number = points.length;
@@ -1172,8 +1269,11 @@ export default class MathHelper {
    * @returns {Vector2D[]}
    */
   public static extendPoints(points: Vector2D[], extendLength: number = 50): Vector2D[] {
+    // @ts-ignore
     const _points = [].concat(points);
+    // @ts-ignore
     const startPoint: Vector2D = _points.pop().clone();
+    // @ts-ignore
     const endPoint: Vector2D = _points.pop().clone();
     let dir: Vector2D = startPoint.subtract(endPoint);
 
@@ -1181,15 +1281,19 @@ export default class MathHelper {
     dir = dir.multiply(extendLength);
     const endP: Vector2D = startPoint.add(dir);
 
+    // @ts-ignore
     const newPs = [].concat(points);
     if (newPs.length === 2) {
+      // @ts-ignore
       newPs[1] = endP;
     } else {
+      // @ts-ignore
       newPs.push(endP);
     }
     return newPs;
   }
 
+  // @ts-ignore
   public static reLength(startPoint: Vector2D, endPoint: Vector2D, length): Vector2D {
     const _startPoint = startPoint.clone();
     const _endPoint = endPoint.clone();
@@ -1200,9 +1304,6 @@ export default class MathHelper {
     return _endPoint;
   }
 
-  private static MIN_ANGLE = 0.2617;
-  private static MIN_ANGLE2 = Math.PI * 2 - 0.2617;
-
   public static minAngle(ver1: Vector2D, ver2: Vector2D): boolean {
     const d1 = ver1.normalize();
     const d2 = ver2.normalize();
@@ -1212,50 +1313,9 @@ export default class MathHelper {
     return offset < this.MIN_ANGLE || offset > this.MIN_ANGLE2;
   }
 
-  /**
-   * 点是否在线段上
-   * @param x1 线段端点1的x坐标
-   * @param y1 线段端点1的x坐标
-   * @param x2 线段端点2的x坐标
-   * @param y2 线段端点2的x坐标
-   * @param x 点的x坐标
-   * @param y 点的y坐标
-   * @param hasEndPoint 是否包含端点
-   * @return 如果在线上则返回
-   */
-  private static segmentContainsPoint1(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x: number,
-    y: number,
-    hasEndPoint: boolean = true,
-    offset: number = 0.1,
-  ): boolean {
-    if (MathHelper.distancePointWithLine1(x, y, x1, y1, x2, y2) < offset) {
-      if (!hasEndPoint) {
-        if (
-          MathHelper.distancePointWithPoint1(x, y, x1, y1) > offset &&
-          MathHelper.distancePointWithPoint1(x, y, x2, y2) > offset
-        ) {
-          return true;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * 向量的叉乘
-   */
-  private static crossMul1(x1: number, y1: number, x2: number, y2: number): number {
-    return x1 * y2 - x2 * y1;
-  }
-
   public static pointsToPolygons(pList: Vector2D[][]): Polygon2D[] {
     if (!pList || pList.length < 1) {
+      // @ts-ignore
       return null;
     }
     const polys: Polygon2D[] = [];
@@ -1267,6 +1327,7 @@ export default class MathHelper {
 
   public static polygonsToPoints(polys: Polygon2D[]): Vector2D[][] {
     if (!polys || polys.length < 1) {
+      // @ts-ignore
       return null;
     }
     const pList: Vector2D[][] = [];
@@ -1282,6 +1343,7 @@ export default class MathHelper {
    */
   public static getTriangleOuterCenter(vers: Vector2D[]): Vector2D {
     if (vers.length !== 3) {
+      // @ts-ignore
       return null;
     }
 
@@ -1291,10 +1353,14 @@ export default class MathHelper {
 
     // 两条线是否平行
     if (Line2D.isParallel(triangleLine1, triangleLine2)) {
+      // @ts-ignore
       return null;
     }
 
-    return Line2D.getIntersection(triangleLine1.perpendicularLine(), triangleLine2.perpendicularLine());
+    return Line2D.getIntersection(
+      triangleLine1.perpendicularLine(),
+      triangleLine2.perpendicularLine(),
+    );
   }
 
   /**
@@ -1327,6 +1393,7 @@ export default class MathHelper {
 
     return false;
   }
+
   /**
    * 偏移路径线,两点式
    * @param basePs
@@ -1335,6 +1402,7 @@ export default class MathHelper {
   public static calcOffsetPath2P(basePs: Vector2D[], width: number): Vector2D[] {
     const newPath: Vector2D[] = [];
     const iCount = basePs.length;
+    // @ts-ignore
     let dir: Vector2D = null;
     for (let i = 0; i < iCount; i++) {
       const p: Vector2D = basePs[i];
@@ -1351,6 +1419,7 @@ export default class MathHelper {
     }
     return newPath;
   }
+
   /**
    * 偏移路径线,3点式，准确，但计算大
    * @param basePs
@@ -1403,5 +1472,47 @@ export default class MathHelper {
       ps.push(points[(i + idx) % count]);
     }
     return ps;
+  }
+
+  /**
+   * 点是否在线段上
+   * @param x1 线段端点1的x坐标
+   * @param y1 线段端点1的x坐标
+   * @param x2 线段端点2的x坐标
+   * @param y2 线段端点2的x坐标
+   * @param x 点的x坐标
+   * @param y 点的y坐标
+   * @param hasEndPoint 是否包含端点
+   * @return 如果在线上则返回
+   */
+  private static segmentContainsPoint1(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    x: number,
+    y: number,
+    hasEndPoint: boolean = true,
+    offset: number = 0.1,
+  ): boolean {
+    if (MathHelper.distancePointWithLine1(x, y, x1, y1, x2, y2) < offset) {
+      if (!hasEndPoint) {
+        if (
+          MathHelper.distancePointWithPoint1(x, y, x1, y1) > offset &&
+          MathHelper.distancePointWithPoint1(x, y, x2, y2) > offset
+        ) {
+          return true;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 向量的叉乘
+   */
+  private static crossMul1(x1: number, y1: number, x2: number, y2: number): number {
+    return x1 * y2 - x2 * y1;
   }
 }

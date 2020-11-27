@@ -1,5 +1,5 @@
 /**
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
 import { action, observable } from 'mobx';
 import { Vector2 } from 'three';
@@ -7,10 +7,10 @@ import Vector2D from '../Geometry/Vector2D';
 
 export default class ObserveVector2D extends Vector2D {
   @observable
-  protected _x: number;
+  protected _x!: number;
 
   @observable
-  protected _y: number;
+  protected _y!: number;
 
   @action.bound
   public copy(v: this | Vector2D | Vector2): this {

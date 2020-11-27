@@ -3,9 +3,7 @@ import Polygon2D from './Polygon2D';
 import Vector2D from './Vector2D';
 
 export default class BoundingBox2D extends Box2 {
-  public min: any;
-  public max: any;
-
+  // @ts-ignore
   constructor(min: Vector2D = null, max: Vector2D = null) {
     super(min as any, max as any);
     if (!min && !max) {
@@ -14,6 +12,20 @@ export default class BoundingBox2D extends Box2 {
       this.max = max;
       this.min = min;
     }
+  }
+
+  get boundingPoints(): Vector2D[] {
+    const vertices: Vector2D[] = [];
+    vertices.push(new Vector2D(this.min.x, this.min.y));
+    vertices.push(new Vector2D(this.max.x, this.min.y));
+    vertices.push(new Vector2D(this.max.x, this.max.y));
+    vertices.push(new Vector2D(this.min.x, this.max.y));
+
+    return vertices;
+  }
+
+  public get polygon(): Polygon2D {
+    return new Polygon2D(this.boundingPoints);
   }
 
   public clamp(boundbox: BoundingBox2D): BoundingBox2D {
@@ -36,6 +48,19 @@ export default class BoundingBox2D extends Box2 {
 
   public getCenter(): Vector2D {
     return this.min.add(this.max).multiplyBy(0.5);
+  }
+
+  public max: any;
+  public min: any;
+
+  public setFromCenterAndSize(center: Vector2, size: Vector2): this {
+    const v1 = new Vector2();
+
+    const halfSize = v1.copy(size).multiplyScalar(0.5);
+    this.min.copy(center).sub(halfSize);
+    this.max.copy(center).sum(halfSize);
+
+    return this;
   }
 
   public invalidate() {
@@ -82,7 +107,10 @@ export default class BoundingBox2D extends Box2 {
   }
 
   public restrictInside(boundbox: BoundingBox2D): Vector2D {
-    const vec: Vector2D = new Vector2D(boundbox.max.x - boundbox.min.x, boundbox.max.y - boundbox.min.y);
+    const vec: Vector2D = new Vector2D(
+      boundbox.max.x - boundbox.min.x,
+      boundbox.max.y - boundbox.min.y,
+    );
     if (boundbox.max.x > this.max.x) {
       boundbox.max.x = this.max.x;
       boundbox.min.x = this.max.x - vec.x;
@@ -131,30 +159,7 @@ export default class BoundingBox2D extends Box2 {
     return Math.abs(this.max.y - this.min.y);
   }
 
-  get boundingPoints(): Vector2D[] {
-    const vertices: Vector2D[] = [];
-    vertices.push(new Vector2D(this.min.x, this.min.y));
-    vertices.push(new Vector2D(this.max.x, this.min.y));
-    vertices.push(new Vector2D(this.max.x, this.max.y));
-    vertices.push(new Vector2D(this.min.x, this.max.y));
-
-    return vertices;
-  }
-
-  public setFromCenterAndSize(center: Vector2, size: Vector2): this {
-    const v1 = new Vector2();
-
-    const halfSize = v1.copy(size).multiplyScalar(0.5);
-    this.min.copy(center).sub(halfSize);
-    this.max.copy(center).sum(halfSize);
-
-    return this;
-  }
-
-  public get polygon(): Polygon2D {
-    return new Polygon2D(this.boundingPoints);
-  }
-
+  // @ts-ignore
   public transform(vec1: Vector2D = null): BoundingBox2D {
     ([this.min, this.max] as Vector2D[]).forEach(point => point.transformBy(vec1));
 

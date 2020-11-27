@@ -2,10 +2,6 @@ export default class UniqueIndexGenerator {
   // extends Object
   private static mId: number = 0;
 
-  public UniqueIndexGenerator() {
-    // throw new AbstractClassError();
-  }
-
   public static resetIndex(): void {
     this.mId = 0;
   }
@@ -19,5 +15,9 @@ export default class UniqueIndexGenerator {
   public static getIndex(): number {
     this.mId++;
     return this.mId;
+  }
+
+  public UniqueIndexGenerator() {
+    // throw new AbstractClassError();
   }
 }

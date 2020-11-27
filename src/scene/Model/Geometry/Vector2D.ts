@@ -10,14 +10,29 @@ export default class Vector2D extends Vector2 {
   public static MAX_V2D: Vector2D = new Vector2D(Number.MAX_VALUE, Number.MAX_VALUE);
   public static MIN_V2D: Vector2D = new Vector2D(-Number.MAX_VALUE, -Number.MAX_VALUE);
   public static VAL_NULL: Vector2D = new Vector2D(-Number.MAX_VALUE, Number.MAX_VALUE);
-  protected _x: number;
-  protected _y: number;
+  public static GOLDEN_PROPORTION: number = 0.618;
 
   constructor(x: number = 0, y: number = 0) {
     super(x, y);
     this._x = x;
     this._y = y;
   }
+
+  public toString(): string {
+    return '(' + this._x + ',' + this._y + ')';
+  }
+
+  static get zero(): Vector2D {
+    return new Vector2D();
+  }
+
+  static get one(): Vector2D {
+    return new Vector2D(1, 1);
+  }
+
+  protected _x: number;
+
+  protected _y: number;
 
   get debugCad(): string {
     return 'Circle ' + this.x + ',' + this.y + ' 5 ';
@@ -27,13 +42,254 @@ export default class Vector2D extends Vector2 {
     // only for debug
   }
 
+  public get getDistanceVector2D(): number {
+    return Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2));
+  }
+
+  // 获得垂直向量
+
+  public get getDistanceSquareVector2D(): number {
+    return Math.pow(this._x, 2) + Math.pow(this._y, 2);
+  }
+
+  get positive(): Vector2D {
+    this._x = Math.abs(this._x);
+    this._y = Math.abs(this._y);
+    return this;
+  }
+
+  get getXYFlag(): Vector2D {
+    return new Vector2D(
+      this._x ? this._x / Math.abs(this._x) : 0,
+      this._y ? this._y / Math.abs(this._y) : 0,
+    );
+  }
+
+  get toVector2D(): Vector2D {
+    return new Vector2D(this._x, this._y);
+  }
+
+  get lengthSquared(): number {
+    return Math.pow(this._x, 2) + Math.pow(this._y, 2);
+  }
+
+  get isZero(): boolean {
+    return this.x > -0.00001 && this.x < 0.00001 && this.y > -0.00001 && this.y < 0.00001;
+  }
+
+  // 长度和角度  求向量
+  public static polar(num1: number, num2: number): Vector2D {
+    return new Vector2D(num1 * Math.cos(num2), num1 * Math.sin(num2));
+  }
+
+  public static offset(vec: Vector2D, num1: number, num2: number): Vector2D {
+    return vec.offset(num1, num2);
+  }
+
+  // 距离比较近的情况下使用这个
+  public static distanceOptimization(vec: Vector2D, vec2: Vector2D): number {
+    const x = Math.abs(vec.x - vec2.x);
+    const y = Math.abs(vec.y - vec2.y);
+    const max = x > y ? x : y;
+    return max * 1.4;
+  }
+
+  public static distance(vec: Vector2D, vec2: Vector2D): number {
+    return Math.sqrt(Math.pow(vec.x - vec2.x, 2) + Math.pow(vec.y - vec2.y, 2));
+  }
+
+  public static distanceSquared(vec1: Vector2D, vec2: Vector2D): number {
+    return Math.pow(vec1.x - vec2.x, 2) + Math.pow(vec1.y - vec2.y, 2);
+  }
+
+  public static angleTo(vec1: Vector2D, vec2: Vector2D): number {
+    return MathTool.roundAngle(Math.atan2(vec2.y - vec1.y, vec2.x - vec1.x));
+  }
+
+  public static add(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D(vec1.x + vec2.x, vec1.y + vec2.y);
+  }
+
+  public static subtract(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D(vec1.x - vec2.x, vec1.y - vec2.y);
+  }
+
+  public static dotProduct(vec1: Vector2D, vec2: Vector2D): number {
+    return vec1.x * vec2.x + vec1.y * vec2.y;
+  }
+
+  public static crossProduct(vec1: Vector2D, vec2: Vector2D): number {
+    return vec1.x * vec2.y - vec1.y * vec2.x;
+  }
+
+  public static xmultiply(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): number {
+    return (vec3.x - vec1.x) * (vec2.y - vec1.y) - (vec2.x - vec1.x) * (vec3.y - vec1.y);
+  }
+
+  public static multiply(vec1: Vector2D, num: number): Vector2D {
+    return new Vector2D(vec1.x * num, vec1.y * num);
+  }
+
+  public static interpolate(vec1: Vector2D, vec2: Vector2D, num: number = 0.5): Vector2D {
+    return new Vector2D(vec1.x + (vec2.x - vec1.x) * num, vec1.y + (vec2.y - vec1.y) * num);
+  }
+
+  public static center(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D((vec1.x + vec2.x) / 2, (vec1.y + vec2.y) / 2);
+  }
+
+  public static isParallel(vec1: Vector2D, vec2: Vector2D, tol: number = 1e-3): boolean {
+    // var num:number = this.dotProduct(vec1, vec2) / vec1.length / vec2.length;
+    // return num === 1 || num === -1;
+
+    const angle: number = vec1.angleBetween(vec2);
+    return MathTool.numberEquals(angle, 0.0, tol) || MathTool.numberEquals(angle, Math.PI, tol);
+  }
+
+  public static isOpposite(vec1: Vector2D, vec2: Vector2D): boolean {
+    return this.dotProduct(vec1, vec2) / vec1.length() / vec2.length() === -1;
+  }
+
+  public static isNormalized(vec1: Vector2D): boolean {
+    return vec1.setLength(1);
+  }
+
+  public static max(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D(Math.max(vec1.x, vec2.x), Math.max(vec1.y, vec2.y));
+  }
+
+  public static min(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D(Math.min(vec1.x, vec2.x), Math.min(vec1.y, vec2.y));
+  }
+
+  // @ts-ignore
+  public static rotate(vec1: Vector2D, radian: number, vec2: Vector2D = null): Vector2D {
+    return vec1.rotateBy(radian, vec2);
+  }
+
+  public static fromVector2D(point: Vector2D): Vector2D {
+    return new Vector2D(point.x, point.y);
+  }
+
+  public static fromVector3D(vec3d: Vector3): Vector2D {
+    return new Vector2D(vec3d.x, vec3d.y);
+  }
+
+  public static isConvex(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): boolean {
+    return Vector2D.crossProduct(vec2.subtract(vec1), vec3.subtract(vec1)) > 0;
+  }
+
+  public static getPosFromSegment(vStart: Vector2D, vEnd: Vector2D, len: number): Vector2D {
+    const res: Vector2D = this.polar(len, this.angleTo(vStart, vEnd));
+
+    if (MathTool.isZeroNumber(res.x)) {
+      res.x = 0;
+    }
+    if (MathTool.isZeroNumber(res.y)) {
+      res.y = 0;
+    }
+
+    res.incrementBy(vStart);
+
+    return res;
+  }
+
+  public static Lerp(Start: Vector2D, End: Vector2D, power: number): Vector2D {
+    power = Math.min(Math.max(0.0, power), 1.0);
+    return new Vector2D(
+      Start.x * (1 - power) + End.x * power,
+      Start.y * (1 - power) + End.y * power,
+    );
+  }
+
+  public static divideBetweenPts(
+    start: Vector2D,
+    end: Vector2D,
+    SubsectionNum: number,
+  ): Vector2D[] {
+    const subsectionPts: Vector2D[] = [];
+    const LinePartNum: number = SubsectionNum + 1;
+    const SubsectionPercent: number = 0.0 / LinePartNum;
+    for (let i: number = 1; i < LinePartNum; i++) {
+      subsectionPts[i - 1] = Vector2D.Lerp(start, end, i * SubsectionPercent);
+    }
+    return subsectionPts;
+  }
+
+  /**
+   * 一个点绕另一个点旋转
+   * @param sourceVec 操作点
+   * @param angle  弧度
+   * @param pos 中心点
+   */
+  public static rotateAroundPoint(sourceVec: Vector2D, angle: number, pos: Vector2D): Vector2D {
+    const x1 =
+      (sourceVec.x - pos.x) * Math.cos(angle) - (sourceVec.y - pos.y) * Math.sin(angle) + pos.x;
+    const y1 =
+      (sourceVec.x - pos.x) * Math.sin(angle) + (sourceVec.y - pos.y) * Math.cos(angle) + pos.y;
+
+    return new Vector2D(x1, y1);
+  }
+
+  public static hadVector2D(points: Vector2D[], point: Vector2D): boolean {
+    for (const tmpVector2D of points) {
+      if (tmpVector2D.equals(point)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static getMidPoint(vec1: Vector2D, vec2: Vector2D): Vector2D {
+    return new Vector2D(0.5 * (vec1.x + vec2.x), 0.5 * (vec1.y + vec2.y));
+  }
+
+  public static vectorArray(numbers: any, n: number): Vector2D[] {
+    const vecs: Vector2D[] = [];
+    if (!numbers || numbers.length === 0 || numbers.length % n !== 0) {
+      return vecs;
+    }
+    const len = numbers.length;
+    const lineNum = len / n;
+    for (let i = 0; i < lineNum; i++) {
+      const temp = numbers.slice(i * n, i * n + n);
+      const tmpVector2D = new Vector2D(temp[0], temp[1]);
+      vecs.push(tmpVector2D);
+    }
+    return vecs;
+  }
+
+  /**
+   * @Description: 最小矩形
+   * @author
+   * @data 2019/12/25
+   */
+  public static minRect(points: Vector2D[]) {
+    const arrU: number[] = points.map(it => it.x);
+    const arrV: number[] = points.map(it => it.y);
+    const minX = Math.min(...arrU);
+    const maxX = Math.max(...arrU);
+    const minY = Math.min(...arrV);
+    const maxY = Math.max(...arrV);
+    return { minX, maxX, minY, maxY };
+  }
+
+  // public normalize(): Vector2D {
+  //   let tmpnum: number = NaN;
+  //   if (this.length()) {
+  //     tmpnum = 1 / this.length();
+  //     this._x = this._x * tmpnum;
+  //     this._y = this._y * tmpnum;
+  //   }
+
+  //   super.normalize();
+
+  //   return this;
+  // }
+
   public zero() {
     this._x = 0;
     this._y = 0;
-  }
-
-  public clone(): any {
-    return new Vector2D(this._x, this._y);
   }
 
   public copyTo(vec: Vector2D): Vector2D {
@@ -48,11 +304,12 @@ export default class Vector2D extends Vector2 {
     return this;
   }
 
+  // @ts-ignore
   public rotate(radian: number, vec2: Vector2D = null): Vector2D {
     return this.clone().rotateBy(radian, vec2);
   }
 
-  // 获得垂直向量
+  // @ts-ignore
   public prep(vec2: Vector2D = null): Vector2D {
     return this.clone().rotate(Math.PI / 2, vec2);
   }
@@ -98,14 +355,7 @@ export default class Vector2D extends Vector2 {
     return v;
   }
 
-  public get getDistanceVector2D(): number {
-    return Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2));
-  }
-
-  public get getDistanceSquareVector2D(): number {
-    return Math.pow(this._x, 2) + Math.pow(this._y, 2);
-  }
-
+  // @ts-ignore
   public rotateBy(radian: number, vec: Vector2D = null): Vector2D {
     if (!vec) {
       vec = new Vector2D();
@@ -229,10 +479,6 @@ export default class Vector2D extends Vector2 {
     return this.dotProduct(vec) === 0;
   }
 
-  public equals(vec: any, nummin: number = 1e-3): boolean {
-    return this.equalsX(vec, nummin) && this.equalsY(vec, nummin);
-  }
-
   public equalsX(vec: any, numMin: number = 1e-3): boolean {
     return Math.abs(this._x - vec.x) < numMin;
   }
@@ -258,12 +504,6 @@ export default class Vector2D extends Vector2 {
     return this;
   }
 
-  public negate(): any {
-    this._x = this._x * -1;
-    this._y = this._y * -1;
-    return this;
-  }
-
   public negateY(): Vector2D {
     this._y = this._y * -1;
     return this;
@@ -278,19 +518,6 @@ export default class Vector2D extends Vector2 {
     return this.add(Vector2D.polar(num1, num2));
   }
 
-  // public normalize(): Vector2D {
-  //   let tmpnum: number = NaN;
-  //   if (this.length()) {
-  //     tmpnum = 1 / this.length();
-  //     this._x = this._x * tmpnum;
-  //     this._y = this._y * tmpnum;
-  //   }
-
-  //   super.normalize();
-
-  //   return this;
-  // }
-
   public normalizeNo(): Vector2D {
     let tmpnum: number = NaN;
     const v = Vector2D.zero;
@@ -302,31 +529,8 @@ export default class Vector2D extends Vector2 {
     return v;
   }
 
-  get positive(): Vector2D {
-    this._x = Math.abs(this._x);
-    this._y = Math.abs(this._y);
-    return this;
-  }
-
-  get getXYFlag(): Vector2D {
-    return new Vector2D(this._x ? this._x / Math.abs(this._x) : 0, this._y ? this._y / Math.abs(this._y) : 0);
-  }
-
-  get toVector2D(): Vector2D {
-    return new Vector2D(this._x, this._y);
-  }
-
   public toVector3D(num: number = 0): Vector3 {
     return new Vector3(this._x, this._y, num);
-  }
-
-  public toString(): string {
-    return '(' + this._x + ',' + this._y + ')';
-  }
-
-  public angle(): number {
-    const angle = MathTool.roundAngle(Math.atan2(this._y, this._x));
-    return angle;
   }
 
   public setAngle(num: number) {
@@ -340,8 +544,55 @@ export default class Vector2D extends Vector2 {
     this._y = _loc3 * Math.sin(_loc2);
   }
 
+  public add(vec: any): any {
+    return new Vector2D(this._x + vec.x, this._y + vec.y);
+  }
+
+  public angle(): number {
+    const angle = MathTool.roundAngle(Math.atan2(this._y, this._x));
+    return angle;
+  }
+
+  public clone(): any {
+    return new Vector2D(this._x, this._y);
+  }
+
+  public divide(vec: any): any {
+    if (!vec.x || !vec.y) {
+      throw new Error('cannot divide zero');
+    }
+    return new Vector2D(this._x / vec.x, this._y / vec.y);
+  }
+
+  public equals(vec: any, nummin: number = 1e-3): boolean {
+    return this.equalsX(vec, nummin) && this.equalsY(vec, nummin);
+  }
+
   public length(): number {
     return Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2));
+  }
+
+  public multiply(vec: any): any {
+    return new Vector2D(this._x * vec, this._y * vec);
+  }
+
+  public negate(): any {
+    this._x = this._x * -1;
+    this._y = this._y * -1;
+    return this;
+  }
+
+  public set(x: number, y?: number): this {
+    if (y === undefined) {
+      y = x;
+    }
+
+    if (Number.isNaN(x) || Number.isNaN(y)) {
+      // @ts-ignore
+      return;
+    }
+
+    return super.set(x, y);
   }
 
   public setLength(num: number): any {
@@ -360,10 +611,7 @@ export default class Vector2D extends Vector2 {
     return this;
   }
 
-  get lengthSquared(): number {
-    return Math.pow(this._x, 2) + Math.pow(this._y, 2);
-  }
-
+  // @ts-ignore
   get x(): number {
     return this._x;
   }
@@ -373,6 +621,7 @@ export default class Vector2D extends Vector2 {
     return;
   }
 
+  // @ts-ignore
   get y(): number {
     return this._y;
   }
@@ -380,162 +629,6 @@ export default class Vector2D extends Vector2 {
   set y(num: number) {
     this._y = num;
     return;
-  }
-
-  get isZero(): boolean {
-    return this.x > -0.00001 && this.x < 0.00001 && this.y > -0.00001 && this.y < 0.00001;
-  }
-
-  // 长度和角度  求向量
-  public static polar(num1: number, num2: number): Vector2D {
-    return new Vector2D(num1 * Math.cos(num2), num1 * Math.sin(num2));
-  }
-
-  public static offset(vec: Vector2D, num1: number, num2: number): Vector2D {
-    return vec.offset(num1, num2);
-  }
-
-  // 距离比较近的情况下使用这个
-  public static distanceOptimization(vec: Vector2D, vec2: Vector2D): number {
-    const x = Math.abs(vec.x - vec2.x);
-    const y = Math.abs(vec.y - vec2.y);
-    const max = x > y ? x : y;
-    return max * 1.4;
-  }
-
-  public static distance(vec: Vector2D, vec2: Vector2D): number {
-    return Math.sqrt(Math.pow(vec.x - vec2.x, 2) + Math.pow(vec.y - vec2.y, 2));
-  }
-
-  public static distanceSquared(vec1: Vector2D, vec2: Vector2D): number {
-    return Math.pow(vec1.x - vec2.x, 2) + Math.pow(vec1.y - vec2.y, 2);
-  }
-
-  public static angleTo(vec1: Vector2D, vec2: Vector2D): number {
-    return MathTool.roundAngle(Math.atan2(vec2.y - vec1.y, vec2.x - vec1.x));
-  }
-
-  public static add(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D(vec1.x + vec2.x, vec1.y + vec2.y);
-  }
-
-  public static subtract(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D(vec1.x - vec2.x, vec1.y - vec2.y);
-  }
-
-  public static dotProduct(vec1: Vector2D, vec2: Vector2D): number {
-    return vec1.x * vec2.x + vec1.y * vec2.y;
-  }
-
-  public static crossProduct(vec1: Vector2D, vec2: Vector2D): number {
-    return vec1.x * vec2.y - vec1.y * vec2.x;
-  }
-
-  public static xmultiply(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): number {
-    return (vec3.x - vec1.x) * (vec2.y - vec1.y) - (vec2.x - vec1.x) * (vec3.y - vec1.y);
-  }
-
-  public static multiply(vec1: Vector2D, num: number): Vector2D {
-    return new Vector2D(vec1.x * num, vec1.y * num);
-  }
-
-  public static interpolate(vec1: Vector2D, vec2: Vector2D, num: number = 0.5): Vector2D {
-    return new Vector2D(vec1.x + (vec2.x - vec1.x) * num, vec1.y + (vec2.y - vec1.y) * num);
-  }
-
-  public static center(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D((vec1.x + vec2.x) / 2, (vec1.y + vec2.y) / 2);
-  }
-
-  public static isParallel(vec1: Vector2D, vec2: Vector2D, tol: number = 1e-3): boolean {
-    // var num:number = this.dotProduct(vec1, vec2) / vec1.length / vec2.length;
-    // return num === 1 || num === -1;
-
-    const angle: number = vec1.angleBetween(vec2);
-    return MathTool.numberEquals(angle, 0.0, tol) || MathTool.numberEquals(angle, Math.PI, tol);
-  }
-
-  public static isOpposite(vec1: Vector2D, vec2: Vector2D): boolean {
-    return this.dotProduct(vec1, vec2) / vec1.length() / vec2.length() === -1;
-  }
-
-  public static isNormalized(vec1: Vector2D): boolean {
-    return vec1.setLength(1);
-  }
-
-  public static max(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D(Math.max(vec1.x, vec2.x), Math.max(vec1.y, vec2.y));
-  }
-
-  public static min(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D(Math.min(vec1.x, vec2.x), Math.min(vec1.y, vec2.y));
-  }
-
-  public static rotate(vec1: Vector2D, radian: number, vec2: Vector2D = null): Vector2D {
-    return vec1.rotateBy(radian, vec2);
-  }
-
-  public static fromVector2D(point: Vector2D): Vector2D {
-    return new Vector2D(point.x, point.y);
-  }
-
-  public static fromVector3D(vec3d: Vector3): Vector2D {
-    return new Vector2D(vec3d.x, vec3d.y);
-  }
-
-  public static isConvex(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): boolean {
-    return Vector2D.crossProduct(vec2.subtract(vec1), vec3.subtract(vec1)) > 0;
-  }
-
-  public static getPosFromSegment(vStart: Vector2D, vEnd: Vector2D, len: number): Vector2D {
-    const res: Vector2D = this.polar(len, this.angleTo(vStart, vEnd));
-
-    if (MathTool.isZeroNumber(res.x)) {
-      res.x = 0;
-    }
-    if (MathTool.isZeroNumber(res.y)) {
-      res.y = 0;
-    }
-
-    res.incrementBy(vStart);
-
-    return res;
-  }
-
-  public static Lerp(Start: Vector2D, End: Vector2D, power: number): Vector2D {
-    power = Math.min(Math.max(0.0, power), 1.0);
-    return new Vector2D(Start.x * (1 - power) + End.x * power, Start.y * (1 - power) + End.y * power);
-  }
-
-  public static GOLDEN_PROPORTION: number = 0.618;
-
-
-
-  public static divideBetweenPts(start: Vector2D, end: Vector2D, SubsectionNum: number): Vector2D[] {
-    const subsectionPts: Vector2D[] = [];
-    const LinePartNum: number = SubsectionNum + 1;
-    const SubsectionPercent: number = 0.0 / LinePartNum;
-    for (let i: number = 1; i < LinePartNum; i++) {
-      subsectionPts[i - 1] = Vector2D.Lerp(start, end, i * SubsectionPercent);
-    }
-    return subsectionPts;
-  }
-
-  /**
-   * 一个点绕另一个点旋转
-   * @param sourceVec 操作点
-   * @param angle  弧度
-   * @param pos 中心点
-   */
-  public static rotateAroundPoint(sourceVec: Vector2D, angle: number, pos: Vector2D): Vector2D {
-    const x1 = (sourceVec.x - pos.x) * Math.cos(angle) - (sourceVec.y - pos.y) * Math.sin(angle) + pos.x;
-    const y1 = (sourceVec.x - pos.x) * Math.sin(angle) + (sourceVec.y - pos.y) * Math.cos(angle) + pos.y;
-
-    return new Vector2D(x1, y1);
-  }
-
-  public add(vec: any): any {
-    return new Vector2D(this._x + vec.x, this._y + vec.y);
   }
 
   public addV(vec: Vector2D): Vector2D {
@@ -554,22 +647,11 @@ export default class Vector2D extends Vector2 {
     return new Vector2D(this._x * vec.x, this._y * vec.y);
   }
 
-  public divide(vec: any): any {
-    if (!vec.x || !vec.y) {
-      throw new Error('cannot divide zero');
-    }
-    return new Vector2D(this._x / vec.x, this._y / vec.y);
-  }
-
   public divideNumber(n: number): Vector2D {
     if (!n) {
       throw new Error('cannot divide zero');
     }
     return new Vector2D(this._x / n, this._y / n);
-  }
-
-  public multiply(vec: any): any {
-    return new Vector2D(this._x * vec, this._y * vec);
   }
 
   // vec : 偏移向量
@@ -584,24 +666,6 @@ export default class Vector2D extends Vector2 {
     vecRet.transformBy(vec);
     return vecRet;
   }
-
-  static get zero(): Vector2D {
-    return new Vector2D();
-  }
-
-  static get one(): Vector2D {
-    return new Vector2D(1, 1);
-  }
-
-  public static hadVector2D(points: Vector2D[], point: Vector2D): boolean {
-    for (const tmpVector2D of points) {
-      if (tmpVector2D.equals(point)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 
   public transThreeJsVector2(): Vector2 {
     return new Vector2(this._x, this._y);
@@ -646,52 +710,6 @@ export default class Vector2D extends Vector2 {
     }
     const hypotenuse = this.getDistanceVector2D / cos;
     return vN.multiplyByNo(hypotenuse);
-  }
-
-  public set(x: number, y?: number): this {
-    if (y === undefined) {
-      y = x;
-    }
-
-    if (Number.isNaN(x) || Number.isNaN(y)) {
-      return;
-    }
-
-    return super.set(x, y);
-  }
-
-  public static getMidPoint(vec1: Vector2D, vec2: Vector2D): Vector2D {
-    return new Vector2D(0.5 * (vec1.x + vec2.x), 0.5 * (vec1.y + vec2.y));
-  }
-
-  public static vectorArray(numbers: any, n: number): Vector2D[] {
-    const vecs: Vector2D[] = [];
-    if (!numbers || numbers.length === 0 || numbers.length % n !== 0) {
-      return vecs;
-    }
-    const len = numbers.length;
-    const lineNum = len / n;
-    for (let i = 0; i < lineNum; i++) {
-      const temp = numbers.slice(i * n, i * n + n);
-      const tmpVector2D = new Vector2D(temp[0], temp[1]);
-      vecs.push(tmpVector2D);
-    }
-    return vecs;
-  }
-
-  /**
-   * @Description: 最小矩形
-   * @author
-   * @data 2019/12/25
-   */
-  public static minRect(points: Vector2D[]) {
-    const arrU: number[] = points.map(it => it.x);
-    const arrV: number[] = points.map(it => it.y);
-    const minX = Math.min(...arrU);
-    const maxX = Math.max(...arrU);
-    const minY = Math.min(...arrV);
-    const maxY = Math.max(...arrV);
-    return { minX, maxX, minY, maxY };
   }
 
   /**

@@ -1,26 +1,21 @@
-import debounce from 'lodash/debounce';
 import { reaction } from 'mobx';
-import Point = PIXI.Point;
 import Model2DActive from '../../../store/Model2DActive';
-import ModelActiveData from '../../../store/ModelActiveData';
 import View2DData from '../../../store/View2DData';
 import Vector2D from '../../Model/Geometry/Vector2D';
-import { pointToVector, vectorToPoint } from '../Utils';
+import { pointToVector } from '../Utils';
 import BaseController from './BaseController';
+import Point = PIXI.Point;
+
 const SCENE_2D_MAX_SCALE = 5;
 const SCENE_2D_MIN_SCALE = 0.12;
 /**
  * 视图控制器，用于控制2D视图 放大平移缩放等
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
 export default class ViewController extends BaseController {
   protected scene: any;
   protected interactionManager: any;
   private renderDom: any;
-
-  private endScale = debounce(() => {
-    Model2DActive.setCameraChanging(false);
-  }, 200);
 
   public constructor(scene: any) {
     super(scene);
@@ -29,14 +24,7 @@ export default class ViewController extends BaseController {
 
     reaction(
       () => {
-        if (Model2DActive.isWallDrawing) {
-          return true;
-        }
-        if (Model2DActive.isRoomDrawing) {
-          return true;
-        }
-
-        return !Model2DActive.isChanging && !ModelActiveData.cameraChanging;
+        return !Model2DActive.cameraMove;
       },
       enable => {
         this.enable = enable;
@@ -49,14 +37,9 @@ export default class ViewController extends BaseController {
     let startPosition: any;
     let startPoint: any;
 
+    // @ts-ignore
     const moveEvent = event => {
       if (!startPosition) {
-        return;
-      }
-      if (Model2DActive.drawingWallModeState) {
-        return;
-      }
-      if (Model2DActive.drawingRoomModeState) {
         return;
       }
       const { pageX: x, pageY: y } = event;
@@ -69,8 +52,11 @@ export default class ViewController extends BaseController {
 
       const { x: startX, y: startY } = startPosition;
 
-      View2DData.setPosition(new Vector2D(startX + nowX - startPointX, startY + nowY - startPointY));
+      View2DData.setPosition(
+        new Vector2D(startX + nowX - startPointX, startY + nowY - startPointY),
+      );
     };
+    // @ts-ignore
     const endEvent = event => {
       if (!startPosition) {
         return;
@@ -81,6 +67,7 @@ export default class ViewController extends BaseController {
 
     this.on('win.input.end.right', endEvent);
     this.on('win.input.end', endEvent);
+    // @ts-ignore
     this.on('input.start', event => {
       if (/mouse/.test(event.type)) {
         if (event.button !== 2 && event.button !== 1) {
@@ -91,20 +78,22 @@ export default class ViewController extends BaseController {
       const { pageX: x, pageY: y } = event;
       startPoint = new Point();
       this.interactionManager.mapPositionToPoint(startPoint, x, y);
-      // 在进入之前取消上次动作，防止放大缩小后马上平移导致的问题
-      this.endScale.cancel();
       moveEvent(event);
     });
     // this.on('win.input.move', moveEvent);
+    // @ts-ignore
     this.on('win.input.move', event => {
       moveEvent(event);
     });
+    // @ts-ignore
     this.on('contextmenu', event => event.preventDefault());
 
+    // @ts-ignore
     this.on('scale+', event => {
       const scaleResult = Math.min(this.scene.scale.x + this.makeScaleStep(), SCENE_2D_MAX_SCALE);
       this.calculateScaleOffset(event, scaleResult);
     });
+    // @ts-ignore
     this.on('scale-', event => {
       const scaleResult = Math.max(this.scene.scale.x - this.makeScaleStep(), SCENE_2D_MIN_SCALE);
       this.calculateScaleOffset(event, scaleResult);
@@ -112,10 +101,11 @@ export default class ViewController extends BaseController {
   }
 
   protected makeScaleStep() {
-    const rate=  0.2;
+    const rate = 0.2;
     return this.scene.scale.x * rate;
   }
 
+  // @ts-ignore
   private calculateScaleOffset(event, scale) {
     const { pageX: x, pageY: y } = event;
     const pointBefore = new Point();

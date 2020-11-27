@@ -1,7 +1,22 @@
+import { LayerOrder, layerOrderGroups } from "@/scene/2D/Layer/LayerOrder";
+import JSTSUtils from "@/scene/2D/Utils/JSTSUtils";
+import Level from "@/scene/Model/Home/Level";
+import Room from "@/scene/Model/Home/Room";
+import Structure, { StType } from "@/scene/Model/Home/Structure";
+import ObserveVector3 from "@/scene/Model/ObserveMath/ObserveVector3";
+import ConfigStructure from "@/utils/ConfigStructure";
+import Constant from "@/utils/Math/contanst/constant";
+import Point from "@/utils/Math/geometry/Point";
+import Polygon from "@/utils/Math/geometry/Polygon";
+import Segment from "@/utils/Math/geometry/Segment";
+import Vector2 from "@/utils/Math/geometry/Vector2";
+import MathUtils from "@/utils/Math/math/MathUtils";
+import Quadtree from "@/utils/Math/math/Quadtree";
+import PolygonClipper from "@/utils/PolygonClipper";
+import { union } from "@turf/turf";
+import { reaction } from "mobx";
+import maxBy from "lodash/maxBy";
 import {
-  AxesHelper,
-  BoxBufferGeometry,
-  BoxGeometry,
   Color,
   DoubleSide,
   Euler,
@@ -11,41 +26,439 @@ import {
   MeshPhongMaterial,
   Shape,
   ShapeBufferGeometry,
-  ShapeGeometry,
-  Vector2,
   Vector3,
 } from "three";
 import Scene2D from "../scene/2D";
-import GeoSurface from "../scene/Model/Geometry/GeoSurface";
 import GraphicsTool from "../scene/2D/Utils/GraphicsTool";
-import Vector2D from "../scene/Model/Geometry/Vector2D";
-import Polygon2D from "../scene/Model/Geometry/Polygon2D";
-import { autorun, computed, observable } from "mobx";
-import Column2D from "@/scene/2D/ViewObject/Column2D";
-import Column from "@/scene/Model/Home/Column";
-import Point from "./Math/geometry/Point";
+import GeoSurface from "../scene/Model/Geometry/GeoSurface";
+import GeometryFactory = jsts.geom.GeometryFactory;
+import Geometry = jsts.geom.Geometry;
+import Coordinate = jsts.geom.Coordinate;
 
 class LianBoTest {
+  public vv!: ObserveVector3;
+  public v3 = new ObserveVector3();
+  public changNum = 10;
+  public container: PIXI.Container = new PIXI.Container();
+  public group!: Group;
+  public angle = 15;
+
   public constructor() {
-    window["TEST"] = () => {
+    (window as any).TEST = () => {
       this.testMain();
+    };
+    (window as any).TEST1 = () => {
+      // this.testJSTSSegIntersection();
+      // this.testJSTSPlyIntersection();
+      // this.testFindOutFace();
+      this.testOutFace();
+    };
+    (window as any).TEST2 = () => {
+      this.testPolygonOverlap();
     };
   }
 
-  public init() {}
+  public init(): void {
+    // autorun(() => {
+    //   console.log(this.v3.x);
+    //   console.log(this.v3.z);
+    //   console.log(this.v3.y);
+    // })
+    // reaction(
+    //   () => {
+    //     return [this.v3.x, this.v3.y, this.v3.z];
+    //   },
+    //   () => {
+    //     console.log("[this.v3.x, this.v3.y, this.v3.z]");
+    //   }
+    // );
+    return;
+  }
 
-  testMain(): void {
-    this.testLayer();
+  testFindOutFace() {
+    const st = this.lvl.findByRvtId("2189459");
+    const segs = this.findOutWallFace(st);
+  }
+  // 1647061
+  testOutFace() {
+    const st = this.lvl.findByRvtId("2189472");
+    const st1 = this.lvl.findByRvtId("1647145");
+    // const st2 = this.lvl.findByRvtId("1647548");
+    // const r2 = this.lvl.findByRvtId("1647548");
+    const segs = st.outFace([st1]);
+    this.drawSegs(segs);
+  }
+
+  testDiff(plg: Polygon, plg2: Polygon) {
+    const diffPlg = JSTSUtils.iDifference(plg, plg2);
+    const segs = diffPlg.edges.filter((item) => !plg.insideSeg(item));
+    this.drawSegs(segs);
+  }
+
+  testJSTSPlyIntersection() {
+    const ply = this.lvl.findByRvtId("1647039").polygon;
+    const ply1 = this.lvl.findByRvtId("1650962").polygon;
+    const ply2 = this.lvl.findByRvtId("2187646").polygon;
+    const result = JSTSUtils.iItersectionPlg(ply, ply2);
+    const result1 = JSTSUtils.iDifference(ply, ply2);
+    console.log(result);
+    console.log(result1);
+  }
+
+  testJSTSSegIntersection() {
+    const seg = new Segment(new Point(0, 0), new Point(0, 10));
+    const seg1 = new Segment(new Point(0, 5), new Point(10, 5));
+    const result = this.intersection(seg, seg1);
+    console.log(result);
+  }
+
+  public intersection(seg: Segment, seg1: Segment) {
+    if (seg.collinear(seg1)) {
+      const seg = new Segment(new Point(0, 0), new Point(0, 10));
+      const seg1 = new Segment(new Point(0, 5), new Point(10, 5));
+      const result = JSTSUtils.iIntersectionSeg(seg, seg1);
+      return result;
+    }
+    return null;
+  }
+  public get lvl() {
+    return Scene2D.getInstance().home.curLevel;
+  }
+
+  testPolygonOverlap() {
+    MathUtils.Epsilon = ConfigStructure.accuracy;
+    this.container.removeChildren();
+    const f0 = this.lvl.findByRvtId("2187670");
+    const s1 = this.lvl.findByRvtId("1647122");
+    const r0 = this.lvl.findByRvtId("1650976");
+    console.log(f0.polygon.isBox());
+    console.log(s1.polygon.isBox());
+
+    // console.log(r0.polygon.insidePolygon(f0.polygon));
+    this.findOutWallFace(f0);
+    // this.drawSegs(segs);
+    // const segs = this.findOutWallFace(f0);
+    // const seg0 = s1.polygon.edges[1];
+    // const rSeg = r0.polygon.edges[3];
+    // const result = seg0.subtract(rSeg);
+    // const segs = f0.outFace([s1]);
+    // this.drawSegs(segs);
+    MathUtils.resetAccuracy();
+  }
+
+  testMain() {
+    // this.testJSTS();
+    this.drawRemainder();
     console.log("result");
   }
 
-  public testLayer(): void {
-    const sc = Scene2D.getInstance();
-    const group0 = new PIXI.display.Group(0, true);
+  testJSTS() {
+    // const w0 = this.lvl.findByRvtId("1647679");
+    // const f0 = this.lvl.findByRvtId("2189472");
+    // const f1 = this.lvl.findByRvtId("2189474");
+    // const f2 = this.lvl.findByRvtId("1647040");
+    // const offsetPlyg = JSTSUtils.iUnion(w0.polygon, f0.polygon);
+    const f0 = this.lvl.findByRvtId("2187670");
+    const s1 = this.lvl.findByRvtId("1647122");
+    const r1 = this.lvl.findByRvtId("1698735");
+    const c1 = this.lvl.findByRvtId("1650976");
+    const sts = Scene2D.getInstance()
+      .home.curLevel.structures.filter((item) => {
+        return (
+          item.visible &&
+          (item.stType === StType.Column ||
+            item.stType === StType.Framing ||
+            item.stType === StType.Wall ||
+            item.stType === StType.Window ||
+            item.stType === StType.Door)
+        );
+      })
+      .map((item) => item.polygon);
+    const offsetPlyg = JSTSUtils.iDifference(f0.polygon, c1.polygon, 0);
+    console.log(offsetPlyg);
+    const syEdges = offsetPlyg.edges.filter(
+      (item) => !s1.polygon.insideSeg(item)
+    );
+    this.drawSegs(syEdges);
+    // this.drawPolygon(offsetPlyg.vertices);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-11-26 10:56:26
+   * @Description: 绘制外墙
+   */
+  drawRemainder() {
+    MathUtils.Epsilon = ConfigStructure.accuracy;
+    this.container.removeChildren();
+    const sts = Scene2D.getInstance().home.curLevel.structures.filter(
+      (item) => {
+        return (
+          item.visible &&
+          (item.stType === StType.Column ||
+            item.stType === StType.Framing ||
+            item.stType === StType.Wall ||
+            item.stType === StType.Window ||
+            item.stType === StType.Door)
+        );
+      }
+    );
+    for (const startWall of sts) {
+      this.findOutWallFace(startWall);
+    }
+    MathUtils.resetAccuracy();
+  }
+
+  findOutWallFace(startWall: Structure) {
+    const strs = Scene2D.getInstance()
+      .home.curLevel.quadTree.retrieve(startWall.quadData)
+      .filter(
+        (item) => item.data !== startWall && item.data.stType !== StType.PCWall
+      )
+      .map((item) => item.data);
+    const segs = startWall.outFace(strs);
+    this.drawSegs(segs);
+  }
+
+  drawSegs(bigPath: any[]) {
+    // this.container.removeChildren();
+    const grp = new PIXI.Graphics();
+    this.container.addChild(grp);
+    // const cleanPath = PolygonClipper.pointsToShape(bigPath).clean(0.1);
+    bigPath.forEach(
+      (item) =>
+        item &&
+        GraphicsTool.drawLine(grp, item.start, item.end, {
+          color: Constant.colorRandom(),
+        })
+    );
     this.renderTest();
   }
 
-  public container: PIXI.Container = new PIXI.Container();
+  findOutWallPath() {
+    const startWalls = Scene2D.getInstance().home.curLevel.structures.filter(
+      (item) => item.rvtId === "1647035"
+    );
+    let startWall!: Structure;
+    if (startWalls.length > 0) startWall = startWalls[0];
+    if (!startWall) return;
+    const faces = startWall.wallFaces();
+    startWall.roomRelSegs;
+    let outFace: Segment;
+    for (const face of faces) {
+      if (!startWall.roomRelSegs.some((item) => item.collinear(face))) {
+        outFace = face;
+      }
+    }
+  }
+
+  testClipperOffset() {
+    const p0 = new Point(0, 0);
+    const p1 = new Point(100, 0);
+    const p2 = new Point(100, 100);
+    const p3 = new Point(0, 100);
+    const result = PolygonClipper.offset([p0, p1, p2, p3], 10);
+    console.log(result);
+  }
+
+  disappearInsideWall() {
+    const sts = [...Scene2D.getInstance().home.curLevel.structures];
+    for (const st of sts) {
+      if (st.insideWall()) {
+        st.visible = false;
+      }
+    }
+  }
+
+  public testStructures: Structure[] = [];
+
+  findOutLine() {
+    const sts = [...Scene2D.getInstance().home.curLevel.structures].filter(
+      (item) => {
+        return (
+          item.visible &&
+          (item.stType === StType.Window ||
+            item.stType === StType.Wall ||
+            item.stType === StType.Framing ||
+            item.stType === StType.Column)
+        );
+      }
+    );
+    this.testTurfUnion(sts);
+  }
+
+  unionRoom() {
+    const rooms = Scene2D.getInstance().home.curLevel.rooms;
+    const roomPaths: any[][] = [];
+    for (const room of rooms) {
+      const path = this.unionSts([room, ...room.relStructures]);
+      roomPaths.push(path!);
+    }
+    const result = PolygonClipper.unionPoint(roomPaths);
+    const bigPath = maxBy(result, (o: any) => {
+      return o.length;
+    });
+    this.drawUninoPaht(bigPath!);
+  }
+
+  unionSts(sts: any[]) {
+    const polys = sts.map((item) => item.polygon.vertices);
+    const result = PolygonClipper.unionPoint(polys);
+    const bigPath = maxBy(result, (o: any) => {
+      return o.length;
+    });
+    return bigPath;
+  }
+
+  drawUninoPaht(bigPath: any[]) {
+    this.container.removeChildren();
+    const grp = new PIXI.Graphics();
+    this.container.addChild(grp);
+    grp.lineStyle(3, Constant.colorMap.MidnightBlue, 1);
+    // const cleanPath = PolygonClipper.pointsToShape(bigPath).clean(0.1);
+    bigPath && GraphicsTool.drawPolygon(grp, bigPath);
+    this.renderTest();
+  }
+
+  testTurfUnion(sts: any[]) {
+    // const sts = this.testStructures;
+
+    const polys = [];
+    for (const st of sts) {
+      const ves = st.topFaceGeo;
+      const turfPoly = [...ves];
+      polys.push(turfPoly);
+    }
+    const result = PolygonClipper.unionPoint(polys);
+    // const bigPath = maxBy(result, (o: any) => {
+    //   return o.length;
+    // });
+    for (const bigPath of result) {
+      if (!bigPath) return;
+      console.log(bigPath);
+      this.container.removeChildren();
+      const grp = new PIXI.Graphics();
+      this.container.addChild(grp);
+      grp.lineStyle(3, Constant.colorRandom(), 1);
+      const cleanPath = PolygonClipper.pointsToShape(bigPath).clean(0.1);
+      const grpPath = bigPath.map((item) => ConfigStructure.computePoint(item));
+      bigPath && GraphicsTool.drawPolygon(grp, grpPath);
+    }
+
+    this.renderTest();
+  }
+
+  drawPolygon(grpPath: any[]) {
+    const grp = new PIXI.Graphics();
+    this.container.addChild(grp);
+    grp.lineStyle(1, Constant.colorRandom(), 1);
+    grpPath && GraphicsTool.drawPolygon(grp, grpPath);
+    this.renderTest();
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-11-26 11:10:16
+   * @Description: 实心的
+   */
+  drawSolidPolygon(grpPath: any[]) {
+    const grp = new PIXI.Graphics();
+    this.container.addChild(grp);
+    grp.lineStyle(1, Constant.colorRandom(), 1);
+    grp.beginFill(Constant.colorRandom(), 0.8);
+    grpPath && GraphicsTool.drawPolygon(grp, grpPath);
+    grp.endFill();
+    this.renderTest();
+  }
+
+  testQuadTree() {
+    const tree = new Quadtree({ x: 0, y: 0, width: 200, height: 200 });
+    tree.insert({ x: 50, y: 50, width: 10, height: 10 });
+    const result = tree.retrieve({ x: 50, y: 50, width: 10, height: 10 });
+    console.log(result);
+  }
+
+  testCanvas() {
+    const canvas: any = document.createElement("canvas");
+    document.body.append(canvas);
+    // canvas.width = ConfigStructure.maxCanvasV3.x - ConfigStructure.minCanvasV3.x;
+    // canvas.height = ConfigStructure.maxCanvasV3.y - ConfigStructure.minCanvasV3.y;
+    const ctx = canvas.getContext("2d");
+    ctx!.strokeStyle = "rgba(255,0,0,0.5)";
+    ctx!.strokeRect(0, 0, 200, 200);
+  }
+
+  testPIXITextRoom() {
+    const txt = new PIXI.Text("");
+    txt.style.fontSize = 13;
+
+    txt.anchor.set(0.5, 0.5);
+    txt.parentGroup = layerOrderGroups[LayerOrder.Camera];
+    this.container.addChild(txt);
+  }
+
+  testDrawPolygon() {
+    const p0 = new Point(0, 0);
+    const p1 = new Point(100, 0);
+    const p2 = new Point(100, 100);
+    const p3 = new Point(0, 100);
+    const grp = new PIXI.Graphics();
+    grp.beginFill(Constant.colorMap.MidnightBlue);
+    GraphicsTool.drawPolygon(grp, [p0, p1, p2, p3]);
+    grp.endFill();
+    this.container.addChild(grp);
+    this.renderTest();
+  }
+
+  testDrawPolygonEdge() {
+    const p0 = new Point(0, 0);
+    const p1 = new Point(100, 0);
+    const p2 = new Point(100, 100);
+    const p3 = new Point(0, 100);
+    const grp = new PIXI.Graphics();
+    grp.lineStyle(2, Constant.colorMap.Yellow, 1);
+    GraphicsTool.drawPolygon(grp, [p0, p1, p2, p3]);
+    this.container.addChild(grp);
+    this.renderTest();
+  }
+
+  testBoxTouch() {}
+
+  testSegmentIntercation() {
+    const s = new Segment(new Point(0, 0), new Point(1, 0));
+    const s1 = new Segment(new Point(0.5, 0), new Point(1.5, 0));
+    const result = s.intersect(s1);
+    console.log(result);
+  }
+
+  testColorHex() {
+    const re = Constant.colorHexNumber("#ffffff");
+    console.log(re);
+    const re1 = Constant.colorHex(0xffffff);
+    console.log(re1);
+  }
+
+  test1() {
+    this.testTurfUnion(this.testStructures);
+    this.testStructures = [];
+  }
+
+  test2() {
+    this.vv.x = this.changNum++;
+  }
+
+  public testObservalV3() {
+    const tmp = new ObserveVector3(this.changNum++, 1, 1);
+    // this.v3.copy(tmp);
+    this.v3.z = this.changNum++;
+  }
+
+  public test_distanceToSegment() {
+    const seg = new Segment(new Point(0, 0), new Point(0, -330));
+    const p = new Point(0, -165);
+    const result = seg.distanceToPoint(p).dis;
+    console.log(result === 0);
+  }
 
   public lineWidth(): number {
     let scale = 1.5 / Scene2D.getInstance().scale.x / 2;
@@ -69,7 +482,7 @@ class LianBoTest {
     console.log(r2);
   }
 
-  public drawTest(str: string, pos: any, color: string = null) {
+  public drawTest(str: string, pos: any, color: string = "") {
     const style = {
       fontSize: this.lineWidth() * 15,
       fill: color ? color : "#ff0000",
@@ -86,10 +499,19 @@ class LianBoTest {
     const grp = new PIXI.Graphics();
     grp.lineStyle(0);
     grp.beginFill(0xde3249, 1);
-    GraphicsTool.drawCircle(grp, Vector2D.ORIGIN_V2D, 10);
+    GraphicsTool.drawCircle(grp, Point.ZERO, 10);
     grp.endFill();
     this.container.addChild(grp);
     this.renderTest();
+  }
+
+  public Circle(): PIXI.Graphics {
+    const grp = new PIXI.Graphics();
+    grp.lineStyle(1);
+    grp.beginFill(0xde3249, 1);
+    GraphicsTool.drawCircle(grp, Point.ZERO, 1000000);
+    grp.endFill();
+    return grp;
   }
 
   public renderTest() {
@@ -105,7 +527,7 @@ class LianBoTest {
     console.log("test!");
     // const revitObj = require('./lianboJson.json');
     const revitObj = require("./P000001-B0004-F0004.json");
-    let firstP = null;
+    let firstP: any;
     if (revitObj.length > 0) {
       const geo = revitObj[0];
       if (geo.solids.length > 0) {
@@ -148,8 +570,8 @@ class LianBoTest {
       }
     };
     optimization();
-    const edgesToVer = (edges) => {
-      const vers = [];
+    const edgesToVer = (edges: any[]) => {
+      const vers: any[] = [];
       for (let i = 0; i < edges.length; i++) {
         const pointStart = this.relativeZero(edges[i].startPoint, firstP);
         const pointEnd = this.relativeZero(edges[i].endPoint, firstP);
@@ -169,7 +591,7 @@ class LianBoTest {
       }
       return vers;
     };
-    const renderEdge = (edge) => {
+    const renderEdge = (edge: any[]) => {
       const result: Vector3[] = [];
       const edgesOfV3 = this.edgesToVector3(edge);
       const matrixWorld = this.edgeMatrix(edgesOfV3);
@@ -191,7 +613,7 @@ class LianBoTest {
         shape.lineTo(result[i].x, result[i].y);
       }
       const geometry = new ShapeBufferGeometry(shape);
-      const matRed: MeshPhongMaterial = new MeshPhongMaterial({
+      const matRed: THREE.MeshPhongMaterial = new MeshPhongMaterial({
         side: DoubleSide,
         color: new Color(Math.random(), Math.random(), Math.random()),
       });
@@ -215,13 +637,22 @@ class LianBoTest {
     this.group = group;
   }
 
-  public group: Group;
-  public angle = 15;
-
   public rotateGroup() {
     console.log(this.group.rotation);
     this.group.rotateX(this.angle);
     this.angle += 15;
+  }
+
+  public testWorldToLocal(): Vector3[] {
+    // const obj = require('./lianboJson.json');
+    const obj: any = null;
+    const result: Vector3[] = [];
+    const edgesOfV3 = this.edgesToVector3(obj.edges[0]);
+    const matrixWorld = this.edgeMatrix(edgesOfV3);
+    for (const edge of edgesOfV3) {
+      result.push(this.worldToLocal(edge.startPoint, matrixWorld));
+    }
+    return result;
   }
 
   private relativeZero(current: any, zero: any): Vector2 {
@@ -232,7 +663,7 @@ class LianBoTest {
   }
 
   private edgesToVector3(edges: any): any {
-    return edges.map((item) => {
+    return edges.map((item: any) => {
       return {
         startPoint: new Vector3(
           item.startPoint.X,
@@ -281,16 +712,6 @@ class LianBoTest {
   private localToWorld(v: Vector3, matrixWorld: Matrix4): Vector3 {
     return v.applyMatrix4(matrixWorld);
   }
-
-  public testWorldToLocal(): Vector3[] {
-    const obj = require("./lianboJson.json");
-    const result: Vector3[] = [];
-    const edgesOfV3 = this.edgesToVector3(obj.edges[0]);
-    const matrixWorld = this.edgeMatrix(edgesOfV3);
-    for (const edge of edgesOfV3) {
-      result.push(this.worldToLocal(edge.startPoint, matrixWorld));
-    }
-    return result;
-  }
 }
+
 export default new LianBoTest();

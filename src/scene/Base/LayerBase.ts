@@ -2,45 +2,23 @@ import EventEmitter = PIXI.utils.EventEmitter;
 import AH from '../2D/Utils/AH';
 import { IDataObject } from '../Interface/IDataObject';
 import { IViewObject } from '../Interface/IViewObject';
+
 const layerEventEmit = new EventEmitter();
 
 export const LayerEvent = layerEventEmit;
 
 export enum LayerName {
-  MODEL = 'model',
-  MODELGROUP = 'modelGroup',
-  Hole = 'hole',
-  Wall = 'wall',
-  Column = 'column',
-  CurvedWall = 'curvedWall',
+  Structure = 'column',
   Room = 'room',
-  Light = 'light',
-  LightGroup = 'lightGroup',
-  CubeBox = 'cubeBox',
-  Corner = 'corner',
-  Ruler = 'ruler',
-  Replica = 'replica',
-  Parquet = 'parquet',
-  Shape3DLayer = 'shape3DLayer',
-  Ceiling = 'ceiling',
-  BgWall = 'bgWall',
-  Hard = 'hard',
 }
 
 export default abstract class LayerBase extends EventEmitter {
   protected _disposeArr: Array<() => void> = [];
-  private disposeFn: () => void;
-  public get layerName(): string {
-    return this._layerName;
-  }
-
-  public set layerName(val: string) {
-    this._layerName = val;
-  }
   protected container: any;
   protected dataViewMap: Map<IDataObject, IViewObject>;
-  protected _layerName: string;
   protected _loadComplete: boolean = false;
+  // @ts-ignore
+  private disposeFn: () => void;
 
   public constructor(scene: any) {
     super();
@@ -53,6 +31,22 @@ export default abstract class LayerBase extends EventEmitter {
     });
   }
 
+  // @ts-ignore
+  protected _layerName: string;
+
+  public get layerName(): string {
+    return this._layerName;
+  }
+
+  public set layerName(val: string) {
+    this._layerName = val;
+  }
+
+  public get mapSize(): number {
+    return this.dataViewMap.size;
+  }
+
+  // @ts-ignore
   public emitEvent(method, ...model) {
     layerEventEmit.emit(this._layerName, { type: method, model });
   }
@@ -60,15 +54,12 @@ export default abstract class LayerBase extends EventEmitter {
   public render(): void {}
 
   public get(key: IDataObject): IViewObject {
+    // @ts-ignore
     return this.dataViewMap.get(key);
   }
 
   public isEmptyMap() {
     return this.dataViewMap.size === 0;
-  }
-
-  public get mapSize(): number {
-    return this.dataViewMap.size;
   }
 
   public add(dataObj: IDataObject) {}
@@ -95,22 +86,6 @@ export default abstract class LayerBase extends EventEmitter {
     return Array.from(this.dataViewMap.values());
   }
 
-  /**
-   * 响应同步Layer事件
-   */
-  protected initSyncEvent() {
-    const syncFn = args => {
-      const { type, model } = args;
-      this[type](...model);
-    };
-    if (this.container) {
-      layerEventEmit.on(this._layerName, syncFn);
-      this.disposeFn = () => {
-        layerEventEmit.off(this._layerName, syncFn);
-      };
-    }
-  }
-
   public dispose() {
     this.disposeFn && this.disposeFn();
     this.disposeArr();
@@ -122,6 +97,7 @@ export default abstract class LayerBase extends EventEmitter {
   }
 
   public destroy() {
+    // @ts-ignore
     for (const value of this.dataViewMap.values()) {
       value && (value as any).destroy();
     }
@@ -133,7 +109,26 @@ export default abstract class LayerBase extends EventEmitter {
     this.dataViewMap.clear();
   }
 
+  // @ts-ignore
   public removeChild(children, child) {
     AH.remove(children, child);
+  }
+
+  /**
+   * 响应同步Layer事件
+   */
+  protected initSyncEvent() {
+    // @ts-ignore
+    const syncFn = args => {
+      const { type, model } = args;
+      // @ts-ignore
+      this[type](...model);
+    };
+    if (this.container) {
+      layerEventEmit.on(this._layerName, syncFn);
+      this.disposeFn = () => {
+        layerEventEmit.off(this._layerName, syncFn);
+      };
+    }
   }
 }

@@ -4,23 +4,21 @@ import UniqueIndexGenerator from '../Util/UniqueIndexGenerator';
 
 const { EventEmitter } = utils;
 export default class ObjectIndex extends EventEmitter implements IDataObject {
-  protected _id: string;
+  get rvtId(): string {
+    return this._rvtId;
+  }
 
+  set rvtId(value: string) {
+    this._rvtId = value;
+  }
   constructor() {
     super();
     this._id = ObjectIndex.assignUniqueId();
   }
 
-  public clone(): object {
-    return null;
-  }
+  protected _id: string;
 
-  public static assignUniqueId(): string {
-    const iUniqueIndex: number = UniqueIndexGenerator.getIndex();
-    const strUniqueIndex: string = iUniqueIndex.toString();
-
-    return strUniqueIndex;
-  }
+  private _rvtId!: string;
 
   get id(): string {
     return this._id;
@@ -33,10 +31,21 @@ export default class ObjectIndex extends EventEmitter implements IDataObject {
     UniqueIndexGenerator.setIndex(locId);
   }
 
+  public static assignUniqueId(): string {
+    const iUniqueIndex: number = UniqueIndexGenerator.getIndex();
+    const strUniqueIndex: string = iUniqueIndex.toString();
+
+    return strUniqueIndex;
+  }
+
+  public clone(): object {
+    return {};
+  }
+
   public buildFromData(data: any) {}
 
   public buildToData(): object {
-    return undefined;
+    return {};
   }
 
   public on(event: string, fn: any, context?: any): any {

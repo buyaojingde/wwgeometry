@@ -1,20 +1,13 @@
-import MathHelper from '../Util/MathHelper';
 import BoundingBox2D from './BoundingBox2D';
 import Line2D from './Line2D';
 import Polygon2D from './Polygon2D';
 import Vector2D from './Vector2D';
 
 export default class Box2D {
-  private _size: Vector2D;
-  private _scale: Vector2D;
-  private _position: Vector2D;
-  private _rotation: number = 0;
-  private _vertices: Vector2D[];
-  private _boundingPoints: Vector2D[];
   private _boolean: boolean = true;
-  private _boundingBox: BoundingBox2D;
   private _polygon2D: Polygon2D;
 
+  // @ts-ignore
   constructor(vec: Vector2D = null) {
     this._size = new Vector2D();
     this._scale = new Vector2D(1, 1);
@@ -22,6 +15,7 @@ export default class Box2D {
     this._vertices = [];
     this._boundingPoints = [];
     this._boundingBox = new BoundingBox2D();
+    // @ts-ignore
     this._polygon2D = new Polygon2D();
     if (vec) {
       this.size = vec;
@@ -30,40 +24,7 @@ export default class Box2D {
     return;
   }
 
-  public clone(): any {
-    const box: any = new Box2D(this._size);
-    box.position = this._position.clone();
-    box.scale = this._scale.clone();
-    box.rotation = this._rotation;
-    return box;
-  }
-
-  public static buildFromBoundingPoints(vecs: Vector2D[]): Box2D {
-    if (!vecs || vecs.length !== 4) {
-      return null;
-    }
-    const _loc2: any = new Box2D();
-    _loc2.setBoundingPoints(vecs);
-    return _loc2;
-  }
-
-  public static buildWithoutScale(vec1: Vector2D, vec2: Vector2D, num: number = 0): Box2D {
-    return new Box2D(vec1).setTransform(vec2, new Vector2D(1, 1), num);
-  }
-
-  public get boundingPoints(): Vector2D[] {
-    if (this._boolean) {
-      this.composeTransforms();
-    }
-    return this._boundingPoints;
-  }
-
-  public get boundingBox(): BoundingBox2D {
-    if (this._boolean) {
-      this.composeTransforms();
-    }
-    return this._boundingBox;
-  }
+  private _size: Vector2D;
 
   public get size(): Vector2D {
     return this._size.clone();
@@ -76,6 +37,8 @@ export default class Box2D {
       this.calculateBoundingPoints();
     }
   }
+
+  private _scale: Vector2D;
 
   public get scale(): Vector2D {
     return this._scale.clone();
@@ -91,6 +54,8 @@ export default class Box2D {
     }
   }
 
+  private _position: Vector2D;
+
   public get position(): Vector2D {
     return this._position.clone();
   }
@@ -105,6 +70,8 @@ export default class Box2D {
     }
   }
 
+  private _rotation: number = 0;
+
   public get rotation(): number {
     return this._rotation;
   }
@@ -114,6 +81,30 @@ export default class Box2D {
       this._rotation = param1;
       this._boolean = true;
     }
+  }
+
+  private _vertices: Vector2D[];
+
+  public get vertices(): Vector2D[] {
+    return this._vertices;
+  }
+
+  private _boundingPoints: Vector2D[];
+
+  public get boundingPoints(): Vector2D[] {
+    if (this._boolean) {
+      this.composeTransforms();
+    }
+    return this._boundingPoints;
+  }
+
+  private _boundingBox: BoundingBox2D;
+
+  public get boundingBox(): BoundingBox2D {
+    if (this._boolean) {
+      this.composeTransforms();
+    }
+    return this._boundingBox;
   }
 
   public get transformChanged(): boolean {
@@ -168,6 +159,28 @@ export default class Box2D {
     }
   }
 
+  public static buildFromBoundingPoints(vecs: Vector2D[]): Box2D {
+    if (!vecs || vecs.length !== 4) {
+      // @ts-ignore
+      return null;
+    }
+    const _loc2: any = new Box2D();
+    _loc2.setBoundingPoints(vecs);
+    return _loc2;
+  }
+
+  public static buildWithoutScale(vec1: Vector2D, vec2: Vector2D, num: number = 0): Box2D {
+    return new Box2D(vec1).setTransform(vec2, new Vector2D(1, 1), num);
+  }
+
+  public clone(): any {
+    const box: any = new Box2D(this._size);
+    box.position = this._position.clone();
+    box.scale = this._scale.clone();
+    box.rotation = this._rotation;
+    return box;
+  }
+
   public calculateBoundingPoints(): Vector2D[] {
     let num = 0;
     this._boundingBox.invalidate();
@@ -192,6 +205,7 @@ export default class Box2D {
     return this;
   }
 
+  // @ts-ignore
   public setTransform(vec1: Vector2D = null, vec2: Vector2D = null, num: number = 0): Box2D {
     if (!vec1) {
       vec1 = new Vector2D(0, 0);
@@ -219,6 +233,7 @@ export default class Box2D {
   }
 
   public globalToLocal(vec: Vector2D): Vector2D {
+    // @ts-ignore
     let _loc2: Vector2D = null;
     _loc2 = vec.subtract(this._position);
     _loc2.rotateBy(-this._rotation);
@@ -252,7 +267,12 @@ export default class Box2D {
     return vec4.x >= vec2.x && vec4.x <= vec3.x && vec4.y >= vec2.y && vec4.y <= vec3.y;
   }
 
-  public translateEdges(num1: number = 0, num2: number = 0, num3: number = 0, num4: number = 0): Box2D {
+  public translateEdges(
+    num1: number = 0,
+    num2: number = 0,
+    num3: number = 0,
+    num4: number = 0,
+  ): Box2D {
     const box7: any = this._size.clone();
     const vec5: any = this._position.clone();
     box7.offsetBy(num4 + num2, num1 + num3);
@@ -282,10 +302,6 @@ export default class Box2D {
       num++;
     }
     return lines;
-  }
-
-  public get vertices(): Vector2D[] {
-    return this._vertices;
   }
 
   private calculateVertices(): Vector2D[] {

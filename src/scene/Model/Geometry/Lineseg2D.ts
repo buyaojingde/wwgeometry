@@ -1,31 +1,22 @@
-import MathHelper from '../Util/MathHelper';
 import MathTool from '../Util/MathTool';
 import Vector2DTool from '../Util/Vector2DTool';
 import Line2D from './Line2D';
 import Vector2D from './Vector2D';
 
 export default class Lineseg2D {
-  get debugCad(): string {
-    return 'Line ' + this._start.x + ',' + this._start.y + ' ' + this._end.x + ',' + this._end.y + '  ';
+  constructor(ptStart: Vector2D, ptEnd: Vector2D) {
+    this._start = ptStart.clone();
+    this._end = ptEnd.clone();
   }
+
+  get debugCad(): string {
+    return (
+      'Line ' + this._start.x + ',' + this._start.y + ' ' + this._end.x + ',' + this._end.y + '  '
+    );
+  }
+
   set debugCad(s: string) {
     // only for debug
-  }
-
-  set start(pt: Vector2D) {
-    this._start = pt;
-  }
-
-  get start(): Vector2D {
-    return this._start;
-  }
-
-  get end(): Vector2D {
-    return this._end;
-  }
-
-  set end(pt: Vector2D) {
-    this._end = pt;
   }
 
   get length(): number {
@@ -35,9 +26,27 @@ export default class Lineseg2D {
   get center(): Vector2D {
     return this.interpolate(0.5);
   }
+
   // extthis._ends Object implements ICloneable
   private _start: Vector2D;
+
+  get start(): Vector2D {
+    return this._start;
+  }
+
+  set start(pt: Vector2D) {
+    this._start = pt;
+  }
+
   private _end: Vector2D;
+
+  get end(): Vector2D {
+    return this._end;
+  }
+
+  set end(pt: Vector2D) {
+    this._end = pt;
+  }
 
   public static distanceToSegment(
     x1: number,
@@ -132,7 +141,11 @@ export default class Lineseg2D {
 
   /**是否重合*/
 
-  public static isSuperposition(line1: Lineseg2D, line2: Lineseg2D, tolPtEquals: number = 0.0001): boolean {
+  public static isSuperposition(
+    line1: Lineseg2D,
+    line2: Lineseg2D,
+    tolPtEquals: number = 0.0001,
+  ): boolean {
     return (
       (line1.isPointOn(line2.end, tolPtEquals) && line1.isPointOn(line2.start, tolPtEquals)) ||
       (line2.isPointOn(line1.start, tolPtEquals) && line2.isPointOn(line1.end, tolPtEquals))
@@ -156,11 +169,16 @@ export default class Lineseg2D {
       }
     }
 
+    // @ts-ignore
     return null;
   }
 
   // 获得重叠的线段
-  public static getOverlapLinesegment(seg1: Lineseg2D, seg2: Lineseg2D, tol: number = 0.0001): Lineseg2D {
+  public static getOverlapLinesegment(
+    seg1: Lineseg2D,
+    seg2: Lineseg2D,
+    tol: number = 0.0001,
+  ): Lineseg2D {
     const ptsOverlap: Vector2D[] = [];
 
     if (seg1.isPointOn(seg2.start, tol)) {
@@ -176,6 +194,7 @@ export default class Lineseg2D {
       ptsOverlap.push(seg1.end);
     }
 
+    // @ts-ignore
     let ret: Lineseg2D = null;
     if (ptsOverlap.length === 2) {
       ret = new Lineseg2D(ptsOverlap[0], ptsOverlap[1]);
@@ -203,11 +222,6 @@ export default class Lineseg2D {
       return true;
     }
     return false;
-  }
-
-  constructor(ptStart: Vector2D, ptEnd: Vector2D) {
-    this._start = ptStart.clone();
-    this._end = ptEnd.clone();
   }
 
   // 基类的接口实现
@@ -245,9 +259,12 @@ export default class Lineseg2D {
 
   // 线段到一个点的最小矩离
   public minDistanceToPoint(pt: Vector2D): number {
-    const ptFoot: Vector2D = new Line2D().footPoint(this.toLine2D(),pt);
+    const ptFoot: Vector2D = new Line2D().footPoint(this.toLine2D(), pt);
     if (
-      MathTool.numberEquals(ptFoot.distance(this._start) + ptFoot.distance(this._end), this._start.distance(this._end))
+      MathTool.numberEquals(
+        ptFoot.distance(this._start) + ptFoot.distance(this._end),
+        this._start.distance(this._end),
+      )
     ) {
       // 如果垂足在起点和终点之间则表示垂足到源点的距离为最小矩离
       return pt.distance(ptFoot);
@@ -272,9 +289,12 @@ export default class Lineseg2D {
 
   // 找到在线段点的一个点，此点离参考点最近
   public pointOnLinesegHasMinDistanceToAPoint(pt: Vector2D): Vector2D {
-    const ptFoot: Vector2D = new Line2D().footPoint(this.toLine2D(),pt);
+    const ptFoot: Vector2D = new Line2D().footPoint(this.toLine2D(), pt);
     if (
-      MathTool.numberEquals(ptFoot.distance(this._start) + ptFoot.distance(this._end), this._start.distance(this._end))
+      MathTool.numberEquals(
+        ptFoot.distance(this._start) + ptFoot.distance(this._end),
+        this._start.distance(this._end),
+      )
     ) {
       // 如果垂足在起点和终点之间则表示垂足到源点的距离为最小矩离
       return ptFoot;
@@ -315,8 +335,8 @@ export default class Lineseg2D {
     }
 
     // 跟据线段的两点与直线的方向判断是否有交点
-    const ptFoot1: Vector2D = line.footPoint(line,this._start);
-    const ptFoot2: Vector2D = line.footPoint(line,this._end);
+    const ptFoot1: Vector2D = line.footPoint(line, this._start);
+    const ptFoot2: Vector2D = line.footPoint(line, this._end);
     const vec1: Vector2D = Vector2D.subtract(this._start, ptFoot1).normalize();
     const vec2: Vector2D = Vector2D.subtract(this._end, ptFoot2).normalize();
     if (vec1.equals(vec2.negate())) {
@@ -385,12 +405,12 @@ export default class Lineseg2D {
    */
   public getProjectionSegmentToASegment(targetSeg: Lineseg2D): Lineseg2D {
     const tarLine: Line2D = targetSeg.toLine2D();
-    const targetFootPoint1: Vector2D =tarLine .footPoint(tarLine,this._start);
-    const targetFootPoint2: Vector2D = tarLine.footPoint(tarLine,this._end);
+    const targetFootPoint1: Vector2D = tarLine.footPoint(tarLine, this._start);
+    const targetFootPoint2: Vector2D = tarLine.footPoint(tarLine, this._end);
 
     const thisLine: Line2D = this.toLine2D();
-    const thisFootPoint1: Vector2D = thisLine.footPoint(thisLine,targetSeg.start);
-    const thisFootPoint2: Vector2D = thisLine.footPoint(thisLine,targetSeg.end);
+    const thisFootPoint1: Vector2D = thisLine.footPoint(thisLine, targetSeg.start);
+    const thisFootPoint2: Vector2D = thisLine.footPoint(thisLine, targetSeg.end);
 
     const ptsNeed: Vector2D[] = [];
     if (targetSeg.isPointOn(targetFootPoint1)) {
@@ -408,13 +428,14 @@ export default class Lineseg2D {
 
     const ptsFoot: Vector2D[] = [];
     for (const pt of ptsNeed) {
-      const ptFoot: Vector2D = tarLine.footPoint(tarLine,pt);
+      const ptFoot: Vector2D = tarLine.footPoint(tarLine, pt);
       if (Vector2DTool.indexOfPoints(ptsFoot, ptFoot) < 0) {
         ptsFoot.push(ptFoot);
       }
     }
 
     if (ptsFoot.length !== 2) {
+      // @ts-ignore
       return null;
     }
 
@@ -429,8 +450,10 @@ export default class Lineseg2D {
   public intersectCircle(center: Vector2D, radius: number): boolean {
     // 一个端点在圆内
     if (
-      (Vector2D.distance(center, this.start) < radius && Vector2D.distance(center, this.end) > radius) ||
-      (Vector2D.distance(center, this.end) < radius && Vector2D.distance(center, this.start) > radius)
+      (Vector2D.distance(center, this.start) < radius &&
+        Vector2D.distance(center, this.end) > radius) ||
+      (Vector2D.distance(center, this.end) < radius &&
+        Vector2D.distance(center, this.start) > radius)
     ) {
       return true;
     }
@@ -457,9 +480,11 @@ export default class Lineseg2D {
       return false;
     } // 点到直线距离大于半径r
     angle1 =
-      (center.x - this.start.x) * (this.end.x - this.start.x) + (center.y - this.start.y) * (this.end.y - this.start.y);
+      (center.x - this.start.x) * (this.end.x - this.start.x) +
+      (center.y - this.start.y) * (this.end.y - this.start.y);
     angle2 =
-      (center.x - this.end.x) * (this.start.x - this.end.x) + (center.y - this.end.y) * (this.start.y - this.end.y);
+      (center.x - this.end.x) * (this.start.x - this.end.x) +
+      (center.y - this.end.y) * (this.start.y - this.end.y);
     if (angle1 > 0 && angle2 > 0) {
       return true;
     } // 余弦都为正，则是锐角

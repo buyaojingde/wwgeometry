@@ -5,7 +5,12 @@ import Vector2D from '../Geometry/Vector2D';
 export default class Vector2DTool {
   public static DISTANCE_TOLERANCE: number = 20;
 
-  public static searchClosestPoint(vecs: Vector2D[], point: Vector2D, param3: number = 20): Vector2D {
+  public static searchClosestPoint(
+    vecs: Vector2D[],
+    point: Vector2D,
+    param3: number = 20,
+  ): Vector2D {
+    // @ts-ignore
     let tmpPoint: Vector2D = null;
     let len: number = NaN;
     let lenMax: number = 17976931348745161000000000000;
@@ -18,12 +23,18 @@ export default class Vector2DTool {
       }
     }
     if (lenMax > param3) {
+      // @ts-ignore
       return null;
     }
     return tmpPoint;
   }
 
-  public static searchClosestXPoint(Vecs: Vector2D[], point: Vector2D, param3: number = 20): Vector2D {
+  public static searchClosestXPoint(
+    Vecs: Vector2D[],
+    point: Vector2D,
+    param3: number = 20,
+  ): Vector2D {
+    // @ts-ignore
     let tmpPoint: Vector2D = null;
     let len: number = NaN;
     let lenMax: number = 17976931348623161000000000000;
@@ -37,12 +48,18 @@ export default class Vector2DTool {
       }
     }
     if (lenMax > param3) {
+      // @ts-ignore
       return null;
     }
     return tmpPoint;
   }
 
-  public static searchClosestYPoint(vecs: Vector2D[], point: Vector2D, param3: number = 20): Vector2D {
+  public static searchClosestYPoint(
+    vecs: Vector2D[],
+    point: Vector2D,
+    param3: number = 20,
+  ): Vector2D {
+    // @ts-ignore
     let tmpPoint: Vector2D = null;
     let len: number = NaN;
     let lenMax: number = 17976931348623161000000000000;
@@ -55,6 +72,7 @@ export default class Vector2DTool {
       }
     }
     if (lenMax > param3) {
+      // @ts-ignore
       return null;
     }
     return tmpPoint;
@@ -124,7 +142,11 @@ export default class Vector2DTool {
     return ret;
   }
 
-  public static getCadLinestring(pts: Vector2D[], xField: string = 'x', yField: string = 'y'): string {
+  public static getCadLinestring(
+    pts: Vector2D[],
+    xField: string = 'x',
+    yField: string = 'y',
+  ): string {
     // [Vector2D OR Point]
     // if (!GlobalProxy.isDebug())
     // return "";
@@ -145,12 +167,16 @@ export default class Vector2DTool {
     for (let i: number = 0; i < closedPoly.length - 1; ++i) {
       ret +=
         'Line ' +
+        // @ts-ignore
         closedPoly[i][xField] +
         ',' +
+        // @ts-ignore
         closedPoly[i][yField] * -1 +
         ' ' +
+        // @ts-ignore
         closedPoly[(i + 1) % closedPoly.length][xField] +
         ',' +
+        // @ts-ignore
         closedPoly[(i + 1) % closedPoly.length][yField] * -1 +
         ' \n';
     }
@@ -163,7 +189,8 @@ export default class Vector2DTool {
     const endPt: Vector2D = line.end;
 
     if (startPt && endPt) {
-      resultStr += 'Line ' + startPt.x + ',' + startPt.y * -1 + ' ' + endPt.x + ',' + endPt.y * -1 + ' \n';
+      resultStr +=
+        'Line ' + startPt.x + ',' + startPt.y * -1 + ' ' + endPt.x + ',' + endPt.y * -1 + ' \n';
     }
 
     // trace(resultStr);
@@ -337,6 +364,7 @@ export default class Vector2DTool {
     for (let i = 0; i < iCount; i++) {
       let p: Vector2D = section[i];
 
+      // @ts-ignore
       p = new Vector2D(p.x - offsetVec.x, p.y - offsetVec.y);
       newS.push(p);
     }
@@ -362,10 +390,6 @@ export default class Vector2DTool {
     return new Vector2D(xMid, yMid);
   }
 
-  public Vector2DTool() {
-    // throw new AbstractClassError();
-  }
-
   /**
    * 得到两个四分点
    * @param v1
@@ -384,7 +408,11 @@ export default class Vector2DTool {
     return [quartile1, quartile2];
   }
 
-  public static extendInDirectionByLength(point1: Vector2D, point2: Vector2D, len: number = 0): Vector2D {
+  public static extendInDirectionByLength(
+    point1: Vector2D,
+    point2: Vector2D,
+    len: number = 0,
+  ): Vector2D {
     const tol = 1e-3;
     const newPoint = point1.clone();
 
@@ -455,5 +483,9 @@ export default class Vector2DTool {
     }
 
     return perpendicularPoints;
+  }
+
+  public Vector2DTool() {
+    // throw new AbstractClassError();
   }
 }

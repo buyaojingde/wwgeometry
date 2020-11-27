@@ -1,13 +1,12 @@
-import { Euler, Matrix4, Vector2, Vector3 } from 'three';
-import Vector2D from '../Geometry/Vector2D';
-import Vector3D from '../Geometry/Vector3D';
+import GeometryTool from "../../../utils/Math/tool/GeometryTool";
+import { Euler, Matrix4, Vector2, Vector3 } from "three";
+import Vector2D from "../Geometry/Vector2D";
 
 export default class MathTool {
   public static RADIAN_TO_DEGREE: number = 180 / Math.PI;
   public static DEGREE_TO_RADIAN: number = Math.PI / 180;
 
-  constructor() {
-  }
+  constructor() {}
 
   public static normalizeRadian(radian: number): number {
     if (radian >= Math.PI * 2) {
@@ -69,28 +68,61 @@ export default class MathTool {
     return MathTool.roundAngle(num + Math.PI);
   }
 
-  public static numberEquals(num2: number, param2: number, num3: number = 1e-3): boolean {
+  public static numberEquals(
+    num2: number,
+    param2: number,
+    num3: number = 1e-3
+  ): boolean {
     return Math.abs(num2 - param2) < num3;
   }
 
-  public static numberLess(num1: number, num2: number, num3: number = 1e-3): boolean {
+  public static numberLess(
+    num1: number,
+    num2: number,
+    num3: number = 1e-3
+  ): boolean {
     return num1 < num2 - num3;
   }
 
-  public static numberLessEqual(num1: number, num2: number, num3: number = 1e-3): boolean {
-    return this.numberLess(num1, num2, num3) || this.numberEquals(num1, num2, num3);
+  public static numberLessEqual(
+    num1: number,
+    num2: number,
+    num3: number = 1e-3
+  ): boolean {
+    return (
+      this.numberLess(num1, num2, num3) || this.numberEquals(num1, num2, num3)
+    );
   }
 
-  public static numberBetween(num1: number, num2: number, num3: number, num4: number = 1e-3): boolean {
-    return this.numberGreater(num1, Math.min(num2, num3), num4) && this.numberLess(num1, Math.max(num2, num3), num4);
+  public static numberBetween(
+    num1: number,
+    num2: number,
+    num3: number,
+    num4: number = 1e-3
+  ): boolean {
+    return (
+      this.numberGreater(num1, Math.min(num2, num3), num4) &&
+      this.numberLess(num1, Math.max(num2, num3), num4)
+    );
   }
 
-  public static numberGreater(num1: number, num2: number, num3: number = 1e-3): boolean {
+  public static numberGreater(
+    num1: number,
+    num2: number,
+    num3: number = 1e-3
+  ): boolean {
     return num1 > num2 + num3;
   }
 
-  public static numberGreaterEqual(num1: number, num2: number, num3: number = 1e-3): boolean {
-    return this.numberGreater(num1, num2, num3) || this.numberEquals(num1, num2, num3);
+  public static numberGreaterEqual(
+    num1: number,
+    num2: number,
+    num3: number = 1e-3
+  ): boolean {
+    return (
+      this.numberGreater(num1, num2, num3) ||
+      this.numberEquals(num1, num2, num3)
+    );
   }
 
   public static isZeroNumber(num1: number, num2: number = 1e-3): boolean {
@@ -98,24 +130,41 @@ export default class MathTool {
   }
 
   public static pow(num2: number, param2: number): number {
-    return num2 === 0 ? 0 : num2 > 0 ? Math.pow(num2, param2) : Math.pow(num2 * -1, param2) * -1;
+    return num2 === 0
+      ? 0
+      : num2 > 0
+      ? Math.pow(num2, param2)
+      : Math.pow(num2 * -1, param2) * -1;
   }
 
   public static cbrt(num: number): number {
-    return num === 0 ? 0 : num > 0 ? Math.pow(num, 0.333333) : Math.pow(num * -1, 0.333333) * -1;
+    return num === 0
+      ? 0
+      : num > 0
+      ? Math.pow(num, 0.333333)
+      : Math.pow(num * -1, 0.333333) * -1;
   }
 
   public static almostHorizontal(num: number): boolean {
-    return (num > Math.PI / 4 && num < 2.35619) || (num > 3.92699 && num < 5.49779);
+    return (
+      (num > Math.PI / 4 && num < 2.35619) || (num > 3.92699 && num < 5.49779)
+    );
   }
 
   public static isAngleVertical(num: number): boolean {
     const angleNormal = this.normalizeRadian(num);
-    return this.isZeroNumber(angleNormal - Math.PI / 2) || this.isZeroNumber(angleNormal - (Math.PI * 3) / 2);
+    return (
+      this.isZeroNumber(angleNormal - Math.PI / 2) ||
+      this.isZeroNumber(angleNormal - (Math.PI * 3) / 2)
+    );
   }
 
   public static isAngleHorizontal(num: number): boolean {
-    return this.isZeroNumber(num) || this.isZeroNumber(num - Math.PI) || this.isZeroNumber(num - Math.PI * 2);
+    return (
+      this.isZeroNumber(num) ||
+      this.isZeroNumber(num - Math.PI) ||
+      this.isZeroNumber(num - Math.PI * 2)
+    );
   }
 
   public static calculateCeilingPow2(num: number): number {
@@ -133,7 +182,12 @@ export default class MathTool {
     return cur;
   }
 
-  public static randomFloat(num2: number, param2: number, num3: number[] = null): number {
+  // @ts-ignore
+  public static randomFloat(
+    num2: number,
+    param2: number,
+    num3: number[] = null
+  ): number {
     let num5: number = 0;
     let num4: number = Math.random() * (num2 - param2) + param2;
     if (num3) {
@@ -151,7 +205,12 @@ export default class MathTool {
     return num4;
   }
 
-  public static randomInt(num1: number, num2: number, num3: number[] = null): number {
+  // @ts-ignore
+  public static randomInt(
+    num1: number,
+    num2: number,
+    num3: number[] = null
+  ): number {
     let num5: number = 0;
     let num4: number = Math.floor(Math.random() * (num1 - num2) + num2);
     if (num3 && num3.length < num1 - num2) {
@@ -177,23 +236,48 @@ export default class MathTool {
     return num * MathTool.RADIAN_TO_DEGREE;
   }
 
-  public static determinant(v1: number, v2: number, v3: number, v4: number): number {
+  public static determinant(
+    v1: number,
+    v2: number,
+    v3: number,
+    v4: number
+  ): number {
     // 行列式
     return v1 * v3 - v2 * v4;
   }
 
-  public static 0(aa: Vector2D, bb: Vector2D, cc: Vector2D, dd: Vector2D): boolean {
-    const delta: number = this.determinant(bb.x - aa.x, cc.x - dd.x, bb.y - aa.y, cc.y - dd.y);
+  public static 0(
+    aa: Vector2D,
+    bb: Vector2D,
+    cc: Vector2D,
+    dd: Vector2D
+  ): boolean {
+    const delta: number = this.determinant(
+      bb.x - aa.x,
+      cc.x - dd.x,
+      bb.y - aa.y,
+      cc.y - dd.y
+    );
     if (MathTool.isZeroNumber(delta)) {
       // delta=0，表示两线段重合或平行
       return false;
     }
 
-    const namenda: number = MathTool.determinant(cc.x - aa.x, cc.x - dd.x, cc.y - aa.y, cc.y - dd.y / delta);
+    const namenda: number = MathTool.determinant(
+      cc.x - aa.x,
+      cc.x - dd.x,
+      cc.y - aa.y,
+      cc.y - dd.y / delta
+    );
     if (namenda > 1 || namenda < 0) {
       return false;
     }
-    const miu: number = MathTool.determinant(bb.x - aa.x, cc.x - aa.x, bb.y - aa.y, cc.y - aa.y / delta);
+    const miu: number = MathTool.determinant(
+      bb.x - aa.x,
+      cc.x - aa.x,
+      bb.y - aa.y,
+      cc.y - aa.y / delta
+    );
     if (miu > 1 || miu < 0) {
       return false;
     }
@@ -210,14 +294,23 @@ export default class MathTool {
    * @$rawnumber 原始number数值
    * @$numBit 要保留的精度位数, 默认留3位小数
    */
-  public static getFixednumber($rawnumber: number, $numBit: number = 3): number {
+  public static getFixednumber(
+    $rawnumber: number,
+    $numBit: number = 3
+  ): number {
     const ratio: number = Math.pow(10, $numBit);
     const finalnumber: number = Math.round($rawnumber * ratio) / ratio;
 
     return finalnumber;
   }
 
-  public static arcToBezier(r: number, cx: number, cy: number, startAngle: number, endAngle: number): object {
+  public static arcToBezier(
+    r: number,
+    cx: number,
+    cy: number,
+    startAngle: number,
+    endAngle: number
+  ): object {
     const x0: number = cx + Math.cos(startAngle) * r;
     const y0: number = cy + Math.sin(startAngle) * r;
     const x3: number = cx + Math.cos(endAngle) * r;
@@ -240,7 +333,7 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    t: number,
+    t: number
   ): Vector2D {
     const result: Vector2D = new Vector2D();
 
@@ -292,7 +385,9 @@ export default class MathTool {
   public static findInsidePoint(points: any[]): Vector2 {
     const numsPoint: number = points.length;
     const center: Vector2 = new Vector2();
+    // @ts-ignore
     let prevPoint: Vector2 = null;
+    // @ts-ignore
     let currentPoint: Vector2 = null;
     let i: number = 1;
     const iCount: number = points.length;
@@ -318,7 +413,10 @@ export default class MathTool {
    * @param checkPoint 检测点
    * @return 如果包含则返回true
    */
-  public static polygonContainsPoint(polygonPoints: any[], checkPoint: any): boolean {
+  public static polygonContainsPoint(
+    polygonPoints: any[],
+    checkPoint: any
+  ): boolean {
     let inside: boolean = false;
     const pointCount: number = polygonPoints.length;
     let i = 0;
@@ -331,7 +429,10 @@ export default class MathTool {
         // p2在射线之上
         if (p1.y <= checkPoint.y) {
           // p1正好在射线中或者射线下方
-          if ((checkPoint.y - p1.y) * (p2.x - p1.x) > (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+          if (
+            (checkPoint.y - p1.y) * (p2.x - p1.x) >
+            (checkPoint.x - p1.x) * (p2.y - p1.y)
+          ) {
             // 斜率判断,在P1和P2之间且在P1P2右侧
             // 射线与多边形交点为奇数时则在多边形之内，若为偶数个交点时则在多边形之外。
             // 由于inside初始值为false，即交点数为零。所以当有第一个交点时，则必为奇数，则在内部，此时为inside=(!inside)
@@ -341,7 +442,10 @@ export default class MathTool {
         }
       } else if (checkPoint.y < p1.y) {
         // p2正好在射线中或者在射线下方，p1在射线上
-        if ((checkPoint.y - p1.y) * (p2.x - p1.x) < (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+        if (
+          (checkPoint.y - p1.y) * (p2.x - p1.x) <
+          (checkPoint.x - p1.x) * (p2.y - p1.y)
+        ) {
           // 斜率判断,在P1和P2之间且在P1P2右侧
           inside = !inside;
         }
@@ -359,15 +463,23 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    numberOfPoints: number = 18,
+    numberOfPoints: number = 18
   ): number {
     const dt: number = 1.0 / (numberOfPoints - 1);
+    // @ts-ignore
     let curP: Vector2D = null;
+    // @ts-ignore
     let preP: Vector2D = null;
     let len: number = 0;
 
     for (let i: number = 0; i < numberOfPoints; i++) {
-      curP = this.PointOnCubicBezier(control1, control2, anchor1, anchor2, i * dt);
+      curP = this.PointOnCubicBezier(
+        control1,
+        control2,
+        anchor1,
+        anchor2,
+        i * dt
+      );
       if (i > 0) {
         len = len + Vector2D.distance(preP, curP);
       }
@@ -385,13 +497,21 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    numberOfPoints: number,
+    numberOfPoints: number
   ): Vector2D[] {
     const curve: Vector2D[] = [];
     const dt: number = 1.0 / (numberOfPoints - 1);
 
     for (let i: number = 0; i < numberOfPoints; i++) {
-      curve.push(MathTool.PointOnCubicBezier(control1, control2, anchor1, anchor2, i * dt));
+      curve.push(
+        MathTool.PointOnCubicBezier(
+          control1,
+          control2,
+          anchor1,
+          anchor2,
+          i * dt
+        )
+      );
     }
 
     return curve;
@@ -403,7 +523,7 @@ export default class MathTool {
     radius: number,
     startAngle: number,
     arcAngle: number,
-    stepAngle: number,
+    stepAngle: number
   ): Vector2D[] {
     const ptsArc: Vector2D[] = [];
     // const num1: number = NaN;
@@ -418,7 +538,12 @@ export default class MathTool {
     const num4: number = ((arcAngle / num3) * Math.PI) / 180;
     startAngle = (startAngle * Math.PI) / 180;
 
-    ptsArc.push(new Vector2D(px + num2 * Math.cos(startAngle), py + num2 * Math.sin(startAngle)));
+    ptsArc.push(
+      new Vector2D(
+        px + num2 * Math.cos(startAngle),
+        py + num2 * Math.sin(startAngle)
+      )
+    );
 
     let temp = 1;
     while (temp <= num3) {
@@ -440,7 +565,7 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    t: number = 0,
+    t: number = 0
   ): number {
     const dr: Vector2D = new Vector2D();
 
@@ -468,6 +593,7 @@ export default class MathTool {
   /** 获取多边形的质点 */
   public static centeroid(points: Vector2D[]): Vector2D {
     const numsPoint: number = points.length;
+    // @ts-ignore
     let point: Vector2D = null;
     const center: Vector2D = new Vector2D();
     for (point of points) {
@@ -500,6 +626,7 @@ export default class MathTool {
     return v;
   }
 
+  // @ts-ignore
   public static vector2DIndexOf(arr, item: Vector2D) {
     for (let i = 0; i < arr.length; ++i) {
       try {
@@ -514,17 +641,20 @@ export default class MathTool {
     return -1;
   }
 
+  // @ts-ignore
   public static rank(...args): any[] {
     // return args.sort(Array.NUMERIC);
     return args.sort();
   }
 
-  public static worldToLocal(matrix, srcPos): Vector3D {
+  // @ts-ignore
+  public static worldToLocal(matrix, srcPos): Vector3 {
     const m1 = new Matrix4();
     return srcPos.clone().applyMatrix4(m1.getInverse(matrix));
   }
 
-  public static localToWorld(matrix, srcPos): Vector3D {
+  // @ts-ignore
+  public static localToWorld(matrix, srcPos): Vector3 {
     return srcPos.clone().applyMatrix4(matrix);
   }
 
@@ -534,6 +664,7 @@ export default class MathTool {
    * @param v
    * @returns {number}
    */
+  // @ts-ignore
   public static decimal(num, v = 0) {
     const vv = Math.pow(10, v);
     return Math.round(num * vv) / vv;
@@ -555,14 +686,17 @@ export default class MathTool {
    * @param
    * @data 2019/12/25
    */
-  public static modelLocalToWorld(euler: Euler, allPoints: Vector3[]): Vector2D[] {
+  public static modelLocalToWorld(
+    euler: Euler,
+    allPoints: Vector3[]
+  ): Vector2D[] {
     const matrix = new Matrix4();
     // matrix.setPosition(this.position);
     matrix.makeRotationFromEuler(euler);
     const worldPoints = [];
     for (const pointV3 of allPoints) {
       const pointV2Tmp = MathTool.localToWorld(matrix, pointV3);
-      const pointV2 = pointV2Tmp.toVector2();
+      const pointV2 = GeometryTool.vector3toVector2(pointV2Tmp);
       worldPoints.push(pointV2);
     }
     return worldPoints;

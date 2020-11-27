@@ -1,24 +1,32 @@
 /**
-* * by lianbo.guo
+ * * by lianbo.guo
  **/
 import { Application } from 'pixi.js';
 import HomePlan2D from '../2D/Layer/HomePlan';
-import Stage = PIXI.display.Stage;
-import DOMEventManager from '../3D/Manager/DOMEventManager';
+import DOMEventManager from '../2D/Utils/DOMEventManager';
 import Home from '../Model/Home/Home';
+import Stage = PIXI.display.Stage;
 
 export interface IScene2D {
-  renderer();
-  render();
-  startRender();
-  stopRender();
-  getStage(): Stage;
   homePlan: HomePlan2D;
   DOMEventListener: DOMEventManager;
   pickupController: any;
+  home: Home;
+  scaleNumber: number;
+
+  // @ts-ignore
+  renderer();
+
+  // @ts-ignore
+  render();
+
+  // @ts-ignore
+  startRender();
+
+  // @ts-ignore
+  stopRender();
+
+  getStage(): Stage;
 
   getApplication(): Application;
-  home: Home;
-
-  scaleNumber: number;
 }

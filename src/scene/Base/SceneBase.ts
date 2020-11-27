@@ -1,12 +1,9 @@
 import HomePlan2D from '../2D/Layer/HomePlan';
-import EventEmitter = PIXI.utils.EventEmitter;
 import Home from '../Model/Home/Home';
+import EventEmitter = PIXI.utils.EventEmitter;
 
 export default abstract class SceneBase extends EventEmitter {
   // member variables here
-  protected _homePlan: HomePlan2D;
-  private static _home: Home;
-
   protected constructor() {
     super();
     if (!SceneBase._home) {
@@ -14,8 +11,21 @@ export default abstract class SceneBase extends EventEmitter {
     }
   }
 
+  // @ts-ignore
+  protected _homePlan: HomePlan2D;
+
   public get homePlan(): HomePlan2D {
     return this._homePlan;
+  }
+
+  private static _home: Home;
+
+  public get home(): Home {
+    return SceneBase._home;
+  }
+
+  public set home(value: Home) {
+    SceneBase._home = value;
   }
 
   public init() {}
@@ -30,13 +40,5 @@ export default abstract class SceneBase extends EventEmitter {
     if (this._homePlan) {
       this._homePlan.load();
     }
-  }
-
-  public get home(): Home {
-    return SceneBase._home;
-  }
-
-  public set home(value: Home) {
-    SceneBase._home = value;
   }
 }

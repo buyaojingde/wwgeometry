@@ -2,7 +2,7 @@
  * * by lianbo.guo
  **/
 // import { saveAs } from 'file-saver';
-import { computed, observable } from 'mobx';
+import {computed, observable} from 'mobx';
 import Home from '../scene/Model/Home/Home';
 import HomeConvert from '../utils/HomeConvert';
 
@@ -10,6 +10,7 @@ const scene2D = require('../scene/2D').default;
 
 class HomeTypeData {
   @observable.ref
+  // @ts-ignore
   protected gottenHome: Home;
 
   protected hasRequest = null;
@@ -28,6 +29,15 @@ class HomeTypeData {
     });
   }
 
+  /**
+   * 户型是否已经加载
+   * @returns {boolean}
+   */
+  @computed
+  get isHomeLoaded() {
+    return !!this.gottenHome;
+  }
+
   public get() {
     if (!this.gottenHome) {
       throw new Error('还未获取到Home');
@@ -35,15 +45,9 @@ class HomeTypeData {
     return this.gottenHome;
   }
 
-  private async _getHome(from?: string, path?: any) {
-    if(from == 'local'){
-      this.gottenHome = HomeConvert.convert();
-      return this.gottenHome;
-    }
-  }
-
   public async getHome(from?: string, path?: any) {
     if (!this.hasRequest) {
+      // @ts-ignore
       this.hasRequest = this._getHome(from, path);
     }
 
@@ -64,7 +68,7 @@ class HomeTypeData {
     const home = scene2D.getInstance().home;
     const homeData = null;
     const str = JSON.stringify(homeData);
-    const file = new File([str], 'pave.json', { type: 'text/plain;charset=utf-8' });
+    const file = new File([str], 'pave.json', {type: 'text/plain;charset=utf-8'});
     // saveAs(file);
     // axioss.post(devLuo, str, {headers: {
     //     'Content-Type': 'application/json'}}) .then(response => {
@@ -75,13 +79,12 @@ class HomeTypeData {
     //   });
     // console.log(res);
   }
-  /**
-   * 户型是否已经加载
-   * @returns {boolean}
-   */
-  @computed
-  get isHomeLoaded() {
-    return !!this.gottenHome;
+
+  private async _getHome(from?: string, path?: any) {
+    if (from == 'local') {
+      this.gottenHome = HomeConvert.convert();
+      return this.gottenHome;
+    }
   }
 }
 

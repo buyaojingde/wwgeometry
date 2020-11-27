@@ -1,4 +1,4 @@
-import DOMEventManager from '../3D/Manager/DOMEventManager';
+import DOMEventManager from '../2D/Utils/DOMEventManager';
 
 export default class BaseEvent {
   public get enable() {
@@ -20,6 +20,7 @@ export default class BaseEvent {
   protected levelArr: any[] = [];
   private _enable: boolean = false;
 
+  // @ts-ignore
   constructor(DOMEvent) {
     this.DOMEventListener = DOMEvent;
   }

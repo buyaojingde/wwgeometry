@@ -1,24 +1,33 @@
 import Line2DIntersectionStatus from '../Constants/Line2DIntersectionStatus';
 import MathTool from '../Util/MathTool';
-import Line from './Line';
 import Line2D from './Line2D';
 import Line2DIntersection from './Line2DIntersection';
 import Lineseg2D from './Lineseg2D';
 import Vector2D from './Vector2D';
 
 export default class Line2DTool {
+  // extends Object
+  constructor() {}
+
   public static isSegmentOverlap(
     line2: Line2D,
     param2: Line2D,
     beTRUE: boolean = false,
     nummin: number = 1e-3,
   ): boolean {
-    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(line2, param2, nummin);
+    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
+      line2,
+      param2,
+      nummin,
+    );
     if (intersection.status === Line2DIntersectionStatus.OVERLAP) {
       return (
         beTRUE ||
         !MathTool.numberEquals(intersection.u[0], intersection.u[1]) ||
-        !(Line2DTool.isZeroNumber(intersection.u[0]) || Line2DTool.isZeroNumber(1 - intersection.u[0]))
+        !(
+          Line2DTool.isZeroNumber(intersection.u[0]) ||
+          Line2DTool.isZeroNumber(1 - intersection.u[0])
+        )
       );
     }
     return false;
@@ -30,8 +39,12 @@ export default class Line2DTool {
    * @param intersectionLines
    * @returns {null}
    */
-  public static getIntersectionLineTwoPoint(targetLine: Line2D, intersectionLines: Line2D[]): Vector2D[] {
+  public static getIntersectionLineTwoPoint(
+    targetLine: Line2D,
+    intersectionLines: Line2D[],
+  ): Vector2D[] {
     const line = targetLine;
+    // @ts-ignore
     const getNearestIntersectPos = lineDirection => {
       let compareNum = Number.MAX_VALUE;
       let nearestPos = null;
@@ -56,10 +69,15 @@ export default class Line2DTool {
     const startDir = new Line2D(lineCenter, line.start).setLength(2000, lineCenter);
     const endDir = new Line2D(lineCenter, line.end).setLength(2000, lineCenter);
 
+    // @ts-ignore
     return [getNearestIntersectPos(startDir), getNearestIntersectPos(endDir)].filter(val => !!val);
   }
 
-  public static getIntersectionOfLines(line1: Line2D, line2: Line2D, num3: number = 1e-3): Line2DIntersection {
+  public static getIntersectionOfLines(
+    line1: Line2D,
+    line2: Line2D,
+    num3: number = 1e-3,
+  ): Line2DIntersection {
     let num16 = NaN;
     let num17 = NaN;
     let num7 = NaN;
@@ -149,7 +167,12 @@ export default class Line2DTool {
     }
     return intersec;
   }
-  public static getIntersectionOfLinesNEW(line1: Line2D, line2: Line2D, num3: number = 1e-3): Line2DIntersection {
+
+  public static getIntersectionOfLinesNEW(
+    line1: Line2D,
+    line2: Line2D,
+    num3: number = 1e-3,
+  ): Line2DIntersection {
     let num16 = NaN;
     let num17 = NaN;
     let num7 = NaN;
@@ -251,7 +274,11 @@ export default class Line2DTool {
     beTRUE: boolean = false,
     nummin: number = 1e-3,
   ): boolean {
-    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(line1, line2, nummin);
+    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
+      line1,
+      line2,
+      nummin,
+    );
     if (intersection.status === Line2DIntersectionStatus.PART_CROSS) {
       return (
         beTRUE ||
@@ -272,7 +299,11 @@ export default class Line2DTool {
     beTRUE: boolean = false,
     nummin: number = 1e-3,
   ): boolean {
-    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(line1, line2, nummin);
+    const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
+      line1,
+      line2,
+      nummin,
+    );
     switch (intersection.status) {
       case Line2DIntersectionStatus.PART_CROSS: {
         return Line2DTool.isSegmentIntersected(line1, line2, beTRUE, nummin);
@@ -286,138 +317,20 @@ export default class Line2DTool {
     }
   }
 
-  // 		是否有投影
-  public static hasProjection(param1: Line, param2: Line, tol: number = 0): boolean {
-    const line1: Line2D = new Line2D(param1.start, param1.end);
-    const line2: Line2D = new Line2D(param2.start, param2.end);
-    const ptFoot1: Vector2D = line1.footPoint(line1,param2.start); // 垂足
-    const ptFoot2: Vector2D = line1.footPoint(line1,param2.end);
-    const ptFoot3: Vector2D = line2.footPoint(line2,param1.start);
-    const ptFoot4: Vector2D = line2.footPoint(line2,param1.end);
-    if (
-      line1.isPointOnSegment(ptFoot1, Boolean(tol)) ||
-      line1.isPointOnSegment(ptFoot2, Boolean(tol)) ||
-      line2.isPointOnSegment(ptFoot3, Boolean(tol)) ||
-      line2.isPointOnSegment(ptFoot4, Boolean(tol))
-    ) {
-      return true;
-    }
-    return false;
-  }
-
   /**
    * 获取俩平行线的距离
    * @param line1
    * @param line2
-* * by lianbo.guo
+   * * by lianbo.guo
    */
   public static getDistanceBetweenParalellLines(line1: Line2D, line2: Line2D): number {
     const { status } = Line2DTool.getIntersectionOfLines(line1, line2);
     if (status !== Line2DIntersectionStatus.PARALELL) {
+      // @ts-ignore
       return null;
     }
-    const footPoint = line2.footPoint(line2,line1.start);
+    const footPoint = line2.footPoint(line2, line1.start);
     return footPoint.distance(line1.start);
-  }
-
-  // 查找平行线投影重合区域
-  public static findProjection(param1: Line, param2: Line): any[] {
-    const wallInfo: any[] = [];
-    const line1: Line2D = new Line2D(param1.start, param1.end);
-    const line2: Line2D = new Line2D(param2.start, param2.end);
-    const ptFoot1: Vector2D = line1.footPoint(line1,param2.start); // 垂足
-    const ptFoot2: Vector2D = line1.footPoint(line1,param2.end);
-    const ptFoot3: Vector2D = line2.footPoint(line2,param1.start);
-    const ptFoot4: Vector2D = line2.footPoint(line2,param1.end);
-    const dis: number = ptFoot1.distance(param1.start); // 两平行线间的距离
-    if (line1.isPointOnSegment(ptFoot1) && line1.isPointOnSegment(ptFoot2)) {
-      // 若投影全被包含
-      // 				    s ▁▁▁▁▁▁▁▁▁▁e       l1
-      // 			s	▁▁┆▁▁▁▁▁▁▁▁▁┆▁▁▁▁e     l2
-
-      let line: Line2D = new Line2D(ptFoot1, param2.start);
-      const wallThickness: number = line.length;
-      const ptStart: Vector2D = line.center;
-      line = new Line2D(ptFoot2, param2.end);
-      const ptEnd: Vector2D = line.center;
-
-      wallInfo.push(ptStart);
-      wallInfo.push(ptEnd);
-      wallInfo.push(wallThickness);
-      return wallInfo;
-    } else if (line2.isPointOnSegment(ptFoot3) && line2.isPointOnSegment(ptFoot4)) {
-      // 				    s ▁▁▁▁▁▁▁▁▁▁e       l2
-      // 			s	▁▁┆▁▁▁▁▁▁▁▁▁┆▁▁▁▁e     l1
-      let line: Line2D = new Line2D(ptFoot3, param1.start);
-      const wallThickness: number = line.length;
-      const ptStart: Vector2D = line.center;
-      line = new Line2D(ptFoot4, param1.end);
-      const ptEnd: Vector2D = line.center;
-
-      wallInfo.push(ptStart);
-      wallInfo.push(ptEnd);
-      wallInfo.push(wallThickness);
-      return wallInfo;
-    } else {
-      // 若仅有一段重合区域
-      if (line1.isPointOnSegment(ptFoot1)) {
-        if (line2.isPointOnSegment(ptFoot3)) {
-          // 						      s▁▁▁▁▁▁▁▁▁▁e     l1
-          // 						e▁▁┆▁▁▁▁▁┆s             l2
-          let line: Line2D = new Line2D(ptFoot3, param1.start);
-          const wallThickness: number = line.length;
-          const ptStart: Vector2D = line.center;
-          line = new Line2D(ptFoot1, param2.start);
-          const ptEnd: Vector2D = line.center;
-
-          wallInfo.push(ptStart);
-          wallInfo.push(ptEnd);
-          wallInfo.push(wallThickness);
-          return wallInfo;
-        } else {
-          // 						 s▁▁▁▁▁▁▁▁▁e					l1
-          // 						      s┆▁▁▁▁▁┆▁▁▁e			l2
-          let line: Line2D = new Line2D(ptFoot1, param2.start);
-          const wallThickness: number = line.length;
-          const ptStart: Vector2D = line.center;
-          line = new Line2D(ptFoot4, param1.end);
-          const ptEnd: Vector2D = line.center;
-
-          wallInfo.push(ptStart);
-          wallInfo.push(ptEnd);
-          wallInfo.push(wallThickness);
-          return wallInfo;
-        }
-      } else {
-        if (line2.isPointOnSegment(ptFoot3)) {
-          // 						      s▁▁▁▁▁▁▁▁▁▁e     l1
-          // 						s▁▁┆▁▁▁▁▁┆e             l2
-          let line: Line2D = new Line2D(ptFoot3, param1.start);
-          const wallThickness: number = line.length;
-          const ptStart: Vector2D = line.center;
-          line = new Line2D(ptFoot2, param2.end);
-          const ptEnd: Vector2D = line.center;
-
-          wallInfo.push(ptStart);
-          wallInfo.push(ptEnd);
-          wallInfo.push(wallThickness);
-          return wallInfo;
-        } else {
-          // 						 s▁▁▁▁▁▁▁▁▁e					l1
-          // 						      e┆▁▁▁▁▁┆▁▁▁s			l2
-          let line: Line2D = new Line2D(ptFoot4, param1.end);
-          const wallThickness: number = line.length;
-          const ptStart: Vector2D = line.center;
-          line = new Line2D(ptFoot2, param2.end);
-          const ptEnd: Vector2D = line.center;
-
-          wallInfo.push(ptStart);
-          wallInfo.push(ptEnd);
-          wallInfo.push(wallThickness);
-          return wallInfo;
-        }
-      }
-    }
   }
 
   // 		两条线的最小端点距离
@@ -426,7 +339,9 @@ export default class Line2DTool {
     const ptEnd1: Vector2D = param1.end;
     const ptStart2: Vector2D = param2.start;
     const ptEnd2: Vector2D = param2.end;
+    // @ts-ignore
     let ptInter1: Vector2D = null;
+    // @ts-ignore
     let ptInter2: Vector2D = null;
     const vec: any[] = [];
     const dis13: number = ptStart1.distance(ptStart2);
@@ -484,7 +399,9 @@ export default class Line2DTool {
       const dise1e2: number = end1.distance(end2);
       const diss2e2: number = start2.distance(end2);
       const disMax: number = Math.max(diss1e1, diss1s2, diss1e2, dise1s2, dise1e2, diss2e2);
+      // @ts-ignore
       let ptMax1: Vector2D = null;
+      // @ts-ignore
       let ptMax2: Vector2D = null;
       if (disMax === diss1e1) {
         ptMax1 = start1;
@@ -650,6 +567,4 @@ export default class Line2DTool {
   private static isZeroNumber(num1: number, nummin: number = 1e-3): boolean {
     return Math.abs(num1) < nummin;
   }
-  // extends Object
-  constructor() {}
 }

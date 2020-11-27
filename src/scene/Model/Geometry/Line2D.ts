@@ -1,28 +1,15 @@
 import minBy from 'lodash/minBy';
-import { Euler, Matrix4, Quaternion } from 'three';
+import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { EPointLineRelation, ESegOverlapType } from '../../../global/Enum/EnumData';
 import MathHelper from '../Util/MathHelper';
 import MathTool from '../Util/MathTool';
 import Vector2D from './Vector2D';
-import Vector3D from './Vector3D';
 
 export default class Line2D {
-  set normalize(value: Vector2D) {
-    this._normalize = value;
-  }
-
-  get normalize(): Vector2D {
-    if (this.distance === 0) {
-      return null;
-    }
-    return this.direction.divideNumber(this.distance);
-  }
-
-  protected _start: Vector2D;
-  protected _end: Vector2D;
-  private _syncStatus: number; // 参考SharedConstants.SYNC_DELETE
+  public static horizontalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.X_AXIS);
+  public static verticalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.Y_AXIS);
   protected _dirty: boolean;
-  private _normalize: Vector2D;
+  private _syncStatus: number; // 参考SharedConstants.SYNC_DELETE
 
   constructor(vec1?: Vector2D, vec2?: Vector2D) {
     // if (vec1.equals(vec2)) {
@@ -34,24 +21,57 @@ export default class Line2D {
     this._dirty = true;
   }
 
+  protected _start: Vector2D;
+
+  get start(): Vector2D {
+    return this._start;
+  }
+
+  set start(vec: Vector2D) {
+    this._start = vec;
+    return;
+  }
+
+  protected _end: Vector2D;
+
+  get end(): Vector2D {
+    return this._end;
+  }
+
+  set end(vec: Vector2D) {
+    this._end = vec;
+    return;
+  }
+
+  private _normalize!: Vector2D | null;
+
+  get normalize(): Vector2D | null {
+    if (this.distance === 0) {
+      return null;
+    }
+    return this.direction.divideNumber(this.distance);
+  }
+
+  set normalize(value: Vector2D | null) {
+    this._normalize = value;
+  }
+
   get debugCad(): string {
-    const str: string = 'Line ' + this._start.x + ',' + -this._start.y + ' ' + this._end.x + ',' + -this._end.y + ' \n';
+    const str: string =
+      'Line ' +
+      this._start.x +
+      ',' +
+      -this._start.y +
+      ' ' +
+      this._end.x +
+      ',' +
+      -this._end.y +
+      ' \n';
     return str;
   }
 
   set debugCad(s: string) {
     // only for debug
-  }
-
-  public static fromArray(array: number[][]): Line2D {
-    const start = new Vector2D().fromArray(array[0]);
-    const end = new Vector2D().fromArray(array[1]);
-
-    return new Line2D(start, end);
-  }
-
-  public static isZeroNumber(num1: number, num2: number = 1e-3): boolean {
-    return Math.abs(num1) < num2;
   }
 
   get center(): Vector2D {
@@ -80,70 +100,8 @@ export default class Line2D {
     return this._start.distance(this._end);
   }
 
-  public getLeftLine(halfWidth): Line2D {
-    if (this.distance === 0) {
-      return null;
-    } // 这个墙的起点和终点在一起
-    const normalize: Vector2D = this.leftNormal.divideNumber(this.distance);
-    return new Line2D(this._start.add(normalize.multiply(halfWidth)), this._end.add(normalize.multiply(halfWidth)));
-  }
-
-  public getRightLine(halfWidth): Line2D {
-    if (this.distance === 0) {
-      return null;
-    } // 这个墙的起点和终点在一起
-    const normalize: Vector2D = this.rightNormal.divideNumber(this.distance);
-    return new Line2D(this._start.add(normalize.multiply(halfWidth)), this._end.add(normalize.multiply(halfWidth)));
-  }
-
-  // 是否竖直
-  public isVertical(tolDegrees: number = 1): boolean {
-    if (!this.normalize) {
-      return false;
-    }
-    return (
-      this.start.equalsX(this.end, 1e-1) ||
-      Math.abs(MathTool.toDegrees(this.angle) - 90) < tolDegrees ||
-      Math.abs(Math.abs(MathTool.toDegrees(this.angle) - 90) - 180) < tolDegrees
-    );
-  }
-
-  // 		是否水平
-  public isHorizontal(tolDegrees: number = 1): boolean {
-    if (!this.normalize) {
-      return false;
-    }
-    return (
-      this.start.equalsY(this.end, 1e-1) ||
-      MathTool.toDegrees(this.angle) < tolDegrees ||
-      Math.abs(MathTool.toDegrees(this.angle) - 180) < tolDegrees
-    );
-  }
-
   get points(): Vector2D[] {
     return [this.start.clone(), this.end.clone()];
-  }
-
-  public clone(): Line2D {
-    return new Line2D(this._start, this._end);
-  }
-
-  get start(): Vector2D {
-    return this._start;
-  }
-
-  set start(vec: Vector2D) {
-    this._start = vec;
-    return;
-  }
-
-  get end(): Vector2D {
-    return this._end;
-  }
-
-  set end(vec: Vector2D) {
-    this._end = vec;
-    return;
   }
 
   get length(): number {
@@ -154,97 +112,27 @@ export default class Line2D {
     return Vector2D.distanceSquared(this._start, this._end);
   }
 
-  /**
-   * 点在直线上
-   */
-  public isPointOnLine(vec: Vector2D, tol: number = 1e-3): boolean {
-    const vec3: Vector2D = this.start.subtract(vec);
-    const _loc3: Vector2D = this.end.subtract(vec);
-    return Line2D.isZeroNumber(vec3.crossProduct(_loc3), tol);
-  }
-
-  /**
-   * 是否超出直线
-   * @returns {boolean}
-   */
-  public isOutLine(vec: Vector2D): boolean {
-    if (MathTool.isZeroNumber(this.length)) {
-      return true;
-    }
-    const len2: number = vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
-    if (len2 < 0 || len2 > 1) {
-      return true;
-    }
-    return false;
-  }
-
-  public isRight(vec: Vector2D) {
-    // if (this.isOutLine(vec)) {
-    //   return null;
-    // }
-
-    const vec3: Vector2D = this.start.clone().sub(vec);
-    const loc3: Vector2D = this.end.clone().subtract(vec);
-
-    return vec3.crossProduct(loc3) > 0;
-  }
-
-  //   /**
-  //    * 点在线段上
-  //    */
-  /* the new one support when beTrueOnEndpoints is fasle, the old one can not.  */
-  public isPointOnSegmentNew(vec: Vector2D, beTrueOnEndpoints: boolean = true, nummin: number = 1e-3): boolean {
-    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
-
-    if (Math.abs(len - this.length) <= nummin) {
-      return (
-        beTrueOnEndpoints || (Vector2D.distance(vec, this.start) > nummin && Vector2D.distance(vec, this.end) > nummin)
-      );
-    }
-    return false;
-  }
-
-  public isPointOnSegment(vec: Vector2D, beTrueOnEndpoints: boolean = true, nummin: number = 1e-3): boolean {
-    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
-
-    if (Math.abs(len - this.length) <= nummin) {
-      return (
-        beTrueOnEndpoints ||
-        Math.abs(this._start.x - vec.x) > nummin ||
-        Math.abs(this._start.y - vec.y) > nummin ||
-        Math.abs(this._end.x - vec.x) > nummin ||
-        Math.abs(this._end.y - vec.y) > nummin
-      );
-    }
-    return false;
-  }
-
-  // 根据叉乘结果，来判断是在左边还是右边，WebGL是右手坐标系，叉乘是右手法则，所以 1 表示左边，-1表示右边，0表示在线上
-  public getPointSide(vec: Vector2D): number {
-    const vec2: number = Vector2D.xmultiply(this._start, this._end, vec);
-    if (vec2 > 0) {
-      return 1;
-    }
-    if (vec2 < 0) {
-      return -1;
-    }
-    return 0;
-  }
-
-  public getProjection(vec: Vector2D, beTRUE: boolean = false): Vector2D {
-    if (MathTool.isZeroNumber(this.length)) {
+  get angle(): number {
+    if (this.start === this.end) {
+      // @ts-ignore
       return null;
     }
+    return Vector2D.angleTo(this._start, this._end);
+  }
 
-    const len3: number = vec.subtract(this._start).dotProduct(this._end.subtract(this._start)) / this.lengthSquared;
-    if (beTRUE && (len3 < 0 || len3 > 1)) {
-      return null;
-    }
+  public get degrees(): number {
+    return MathTool.toDegrees(this.angle);
+  }
 
-    return this._end
-      .subtract(this._start)
-      .multiplyBy(len3)
-      .incrementBy(this._start);
+  public static fromArray(array: number[][]): Line2D {
+    const start = new Vector2D().fromArray(array[0]);
+    const end = new Vector2D().fromArray(array[1]);
+
+    return new Line2D(start, end);
+  }
+
+  public static isZeroNumber(num1: number, num2: number = 1e-3): boolean {
+    return Math.abs(num1) < num2;
   }
 
   public static isParallel(line1: Line2D, line2: Line2D, tolDegrees: number = 1): boolean {
@@ -261,22 +149,9 @@ export default class Line2D {
     }
     const vec6: number = vec5.angleBetween(vec4);
     return (
-      MathTool.toDegrees(vec6) <= tolDegrees || MathTool.toDegrees(vec6) >= MathTool.toDegrees(Math.PI) - tolDegrees
+      MathTool.toDegrees(vec6) <= tolDegrees ||
+      MathTool.toDegrees(vec6) >= MathTool.toDegrees(Math.PI) - tolDegrees
     );
-  }
-
-  get angle(): number {
-    if (this.start === this.end) {
-      return null;
-    }
-    return Vector2D.angleTo(this._start, this._end);
-  }
-
-  public reverse(): Line2D {
-    const tmpend: Vector2D = this._end;
-    this._end = this._start;
-    this._start = tmpend;
-    return this;
   }
 
   public static isLineALinkWithLineBNew(lineA: Line2D, lineB: Line2D): boolean {
@@ -287,10 +162,8 @@ export default class Line2D {
     const lineBEndPt: Vector2D = lineB.end;
 
     if (
-      (lineAStartPt.equals(lineBStartPt, 0.8) &&
-        lineAEndPt.equals(lineBEndPt, 0.8)) ||
-      (lineAStartPt.equals(lineBEndPt, 0.8) &&
-        lineAEndPt.equals(lineBStartPt, 0.8))
+      (lineAStartPt.equals(lineBStartPt, 0.8) && lineAEndPt.equals(lineBEndPt, 0.8)) ||
+      (lineAStartPt.equals(lineBEndPt, 0.8) && lineAEndPt.equals(lineBStartPt, 0.8))
     ) {
       return false;
     }
@@ -332,7 +205,11 @@ export default class Line2D {
     const endB = lineB.end;
     const endBProjLineA = lineA.getProjection(endB, true);
 
-    if (startAProjLineB && !startAProjLineB.equals(startB, tolPtEquals) && !startAProjLineB.equals(endB, tolPtEquals)) {
+    if (
+      startAProjLineB &&
+      !startAProjLineB.equals(startB, tolPtEquals) &&
+      !startAProjLineB.equals(endB, tolPtEquals)
+    ) {
       bRes = true;
     } else if (
       endAProjLineB &&
@@ -357,72 +234,6 @@ export default class Line2D {
     return bRes;
   }
 
-  public contains(line: Line2D, num: number = 1e-3): boolean {
-    if (line.lengthSquared > this.lengthSquared) {
-      return false;
-    }
-    return this.isPointOnSegment(line.start, true, num) && this.isPointOnSegment(line.end, true, num);
-  }
-
-  public contains_new(line: Line2D, num: number = 0.1): boolean {
-    if (line.lengthSquared > this.lengthSquared || !Line2D.isParallel(this, line)) {
-      return false;
-    }
-    return this.isPointOnSegment(line.start, false, num) && this.isPointOnSegment(line.end, false, num);
-  }
-
-  public translate(vec: Vector2D): Line2D {
-    return new Line2D(Vector2D.add(this._start, vec), Vector2D.add(this._end, vec));
-  }
-
-  public translateBy(vec: Vector2D): Line2D {
-    this.start = Vector2D.add(this._start, vec);
-    this.end = Vector2D.add(this._end, vec);
-    return this;
-  }
-
-  public translateRight(num: number): Line2D {
-    return this.translate(this.rightNormal.normalize().multiplyBy(num));
-  }
-
-  public translateLeft(num: number): Line2D {
-    return this.translate(this.leftNormal.normalize().multiplyBy(num));
-  }
-
-  // 新加的Line2D方法，from flash;
-  public translatePrepToPoint(vec: Vector2D): Line2D {
-    return this.translate(
-      this.getRightNormal()
-        .normalize()
-        .multiplyBy(this.getSignedDistance(vec)),
-    );
-  }
-
-  /**
-   * @Description: region 新加的Line2D方法，from flash;点到line的距离
-   * @param
-* @data 2019/12/25
-   */
-  public getSignedDistance(vec: Vector2D): number {
-    return vec.subtract(this._start).dotProduct(this.getRightNormal().normalize());
-  }
-
-  public getY(num: number): number {
-    if (this.start.x === this.end.x) {
-      return (this.start.y - this.end.y) / 2;
-    }
-    return ((num - this.end.x) / (this.start.x - this.end.x)) * (this.start.y - this.end.y) + this.end.y;
-  }
-
-  public getX(num: number): number {
-    if (this.start.y === this.end.y) {
-      return (this.start.x - this.end.x) / 2;
-    }
-    return ((num - this.end.y) / (this.start.y - this.end.y)) * (this.start.x - this.end.x) + this.end.x;
-  }
-
-  // endregion
-
   public static getLineAngle(line1: Line2D, line2: Line2D, num: number = 1): number {
     if (!line1 || !line2) {
       throw new Error('buggggggg');
@@ -433,8 +244,17 @@ export default class Line2D {
     return MathTool.toDegrees(vec6);
   }
 
-  public static getIntersection(line1: Line2D, line2: Line2D, tolParallel: number = 1e-3): Vector2D {
+  //   /**
+  //    * 点在线段上
+  //    */
+
+  public static getIntersection(
+    line1: Line2D,
+    line2: Line2D,
+    tolParallel: number = 1e-3,
+  ): Vector2D {
     if (this.isParallel(line1, line2, tolParallel)) {
+      // @ts-ignore
       return null;
     }
     const vec8: Vector2D = line1.start;
@@ -442,8 +262,10 @@ export default class Line2D {
     const vec4: Vector2D = line2.start;
     const vec7: Vector2D = line2.end;
     const vec3: Vector2D = vec8.clone();
-    const temp1: number = (vec8.x - vec4.x) * (vec4.y - vec7.y) - (vec8.y - vec4.y) * (vec4.x - vec7.x);
-    const temp2: number = (vec8.x - vec5.x) * (vec4.y - vec7.y) - (vec8.y - vec5.y) * (vec4.x - vec7.x);
+    const temp1: number =
+      (vec8.x - vec4.x) * (vec4.y - vec7.y) - (vec8.y - vec4.y) * (vec4.x - vec7.x);
+    const temp2: number =
+      (vec8.x - vec5.x) * (vec4.y - vec7.y) - (vec8.y - vec5.y) * (vec4.x - vec7.x);
     let num6: number;
     if (temp2 === 0) {
       num6 = 0;
@@ -461,12 +283,17 @@ export default class Line2D {
    * @param line2
    * @param tolParallel
    */
-  public static getIntersectionSegment(line1: Line2D, line2: Line2D, tolParallel: number = 1e-3): Vector2D {
+  public static getIntersectionSegment(
+    line1: Line2D,
+    line2: Line2D,
+    tolParallel: number = 1e-3,
+  ): Vector2D {
     const v = Line2D.getIntersection(line1, line2, tolParallel);
     if (v && line1.isInsideLine(v, tolParallel) && line2.isInsideLine(v, tolParallel)) {
       return v;
     }
-    return null;
+    // @ts-ignore
+    return;
   }
 
   /**
@@ -478,6 +305,7 @@ export default class Line2D {
   public static calcSegmentLineIntersect(seg: Line2D, line: Line2D): Vector2D {
     const interP: Vector2D = Line2D.getIntersection(seg, line);
     if (!interP) {
+      // @ts-ignore
       return null;
     }
     const dis1 = Vector2D.distance(interP, seg.start);
@@ -487,28 +315,8 @@ export default class Line2D {
       return interP;
     }
 
+    // @ts-ignore
     return null;
-  }
-
-  /**
-   * 线段是否相交(点是否在线上)
-   * @param line1
-   * @param line2
-   * @param tolParallel
-   */
-  // 判断是否两线段有交点
-  public isIntersection(line1: Line2D, tol: number = 0.0001): boolean {
-    const dis: number = Line2D.distanceToSegment(
-      this._start.x,
-      this._start.y,
-      this._end.x,
-      this._end.y,
-      line1.start.x,
-      line1.start.y,
-      line1.end.x,
-      line1.end.y,
-    );
-    return MathTool.numberEquals(dis, 0.0, tol);
   }
 
   public static distanceToSegment(
@@ -605,7 +413,7 @@ export default class Line2D {
   /**
    * @Description: 端点
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public static getIntersectionSegmentContainEndPoint(
     line1: Line2D,
@@ -613,6 +421,7 @@ export default class Line2D {
     tolParallel: number = 1e-3,
   ): Vector2D {
     if (Line2D.isParallel(line1, line2)) {
+      // @ts-ignore
       return null;
     }
     if (line1.isInsideLine(line2.start, tolParallel)) {
@@ -621,83 +430,16 @@ export default class Line2D {
     if (line1.isInsideLine(line2.end, tolParallel)) {
       return line2.end;
     }
+    // @ts-ignore
     return null;
   }
 
-  // 单位向量
-  public getDirectionUnit(): Vector2D {
-    return new Vector2D(this.direction.x / this.length, this.direction.y / this.length);
-  }
-
-  /**
-   * 延长缩短线长
-   * @param {number} length
-   * @param {Vector2D} fixedPoint
-   * @returns {this}
-   */
-  public setLength(length: number, fixedPoint: Vector2D = this.center) {
-    const center = fixedPoint;
-
-    const start = center.add(
-      this.start
-        .subtract(center)
-        .normalize()
-        .setLength((this.start.distance(fixedPoint) * length) / this.length),
-    );
-    const end = center.add(
-      this.end
-        .subtract(center)
-        .normalize()
-        .setLength((this.end.distance(fixedPoint) * length) / this.length),
-    );
-
-    this.start.copy(start);
-    this.end.copy(end);
-
-    return this;
-  }
-
-  public copy(line: Line2D) {
-    this.start.copy(line.start);
-    this.end.copy(line.end);
-  }
-
-  public getNearestPoint(vec: Vector2D): Vector2D {
-    if (Line2D.isZeroNumber(this.length)) {
-      return this.start.clone();
-    }
-
-    const len2: number = vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
-    if (len2 < 0) {
-      return this.start.clone();
-    }
-
-    if (len2 > 1) {
-      return this.end.clone();
-    }
-    return this.end
-      .subtract(this.start)
-      .multiplyBy(len2)
-      .incrementBy(this.start);
-  }
-
-  /**
-   * 求投影到直线距离
-   * @param vec
-   */
-  public getProjectLength(vec: Vector2D): number {
-    if (Line2D.isZeroNumber(this.length)) {
-      return Number.MAX_VALUE;
-    }
-    let dir1 = vec.subtract(this.start);
-    let dir2 = this.end.subtract(this.start);
-    const len: number = dir1.length();
-    dir1 = dir1.normalize();
-    dir2 = dir2.normalize();
-    return dir1.dotProduct(dir2) * len;
-  }
-
-  public static getDistance(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D, beTRUE: boolean = false): number {
+  public static getDistance(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    vec3: Vector2D,
+    beTRUE: boolean = false,
+  ): number {
     if (Line2D.isZeroNumber(1)) {
       return Vector2D.distance(vec3, vec1);
     }
@@ -721,28 +463,6 @@ export default class Line2D {
     return vec3.distance(_loc6);
   }
 
-  public getDistance(vec: Vector2D, beTRUE: boolean = false): number {
-    if (Line2D.isZeroNumber(this.length)) {
-      return Vector2D.distance(vec, this.start);
-    }
-
-    const _loc3: number =
-      Vector2D.dotProduct(Vector2D.subtract(vec, this.start), Vector2D.subtract(this.end, this.start)) /
-      this.lengthSquared;
-    if (_loc3 < 0 && beTRUE) {
-      return Vector2D.distance(vec, this.start);
-    }
-
-    if (_loc3 > 1 && beTRUE) {
-      return Vector2D.distance(vec, this.end);
-    }
-
-    const _loc4: Vector2D = Vector2D.subtract(this.end, this.start)
-      .multiplyBy(_loc3)
-      .incrementBy(this.start);
-    return vec.distance(_loc4);
-  }
-
   public static getLineDirection(line1: Line2D, line2: Line2D, num: number = 1): number {
     const vec5: Vector2D = line1.direction;
     const vec4: Vector2D = line2.direction;
@@ -751,52 +471,14 @@ export default class Line2D {
     return vec6;
   }
 
-  public get degrees(): number {
-    return MathTool.toDegrees(this.angle);
-  }
-
-  public interpolate(num: number = 0.5): Vector2D {
-    return Vector2D.interpolate(this.start, this.end, num);
-  }
-
-  public getLeftNormal(): Vector2D {
-    return new Vector2D(this.end.y - this.start.y, this.start.x - this.end.x);
-  }
-
-  // 取垂直向量
-  public getRightNormal(): Vector2D {
-    return new Vector2D(this.start.y - this.end.y, this.end.x - this.start.x);
-  }
-
-  // ptRef - 参考点
-  public getPerpDirection(ptRef: Vector2D): Vector2D {
-    const vecRet = new Vector2D(0, 0);
-    if (this.isPointOnLine(ptRef)) {
-      return vecRet;
-    }
-
-    const ptFoot: Vector2D = this.footPoint(this,ptRef);
-    return Vector2D.subtract(ptRef, ptFoot);
-  }
-
   public static isVertical(lineA: Line2D, lineB: Line2D, tol: number = 1): boolean {
     const dirA: Vector2D = lineA.direction;
     const dirB: Vector2D = lineB.direction;
     const angleInRad: number = dirB.angleBetween(dirA);
-    return MathTool.numberLessEqual(Math.abs(MathTool.toDegrees(angleInRad) - MathTool.toDegrees(Math.PI / 2)), tol);
-  }
-
-  public equalsWithoutDirection(line: Line2D, tol: number = 1e-3): boolean {
-    return (
-      (this.start.equals(line.start, tol) && this.end.equals(line.end, tol)) ||
-      (this.start.equals(line.end, tol) && this.end.equals(line.start, tol))
+    return MathTool.numberLessEqual(
+      Math.abs(MathTool.toDegrees(angleInRad) - MathTool.toDegrees(Math.PI / 2)),
+      tol,
     );
-  }
-
-  public equalsDirection(line: Line2D, tol: number = 1e-3): boolean {
-    const dir1: Vector2D = this.getDirectionUnit();
-    const dir2: Vector2D = line.getDirectionUnit();
-    return dir1.equals(dir2, tol);
   }
 
   /**
@@ -862,10 +544,7 @@ export default class Line2D {
     const startAProjLineB: Vector2D = lineB.getProjection(startA);
 
     if (MathTool.numberEquals(lengthA, lengthB, 0.8)) {
-      if (
-        startB.equals(startAProjLineB, 0.8) ||
-        endB.equals(startAProjLineB, 0.8)
-      ) {
+      if (startB.equals(startAProjLineB, 0.8) || endB.equals(startAProjLineB, 0.8)) {
         return bResult;
       }
     }
@@ -894,13 +573,17 @@ export default class Line2D {
 
     if (
       (lineB.isPointOnSegment(startAProjLineB) &&
-        (MathTool.numberGreater(startAProjToStartB, 5) && MathTool.numberGreater(startAProjToEndB, 5))) ||
+        MathTool.numberGreater(startAProjToStartB, 5) &&
+        MathTool.numberGreater(startAProjToEndB, 5)) ||
       (lineB.isPointOnSegment(endAProjLineB) &&
-        (MathTool.numberGreater(endAProjToStartB, 5) && MathTool.numberGreater(endAProjToEndB, 5))) ||
+        MathTool.numberGreater(endAProjToStartB, 5) &&
+        MathTool.numberGreater(endAProjToEndB, 5)) ||
       (lineA.isPointOnSegment(startBProjLineA) &&
-        (MathTool.numberGreater(startBProjToStartA, 5) && MathTool.numberGreater(startBProjToEndA, 5))) ||
+        MathTool.numberGreater(startBProjToStartA, 5) &&
+        MathTool.numberGreater(startBProjToEndA, 5)) ||
       (lineA.isPointOnSegment(endBProjLineA) &&
-        (MathTool.numberGreater(endBProjToStartA, 5) && MathTool.numberGreater(endBProjToEndA, 5)))
+        MathTool.numberGreater(endBProjToStartA, 5) &&
+        MathTool.numberGreater(endBProjToEndA, 5))
     ) {
       bResult = true;
     }
@@ -957,10 +640,7 @@ export default class Line2D {
     const startAProjLineB: Vector2D = lineB.getProjection(startA);
 
     if (MathTool.numberEquals(lengthA, lengthB, 0.8)) {
-      if (
-        startB.equals(startAProjLineB, 0.8) ||
-        endB.equals(startAProjLineB, 0.8)
-      ) {
+      if (startB.equals(startAProjLineB, 0.8) || endB.equals(startAProjLineB, 0.8)) {
         return bResult;
       }
     }
@@ -1054,11 +734,14 @@ export default class Line2D {
 
     if (
       (lineB.isPointOnSegment(startAProjLineB) &&
-        (MathTool.numberGreater(startAProjToStartB, 5) || MathTool.numberGreater(startAProjToEndB, 5))) ||
+        (MathTool.numberGreater(startAProjToStartB, 5) ||
+          MathTool.numberGreater(startAProjToEndB, 5))) ||
       (lineB.isPointOnSegment(endAProjLineB) &&
-        (MathTool.numberGreater(endAProjToStartB, 5) || MathTool.numberGreater(endAProjToEndB, 5))) ||
+        (MathTool.numberGreater(endAProjToStartB, 5) ||
+          MathTool.numberGreater(endAProjToEndB, 5))) ||
       (lineA.isPointOnSegment(startBProjLineA) &&
-        (MathTool.numberGreater(startBProjToStartA, 5) || MathTool.numberGreater(startBProjToEndA, 5))) ||
+        (MathTool.numberGreater(startBProjToStartA, 5) ||
+          MathTool.numberGreater(startBProjToEndA, 5))) ||
       (lineA.isPointOnSegment(endBProjLineA) &&
         (MathTool.numberGreater(endBProjToStartA, 5) || MathTool.numberGreater(endBProjToEndA, 5)))
     ) {
@@ -1068,16 +751,12 @@ export default class Line2D {
     return bResult;
   }
 
-  public sameSide(vec1: Vector2D, vec2: Vector2D): number {
-    return Vector2D.xmultiply(this.start, this.end, vec1) * Vector2D.xmultiply(this.start, this.end, vec2);
-  }
-
   public static isLineACrossLineB(lineA: Line2D, lineB: Line2D, tol: number = 0): any[] {
     let bCross = false;
-    let crossCenterPt: Vector2D = null;
+    let crossCenterPt: Vector2D;
 
     let ptOnLineBCount = 0;
-    let ptOnLineB: Vector2D = null;
+    let ptOnLineB: Vector2D = new Vector2D();
 
     const startA: Vector2D = lineA.start;
     const startAOnLineB: boolean = lineB.isPointOnSegment(startA, true, 0.8);
@@ -1094,7 +773,7 @@ export default class Line2D {
     }
 
     let ptOnLineACount = 0;
-    let ptOnlineA: Vector2D = null;
+    let ptOnlineA: Vector2D = new Vector2D();
     const startB: Vector2D = lineB.start;
     const startBOnLineA: boolean = lineA.isPointOnSegment(startB, true, 0.8);
     if (startBOnLineA) {
@@ -1109,27 +788,23 @@ export default class Line2D {
       ptOnlineA = endB;
     }
 
+    // @ts-ignore
     if (
       ptOnLineACount === 1 &&
-      ptOnLineBCount === 1 &&
-      !ptOnlineA.equals(ptOnLineB, 0.8) &&
+      ptOnLineBCount === 1 && // @ts-ignore
+      !ptOnlineA.equals(ptOnLineB, 0.8) && // @ts-ignore
       Vector2D.distance(ptOnlineA, ptOnLineB) > tol
     ) {
       bCross = true;
-      crossCenterPt = new Vector2D((ptOnlineA.x + ptOnLineB.x) * 0.5, (ptOnlineA.y + ptOnLineB.y) * 0.5);
+      // @ts-ignore
+      crossCenterPt = new Vector2D(
+        (ptOnlineA.x + ptOnLineB.x) * 0.5,
+        (ptOnlineA.y + ptOnLineB.y) * 0.5,
+      );
     }
 
+    // @ts-ignore
     return [bCross, crossCenterPt];
-  }
-
-  public getOthorPoint(point: Vector2D) {
-    if (point === this.start) {
-      return this.end;
-    } else if (point === this.end) {
-      return this.start;
-    }
-
-    return null;
   }
 
   /**
@@ -1147,14 +822,480 @@ export default class Line2D {
     return false;
   }
 
-  public getDirection(): Vector2D {
-    return this._end.subtract(this._start);
+  public static translationLine(l0: Line2D, offset: Vector2D) {
+    return new Line2D(l0.start.addV(offset), l0.end.addV(offset));
+  }
+
+  public static exchangeVec(para: Line2D[]) {
+    // @ts-ignore
+    let tmp: Line2D = null;
+
+    tmp = para[0];
+    para[0] = para[1];
+    para[1] = tmp;
+  }
+
+  // 注意：哪些点是线上的点，哪个点是测试点，不能搞混
+  public static collinear(
+    ptLine1: Vector2D,
+    ptLine2: Vector2D,
+    ptTest: Vector2D,
+    tol: number = 0.00001,
+  ): boolean {
+    // return MathTool.numberEquals(ptTest.distanceToLine(new Line2D(ptLine1, ptLine2)), 0.0, tol);
+
+    // 			var dir1:Vector2D = ptTest.subtract(ptLine1);
+    // 			var dir2:Vector2D = ptTest.subtract(ptLine2);
+    // 			var angle:number = MathTool.toDegrees(Math.abs(dir1.angleBetween(dir2)));
+    // 			return MathTool.numberEquals(angle, 0.0, tol) ||
+    // 				MathTool.numberEquals(angle, 180, tol);
+
+    // 			return new Line2D(ptLine1, ptLine2).isVector2DOnLine(ptTest, tol);
+
+    const line: Line2D = new Line2D(ptLine1, ptLine2);
+    const ptFoot: Vector2D = line.footPoint(line, ptTest);
+    return ptFoot.distance(ptTest) <= tol;
+  }
+
+  public static Compute_Golden_Proportion(startPt: Vector2D, endPt: Vector2D): Vector2D[] {
+    const newline2d: Line2D = new Line2D(startPt, endPt);
+    // var Golden_Proportion: number = 0.618;
+    const TargetLength: number = Vector2D.GOLDEN_PROPORTION * newline2d.length;
+    const LinelCenter: Vector2D = newline2d.center;
+    // let Results: Vector2D[];
+    const Results: Vector2D[] = [];
+
+    if (MathTool.isZeroNumber(startPt.x - endPt.x)) {
+      Results.push(new Vector2D(LinelCenter.x - TargetLength, LinelCenter.y));
+      Results.push(new Vector2D(LinelCenter.x + TargetLength, LinelCenter.y));
+    } else if (MathTool.isZeroNumber(startPt.y - endPt.y)) {
+      Results.push(new Vector2D(LinelCenter.x, LinelCenter.y - TargetLength));
+      Results.push(new Vector2D(LinelCenter.x, LinelCenter.y + TargetLength));
+    } else {
+      const verticalwallslope: number = -(startPt.x - endPt.x) / (startPt.y - endPt.y);
+      const XStep: number = TargetLength / Math.sqrt(verticalwallslope * verticalwallslope + 1);
+      Results[0] = new Vector2D(LinelCenter.x - XStep, LinelCenter.y - XStep * verticalwallslope);
+      Results[1] = new Vector2D(LinelCenter.x + XStep, LinelCenter.y + XStep * verticalwallslope);
+    }
+    return Results;
+  }
+
+  public getLeftLine(halfWidth: number): Line2D {
+    if (this.distance === 0) {
+      throw new Error('why?');
+    } // 这个墙的起点和终点在一起
+    const normalize: Vector2D = this.leftNormal.divideNumber(this.distance);
+    return new Line2D(
+      this._start.add(normalize.multiply(halfWidth)),
+      this._end.add(normalize.multiply(halfWidth)),
+    );
+  }
+
+  public getRightLine(halfWidth: number): Line2D {
+    if (this.distance === 0) {
+      throw new Error('why?');
+    } // 这个墙的起点和终点在一起
+    const normalize: Vector2D = this.rightNormal.divideNumber(this.distance);
+    return new Line2D(
+      this._start.add(normalize.multiply(halfWidth)),
+      this._end.add(normalize.multiply(halfWidth)),
+    );
+  }
+
+  // endregion
+
+  // 是否竖直
+  public isVertical(tolDegrees: number = 1): boolean {
+    if (!this.normalize) {
+      return false;
+    }
+    return (
+      this.start.equalsX(this.end, 1e-1) ||
+      Math.abs(MathTool.toDegrees(this.angle) - 90) < tolDegrees ||
+      Math.abs(Math.abs(MathTool.toDegrees(this.angle) - 90) - 180) < tolDegrees
+    );
+  }
+
+  // 		是否水平
+  public isHorizontal(tolDegrees: number = 1): boolean {
+    if (!this.normalize) {
+      return false;
+    }
+    return (
+      this.start.equalsY(this.end, 1e-1) ||
+      MathTool.toDegrees(this.angle) < tolDegrees ||
+      Math.abs(MathTool.toDegrees(this.angle) - 180) < tolDegrees
+    );
+  }
+
+  public clone(): Line2D {
+    return new Line2D(this._start, this._end);
+  }
+
+  /**
+   * 点在直线上
+   */
+  public isPointOnLine(vec: Vector2D, tol: number = 1e-3): boolean {
+    const vec3: Vector2D = this.start.subtract(vec);
+    const _loc3: Vector2D = this.end.subtract(vec);
+    return Line2D.isZeroNumber(vec3.crossProduct(_loc3), tol);
+  }
+
+  /**
+   * 是否超出直线
+   * @returns {boolean}
+   */
+  public isOutLine(vec: Vector2D): boolean {
+    if (MathTool.isZeroNumber(this.length)) {
+      return true;
+    }
+    const len2: number =
+      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
+    if (len2 < 0 || len2 > 1) {
+      return true;
+    }
+    return false;
+  }
+
+  public isRight(vec: Vector2D) {
+    // if (this.isOutLine(vec)) {
+    //   return null;
+    // }
+
+    const vec3: Vector2D = this.start.clone().sub(vec);
+    const loc3: Vector2D = this.end.clone().subtract(vec);
+
+    return vec3.crossProduct(loc3) > 0;
+  }
+
+  /* the new one support when beTrueOnEndpoints is fasle, the old one can not.  */
+  public isPointOnSegmentNew(
+    vec: Vector2D,
+    beTrueOnEndpoints: boolean = true,
+    nummin: number = 1e-3,
+  ): boolean {
+    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
+
+    if (Math.abs(len - this.length) <= nummin) {
+      return (
+        beTrueOnEndpoints ||
+        (Vector2D.distance(vec, this.start) > nummin && Vector2D.distance(vec, this.end) > nummin)
+      );
+    }
+    return false;
+  }
+
+  public isPointOnSegment(
+    vec: Vector2D,
+    beTrueOnEndpoints: boolean = true,
+    nummin: number = 1e-3,
+  ): boolean {
+    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
+
+    if (Math.abs(len - this.length) <= nummin) {
+      return (
+        beTrueOnEndpoints ||
+        Math.abs(this._start.x - vec.x) > nummin ||
+        Math.abs(this._start.y - vec.y) > nummin ||
+        Math.abs(this._end.x - vec.x) > nummin ||
+        Math.abs(this._end.y - vec.y) > nummin
+      );
+    }
+    return false;
+  }
+
+  // 根据叉乘结果，来判断是在左边还是右边，WebGL是右手坐标系，叉乘是右手法则，所以 1 表示左边，-1表示右边，0表示在线上
+  public getPointSide(vec: Vector2D): number {
+    const vec2: number = Vector2D.xmultiply(this._start, this._end, vec);
+    if (vec2 > 0) {
+      return 1;
+    }
+    if (vec2 < 0) {
+      return -1;
+    }
+    return 0;
+  }
+
+  public getProjection(vec: Vector2D, beTRUE: boolean = false): Vector2D {
+    if (MathTool.isZeroNumber(this.length)) {
+      // @ts-ignore
+      return null;
+    }
+
+    const len3: number =
+      vec.subtract(this._start).dotProduct(this._end.subtract(this._start)) / this.lengthSquared;
+    if (beTRUE && (len3 < 0 || len3 > 1)) {
+      // @ts-ignore
+      return null;
+    }
+
+    return this._end
+      .subtract(this._start)
+      .multiplyBy(len3)
+      .incrementBy(this._start);
+  }
+
+  public reverse(): Line2D {
+    const tmpend: Vector2D = this._end;
+    this._end = this._start;
+    this._start = tmpend;
+    return this;
+  }
+
+  public contains(line: Line2D, num: number = 1e-3): boolean {
+    if (line.lengthSquared > this.lengthSquared) {
+      return false;
+    }
+    return (
+      this.isPointOnSegment(line.start, true, num) && this.isPointOnSegment(line.end, true, num)
+    );
+  }
+
+  public contains_new(line: Line2D, num: number = 0.1): boolean {
+    if (line.lengthSquared > this.lengthSquared || !Line2D.isParallel(this, line)) {
+      return false;
+    }
+    return (
+      this.isPointOnSegment(line.start, false, num) && this.isPointOnSegment(line.end, false, num)
+    );
+  }
+
+  public translate(vec: Vector2D): Line2D {
+    return new Line2D(Vector2D.add(this._start, vec), Vector2D.add(this._end, vec));
+  }
+
+  public translateBy(vec: Vector2D): Line2D {
+    this.start = Vector2D.add(this._start, vec);
+    this.end = Vector2D.add(this._end, vec);
+    return this;
+  }
+
+  public translateRight(num: number): Line2D {
+    return this.translate(this.rightNormal.normalize().multiplyBy(num));
+  }
+
+  public translateLeft(num: number): Line2D {
+    return this.translate(this.leftNormal.normalize().multiplyBy(num));
+  }
+
+  // 新加的Line2D方法，from flash;
+  public translatePrepToPoint(vec: Vector2D): Line2D {
+    return this.translate(
+      this.getRightNormal()
+        .normalize()
+        .multiplyBy(this.getSignedDistance(vec)),
+    );
+  }
+
+  /**
+   * @Description: region 新加的Line2D方法，from flash;点到line的距离
+   * @param
+   * @data 2019/12/25
+   */
+  public getSignedDistance(vec: Vector2D): number {
+    return vec.subtract(this._start).dotProduct(this.getRightNormal().normalize());
+  }
+
+  public getY(num: number): number {
+    if (this.start.x === this.end.x) {
+      return (this.start.y - this.end.y) / 2;
+    }
+    return (
+      ((num - this.end.x) / (this.start.x - this.end.x)) * (this.start.y - this.end.y) + this.end.y
+    );
+  }
+
+  public getX(num: number): number {
+    if (this.start.y === this.end.y) {
+      return (this.start.x - this.end.x) / 2;
+    }
+    return (
+      ((num - this.end.y) / (this.start.y - this.end.y)) * (this.start.x - this.end.x) + this.end.x
+    );
+  }
+
+  /**
+   * 线段是否相交(点是否在线上)
+   * @param line1
+   * @param line2
+   * @param tolParallel
+   */
+  // 判断是否两线段有交点
+  public isIntersection(line1: Line2D, tol: number = 0.0001): boolean {
+    const dis: number = Line2D.distanceToSegment(
+      this._start.x,
+      this._start.y,
+      this._end.x,
+      this._end.y,
+      line1.start.x,
+      line1.start.y,
+      line1.end.x,
+      line1.end.y,
+    );
+    return MathTool.numberEquals(dis, 0.0, tol);
+  }
+
+  // 单位向量
+  public getDirectionUnit(): Vector2D {
+    return new Vector2D(this.direction.x / this.length, this.direction.y / this.length);
+  }
+
+  /**
+   * 延长缩短线长
+   * @param {number} length
+   * @param {Vector2D} fixedPoint
+   * @returns {this}
+   */
+  public setLength(length: number, fixedPoint: Vector2D = this.center) {
+    const center = fixedPoint;
+
+    const start = center.add(
+      this.start
+        .subtract(center)
+        .normalize()
+        .setLength((this.start.distance(fixedPoint) * length) / this.length),
+    );
+    const end = center.add(
+      this.end
+        .subtract(center)
+        .normalize()
+        .setLength((this.end.distance(fixedPoint) * length) / this.length),
+    );
+
+    this.start.copy(start);
+    this.end.copy(end);
+
+    return this;
+  }
+
+  public copy(line: Line2D) {
+    this.start.copy(line.start);
+    this.end.copy(line.end);
+  }
+
+  public getNearestPoint(vec: Vector2D): Vector2D {
+    if (Line2D.isZeroNumber(this.length)) {
+      return this.start.clone();
+    }
+
+    const len2: number =
+      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
+    if (len2 < 0) {
+      return this.start.clone();
+    }
+
+    if (len2 > 1) {
+      return this.end.clone();
+    }
+    return this.end
+      .subtract(this.start)
+      .multiplyBy(len2)
+      .incrementBy(this.start);
+  }
+
+  /**
+   * 求投影到直线距离
+   * @param vec
+   */
+  public getProjectLength(vec: Vector2D): number {
+    if (Line2D.isZeroNumber(this.length)) {
+      return Number.MAX_VALUE;
+    }
+    let dir1 = vec.subtract(this.start);
+    let dir2 = this.end.subtract(this.start);
+    const len: number = dir1.length();
+    dir1 = dir1.normalize();
+    dir2 = dir2.normalize();
+    return dir1.dotProduct(dir2) * len;
+  }
+
+  public getDistance(vec: Vector2D, beTRUE: boolean = false): number {
+    if (Line2D.isZeroNumber(this.length)) {
+      return Vector2D.distance(vec, this.start);
+    }
+
+    const _loc3: number =
+      Vector2D.dotProduct(
+        Vector2D.subtract(vec, this.start),
+        Vector2D.subtract(this.end, this.start),
+      ) / this.lengthSquared;
+    if (_loc3 < 0 && beTRUE) {
+      return Vector2D.distance(vec, this.start);
+    }
+
+    if (_loc3 > 1 && beTRUE) {
+      return Vector2D.distance(vec, this.end);
+    }
+
+    const _loc4: Vector2D = Vector2D.subtract(this.end, this.start)
+      .multiplyBy(_loc3)
+      .incrementBy(this.start);
+    return vec.distance(_loc4);
+  }
+
+  public interpolate(num: number = 0.5): Vector2D {
+    return Vector2D.interpolate(this.start, this.end, num);
+  }
+
+  public getLeftNormal(): Vector2D {
+    return new Vector2D(this.end.y - this.start.y, this.start.x - this.end.x);
+  }
+
+  // 取垂直向量
+  public getRightNormal(): Vector2D {
+    return new Vector2D(this.start.y - this.end.y, this.end.x - this.start.x);
   }
 
   // public static intersectLine(line1: Line2D, line2: Line2D, tol: number = 0.01):Vector2D {
   //   let v = new Vector2D();
   //   if(this.calcCollineation(line1,line2)) {}
   // }
+
+  // ptRef - 参考点
+  public getPerpDirection(ptRef: Vector2D): Vector2D {
+    const vecRet = new Vector2D(0, 0);
+    if (this.isPointOnLine(ptRef)) {
+      return vecRet;
+    }
+
+    const ptFoot: Vector2D = this.footPoint(this, ptRef);
+    return Vector2D.subtract(ptRef, ptFoot);
+  }
+
+  public equalsWithoutDirection(line: Line2D, tol: number = 1e-3): boolean {
+    return (
+      (this.start.equals(line.start, tol) && this.end.equals(line.end, tol)) ||
+      (this.start.equals(line.end, tol) && this.end.equals(line.start, tol))
+    );
+  }
+
+  public equalsDirection(line: Line2D, tol: number = 1e-3): boolean {
+    const dir1: Vector2D = this.getDirectionUnit();
+    const dir2: Vector2D = line.getDirectionUnit();
+    return dir1.equals(dir2, tol);
+  }
+
+  public sameSide(vec1: Vector2D, vec2: Vector2D): number {
+    return (
+      Vector2D.xmultiply(this.start, this.end, vec1) *
+      Vector2D.xmultiply(this.start, this.end, vec2)
+    );
+  }
+
+  public getOthorPoint(point: Vector2D) {
+    if (point === this.start) {
+      return this.end;
+    } else if (point === this.end) {
+      return this.start;
+    }
+
+    return null;
+  }
+
+  public getDirection(): Vector2D {
+    return this._end.subtract(this._start);
+  }
+
   // 以start为起点的的延长线与另一条线的交点，如果平行就取end点
   public intersectionLineAndLine(line: Line2D, extendRate: number = 5): Vector2D {
     if (Line2D.isParallel(this, line)) {
@@ -1179,13 +1320,17 @@ export default class Line2D {
       if (inPoints.length) {
         const minPoint = minBy(inPoints, point => selfLine.getDistance(point));
 
-        return this.footPoint(selfLine,minPoint).subtract(minPoint);
+        // @ts-ignore
+        return this.footPoint(selfLine, minPoint).subtract(minPoint);
       } else {
         // 两个端点的最小距离
         const center = selfLine.center;
         const minPoint = minBy(points, point => center.distance(point));
-        const thisMinPoint = minBy([selfLine.start, selfLine.end], _point => _point.distance(minPoint));
+        const thisMinPoint = minBy([selfLine.start, selfLine.end], _point =>
+          _point.distance(minPoint),
+        );
 
+        // @ts-ignore
         return thisMinPoint.subtract(minPoint);
       }
     };
@@ -1195,13 +1340,14 @@ export default class Line2D {
 
     const resultVector = minBy([thisMinVector, targetMinVector], vector => vector.length());
 
+    // @ts-ignore
     return returnNumber ? resultVector.length() : resultVector;
   }
 
   /**
    * @Description: 前提是两条线平行 是否共线
    * @param distance 两条线的距离
-* @data 2019/12/25
+   * @data 2019/12/25
    * @param l1
    * @return {any}
    */
@@ -1221,25 +1367,20 @@ export default class Line2D {
   /**
    * @Description: 平行线的距离
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public lineToLineDistance(l1: Line2D): number {
     if (!Line2D.isParallel(this, l1)) {
-      console.error('线段未平行');
-      return null;
+      throw new Error('why');
     }
     const newV = l1.start.subtract(this.start);
     return Math.abs(newV.dotProduct(this.getRightNormal().normalizeNo()));
   }
 
-  public static translationLine(l0: Line2D, offset: Vector2D) {
-    return new Line2D(l0.start.addV(offset), l0.end.addV(offset));
-  }
-
   /**
    * @Description: 点或者投影是否在线上,包括端点
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public isInLine(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
@@ -1250,10 +1391,12 @@ export default class Line2D {
     return false;
   }
 
+  // 线与线是否有重合区域
+
   /**
    * @Description: 点或者投影是否在线上,不包括端点NotEndPoint
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public isInLineNotEndPoint(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
@@ -1277,7 +1420,7 @@ export default class Line2D {
   /**
    * @Description: 点在线上，不包括端点
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public isInsideLine(v: Vector2D, accuracy: number = 1e-3): boolean {
     const newL = v.subtract(this.start);
@@ -1300,7 +1443,7 @@ export default class Line2D {
   /**
    * @Description: 点在线上，包括端点
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public isInsideLinePoint(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
@@ -1319,7 +1462,7 @@ export default class Line2D {
   /**
    * @Description: 点在直线上
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public isInsideLinePointNoSegment(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
@@ -1334,10 +1477,9 @@ export default class Line2D {
     return false;
   }
 
-  // 线与线是否有重合区域
   /* @Description: 主要是平行线之间是否有重合区域
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public lineIntersectLine(l1: Line2D): boolean {
     if (this.isInLineNotEndPoint(l1.start) || this.isInLineNotEndPoint(l1.end)) {
@@ -1357,7 +1499,7 @@ export default class Line2D {
    * @Description: 一条线属于另一条线
    * @param
    *  l1 > this
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public lineInLine(l1: Line2D): boolean {
     if (l1 && l1.isInsideLinePoint(this.start) && l1.isInsideLinePoint(this.end)) {
@@ -1369,11 +1511,12 @@ export default class Line2D {
   /**
    * @Description: l0线段平移到与l1重合
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public lineToLine(l1: Line2D): Line2D {
     if (!Line2D.isParallel(this, l1)) {
       console.error('线段未平行');
+      // @ts-ignore
       return null;
     }
     const lineN = this.getRightNormal().normalizeNo();
@@ -1381,6 +1524,7 @@ export default class Line2D {
     return Line2D.translationLine(this, offset);
   }
 
+  // @ts-ignore
   public droopingPoint(v): Vector2D {
     const droopPoint = v.subtract(this.start).projectionV(this.direction);
     return this.start.addV(droopPoint);
@@ -1389,7 +1533,7 @@ export default class Line2D {
   /**
    * @Description: 点到线的垂线
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public getDropPoint(v: Vector2D): Line2D {
     const droopPoint = v.subtract(this.start).projectionV(this.direction);
@@ -1408,26 +1552,23 @@ export default class Line2D {
    */
   public matrix(rotY = null): Matrix4 {
     const centerPosition = this.center;
-    const position = new Vector3D(centerPosition.x, 0, centerPosition.y);
+    const position = new Vector3(centerPosition.x, 0, centerPosition.y);
 
     const angleY = rotY ? rotY : this.angle;
+    // @ts-ignore
     const eulerTmp = new Euler(0, angleY, 0);
     const quaternionWithEuler = new Quaternion();
     quaternionWithEuler.setFromEuler(eulerTmp);
 
     const rotateMatrix = new Matrix4();
-    rotateMatrix.compose(
-      position,
-      quaternionWithEuler,
-      new Vector3D(1, 1, 1),
-    );
+    rotateMatrix.compose(position, quaternionWithEuler, new Vector3(1, 1, 1));
     return rotateMatrix;
   }
 
   /**
    * 取反线段
    * @returns {Line2D}
-* * by lianbo.guo
+   * * by lianbo.guo
    */
   public getInverse(): Line2D {
     return new Line2D(this.end, this.start);
@@ -1436,10 +1577,11 @@ export default class Line2D {
   /**
    * 返回共线线段的重合部分
    * @param compareLine
-* * by lianbo.guo
+   * * by lianbo.guo
    */
   public getRegistration(compareLine: Line2D): Line2D {
     if (!(this.isCollinearForDistance(compareLine) && this.lineIntersectLine(compareLine))) {
+      // @ts-ignore
       return null;
     }
 
@@ -1482,6 +1624,7 @@ export default class Line2D {
     allPoints.push(this.end);
     const angleVect = this.end.subtract(this.start).angle();
     allPoints.sort((prev, next) => {
+      // @ts-ignore
       const getNormal = point => {
         const vect = point.subtract(this.start);
         const isPlus = MathTool.numberEquals(angleVect, vect.angle()) ? 1 : -1;
@@ -1496,6 +1639,7 @@ export default class Line2D {
     let nextPoint = null;
     for (let index = 0; index < allPoints.length; index++) {
       if (index % 2) {
+        // @ts-ignore
         result.push(new Line2D(nextPoint, allPoints[index]));
       } else {
         nextPoint = allPoints[index];
@@ -1688,7 +1832,7 @@ export default class Line2D {
   /**
    * @Description: 找到离线最近的点
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public findClosestPoint(vecs: Vector2D[]): Vector2D {
     let minDis = Number.MAX_VALUE;
@@ -1700,10 +1844,13 @@ export default class Line2D {
         minV = v;
       }
     }
+    // @ts-ignore
     const index = vecs.indexOf(minV);
     if (index !== -1) {
+      // @ts-ignore
       vecs[index] = null;
     }
+    // @ts-ignore
     const newLine = this.getDropPoint(minV);
 
     return newLine.reverseDirection;
@@ -1712,16 +1859,23 @@ export default class Line2D {
   /**
    * @Description: 求点在线的范围内，且到点的距离
    * @param
-* @data 2019/12/25
+   * @data 2019/12/25
    */
-  public isInLineDistance(point: Vector2D, isSegment: boolean = true): { distanceSquare: number; dropPoint: Vector2D } {
+  public isInLineDistance(
+    point: Vector2D,
+    isSegment: boolean = true,
+  ): { distanceSquare: number; dropPoint: Vector2D } {
     if (MathTool.isZeroNumber(this.lengthSquared)) {
+      // @ts-ignore
       return null;
     }
     const startToPoint = point.subtract(this.start);
     const dotProductResult = this.direction.dotProduct(startToPoint) / this.lengthSquared;
     if (isSegment) {
-      if (MathTool.numberGreaterEqual(dotProductResult, 0) && MathTool.numberLessEqual(dotProductResult, 1)) {
+      if (
+        MathTool.numberGreaterEqual(dotProductResult, 0) &&
+        MathTool.numberLessEqual(dotProductResult, 1)
+      ) {
         const dropPoint = this.direction.multiplyByNo(dotProductResult).addV(this.start);
         return { distanceSquare: dropPoint.distanceSquared(point), dropPoint };
       }
@@ -1730,6 +1884,7 @@ export default class Line2D {
       return { distanceSquare: dropPoint.distanceSquared(point), dropPoint };
     }
 
+    // @ts-ignore
     return null;
   }
 
@@ -1764,6 +1919,7 @@ export default class Line2D {
 
   public mergeSegement(line: Line2D): Line2D {
     if (!Line2D.isParallel(this, line)) {
+      // @ts-ignore
       return null;
     }
     if (this.start.equals(line.start)) {
@@ -1778,8 +1934,10 @@ export default class Line2D {
     if (this.end.equals(line.end)) {
       return new Line2D(this.start, line.start);
     }
+    // @ts-ignore
     return null;
   }
+
   /**
    * 是否投影到起始点和端点之间的线段上，包括端点
    * @param point
@@ -1794,19 +1952,16 @@ export default class Line2D {
     const dirE2 = this.start.subtract(this.end);
     return Vector2D.dotProduct(dirS1, dirS2) > 0 && Vector2D.dotProduct(dirE1, dirE2) > 0;
   }
+
   /**
    * @Description: 线段旋转
    * @author
-* @data 2019/12/25
+   * @data 2019/12/25
    */
   public rotateLine(rot: number): Line2D {
     const newEnd = Vector2D.rotateAroundPoint(this.end, -rot, this.start);
     return new Line2D(this.start, newEnd);
   }
-
-  public static horizontalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.X_AXIS);
-
-  public static verticalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.Y_AXIS);
 
   public scale(num: number): Line2D {
     return new Line2D(
@@ -1825,7 +1980,7 @@ export default class Line2D {
   }
 
   // 找到此点到一条直线的垂足
-  public footPoint(line: Line2D, v:Vector2D): Vector2D {
+  public footPoint(line: Line2D, v: Vector2D): Vector2D {
     let retVal: Vector2D = new Vector2D();
 
     const dx: number = line.start.x - line.end.x;
@@ -1836,7 +1991,8 @@ export default class Line2D {
     }
 
     let u: number =
-      (v.x - line.start.x) * (line.start.x - line.end.x) + (v.y - line.start.y) * (line.start.y - line.end.y);
+      (v.x - line.start.x) * (line.start.x - line.end.x) +
+      (v.y - line.start.y) * (line.start.y - line.end.y);
     u = u / (dx * dx + dy * dy);
 
     retVal.x = line.start.x + u * dx;
@@ -1850,58 +2006,8 @@ export default class Line2D {
    * @param
    * @data 2019/12/25
    */
-  public distancePointToLine(line: Line2D, v:Vector2D): number {
-    const ptFoot: Vector2D = this.footPoint(line,v);
+  public distancePointToLine(line: Line2D, v: Vector2D): number {
+    const ptFoot: Vector2D = this.footPoint(line, v);
     return v.distance(ptFoot);
-  }
-
-
-  public static exchangeVec(para: Line2D[]) {
-    let tmp: Line2D = null;
-
-    tmp = para[0];
-    para[0] = para[1];
-    para[1] = tmp;
-  }
-
-
-  // 注意：哪些点是线上的点，哪个点是测试点，不能搞混
-  public static collinear(ptLine1: Vector2D, ptLine2: Vector2D, ptTest: Vector2D, tol: number = 0.00001): boolean {
-    // return MathTool.numberEquals(ptTest.distanceToLine(new Line2D(ptLine1, ptLine2)), 0.0, tol);
-
-    // 			var dir1:Vector2D = ptTest.subtract(ptLine1);
-    // 			var dir2:Vector2D = ptTest.subtract(ptLine2);
-    // 			var angle:number = MathTool.toDegrees(Math.abs(dir1.angleBetween(dir2)));
-    // 			return MathTool.numberEquals(angle, 0.0, tol) ||
-    // 				MathTool.numberEquals(angle, 180, tol);
-
-    // 			return new Line2D(ptLine1, ptLine2).isVector2DOnLine(ptTest, tol);
-
-    const line: Line2D = new Line2D(ptLine1, ptLine2);
-    const ptFoot: Vector2D = line.footPoint(line,ptTest);
-    return ptFoot.distance(ptTest) <= tol;
-  }
-
-  public static Compute_Golden_Proportion(startPt: Vector2D, endPt: Vector2D): Vector2D[] {
-    const newline2d: Line2D = new Line2D(startPt, endPt);
-    // var Golden_Proportion: number = 0.618;
-    const TargetLength: number = Vector2D.GOLDEN_PROPORTION * newline2d.length;
-    const LinelCenter: Vector2D = newline2d.center;
-    // let Results: Vector2D[];
-    const Results: Vector2D[] = [];
-
-    if (MathTool.isZeroNumber(startPt.x - endPt.x)) {
-      Results.push(new Vector2D(LinelCenter.x - TargetLength, LinelCenter.y));
-      Results.push(new Vector2D(LinelCenter.x + TargetLength, LinelCenter.y));
-    } else if (MathTool.isZeroNumber(startPt.y - endPt.y)) {
-      Results.push(new Vector2D(LinelCenter.x, LinelCenter.y - TargetLength));
-      Results.push(new Vector2D(LinelCenter.x, LinelCenter.y + TargetLength));
-    } else {
-      const verticalwallslope: number = -(startPt.x - endPt.x) / (startPt.y - endPt.y);
-      const XStep: number = TargetLength / Math.sqrt(verticalwallslope * verticalwallslope + 1);
-      Results[0] = new Vector2D(LinelCenter.x - XStep, LinelCenter.y - XStep * verticalwallslope);
-      Results[1] = new Vector2D(LinelCenter.x + XStep, LinelCenter.y + XStep * verticalwallslope);
-    }
-    return Results;
   }
 }

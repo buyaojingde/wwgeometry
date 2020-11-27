@@ -1,30 +1,60 @@
 /**
  * 绘制方法
  */
-import { Graphics } from 'pixi.js';
-import Line2D from '../../Model/Geometry/Line2D';
-import Lineseg2D from '../../Model/Geometry/Lineseg2D';
-import Vector2D from '../../Model/Geometry/Vector2D';
+import Constant from "../../../utils/Math/contanst/constant";
+import Box from "../../../utils/Math/geometry/Box";
+import Point from "../../../utils/Math/geometry/Point";
+import Vector2 from "../../../utils/Math/geometry/Vector2";
+import GeometryTool from "../../../utils/Math/tool/GeometryTool";
+import { Graphics } from "pixi.js";
+import Line2D from "../../Model/Geometry/Line2D";
+import Lineseg2D from "../../Model/Geometry/Lineseg2D";
+import Vector2D from "../../Model/Geometry/Vector2D";
 
 export default class GraphicsTool {
-// 画原点
-  public static drawZeroPoint() {
-    const zero = new Graphics();
+  // 画原点
+  public static drawZeroPoint(
+    zero: Graphics,
+    zeroPoint: Point = Point.ZERO
+  ): Graphics {
+    if (!zero) zero = new Graphics();
     const colorX = 0xff0000;
     const colorY = 0x0dae80;
     zero.beginFill(0x0dae80, 1);
-
-    GraphicsTool.drawArrow(zero, Vector2D.ORIGIN_V2D, new Vector2D(30, 0), 4.0, colorX);
-    GraphicsTool.drawArrow(zero, Vector2D.ORIGIN_V2D, new Vector2D(0, 30), 4.0, colorY);
+    GraphicsTool.drawArrow(
+      zero,
+      zeroPoint,
+      zeroPoint.translate(new Vector2(60, 0)),
+      4.0,
+      colorX
+    );
+    GraphicsTool.drawArrow(
+      zero,
+      zeroPoint,
+      zeroPoint.translate(new Vector2(0, -60)),
+      4.0,
+      colorY
+    );
     zero.lineStyle(1, 0xffffff, 1);
-    GraphicsTool.drawCircle(zero, Vector2D.zero, 1);
+    GraphicsTool.drawCircle(zero, zeroPoint, 1);
     zero.endFill();
     return zero;
   }
 
-  public static drawLine(graphicsInst: Graphics, point1: Vector2D, point2: Vector2D) {
+  public static drawLine(
+    graphicsInst: Graphics,
+    point1: any,
+    point2: any,
+    options?: any
+  ) {
+    const lineWidth = options.lineWidth ? options.lineWidth : 1;
+    const color = options.color ? options.color : 0x0000000;
+    const alpha = options.alpha ? options.alpha : 1;
+    graphicsInst.lineStyle(lineWidth, color, alpha);
+    graphicsInst.beginFill(color);
     graphicsInst.moveTo(point1.x, point1.y);
     graphicsInst.lineTo(point2.x, point2.y);
+    graphicsInst.endFill();
   }
 
   /**
@@ -34,18 +64,23 @@ export default class GraphicsTool {
    * @param point2 终点
    * @param gap 步长
    */
-  public static drawDashedLine(graphicsInst: Graphics, point1: Vector2D, point2: Vector2D, gap: number) {
-    let v2d1: Vector2D = null;
-    let v2d2: Vector2D = null;
-    const distance: number = Vector2D.distance(point1, point2);
+  public static drawDashedLine(
+    graphicsInst: Graphics,
+    point1: Point,
+    point2: Point,
+    gap: number
+  ): void {
+    let v2d1: Vector2D;
+    let v2d2: Vector2D;
+    const distance: number = point1.distanceToPoint(point2);
     let temp: number = 0;
     while (temp < distance) {
-      v2d1 = Vector2D.interpolate(point2, point1, temp / distance);
+      v2d1 = GeometryTool.interpolate(point2, point1, temp / distance);
       temp += gap;
       if (temp > distance) {
         temp = distance;
       }
-      v2d2 = Vector2D.interpolate(point2, point1, temp / distance);
+      v2d2 = GeometryTool.interpolate(point2, point1, temp / distance);
       graphicsInst.moveTo(v2d1.x, v2d1.y);
       graphicsInst.lineTo(v2d2.x, v2d2.y);
       temp += gap;
@@ -54,12 +89,17 @@ export default class GraphicsTool {
   }
 
   /**
-   * @Description: 按段画虚线
+   * @Description: 按段画数量画虚线
    * @param
    * @data 2019/12/25
    */
-  public static drawDashedLineSegment(graphicsInst: Graphics, point1: Vector2D, point2: Vector2D, segment: number) {
-    const distance: number = Vector2D.distance(point1, point2);
+  public static drawDashedLineSegment(
+    graphicsInst: Graphics,
+    point1: Point,
+    point2: Point,
+    segment: number
+  ) {
+    const distance: number = point1.distanceToPoint(point2);
     const gap = distance / segment / 2;
     GraphicsTool.drawDashedLine(graphicsInst, point1, point2, gap);
   }
@@ -80,8 +120,8 @@ export default class GraphicsTool {
     param2: Vector2D,
     radius: number,
     startAngle: number,
-    angleValue: number,
-  ) {
+    angleValue: number
+  ): void {
     let num1: number = NaN;
     let controlX: number = NaN;
     let controlY: number = NaN;
@@ -94,7 +134,10 @@ export default class GraphicsTool {
 
     graphicsInst.moveTo(px, py);
     angleValue = Math.abs(angleValue) % (2 * Math.PI);
-    graphicsInst.lineTo(px + radius * Math.cos(startAngle), py + radius * Math.sin(startAngle));
+    graphicsInst.lineTo(
+      px + radius * Math.cos(startAngle),
+      py + radius * Math.sin(startAngle)
+    );
     let temp = 1;
     while (temp <= num2) {
       startAngle = startAngle + num3;
@@ -112,23 +155,18 @@ export default class GraphicsTool {
     return;
   }
 
-  public static drawBox(graphics: Graphics, param1: Vector2D, param2: Vector2D, param3: number) {
-    const points = calculateBoundingPoints(param2, param1);
-    graphics.beginFill(param3);
-    GraphicsTool.drawPolygon(graphics, points);
-    graphics.endFill();
+  // public static drawBox(graphics: Graphics, param1: Point, param2: Point, param3: number) {
+  //   const points = new Segment(param1, param2).box.points;
+  //   graphics.beginFill(param3);
+  //   GraphicsTool.drawPolygon(graphics, points);
+  //   graphics.endFill();
+  // }
 
-    function calculateBoundingPoints(vec1: Vector2D, vec2: Vector2D, num: number = 0): Vector2D[] {
-      const vecs = [];
-      vecs.push(new Vector2D(-vec1.x / 2, -vec1.y / 2).rotateBy(num).incrementBy(vec2));
-      vecs.push(new Vector2D(vec1.x / 2, -vec1.y / 2).rotateBy(num).incrementBy(vec2));
-      vecs.push(new Vector2D(vec1.x / 2, vec1.y / 2).rotateBy(num).incrementBy(vec2));
-      vecs.push(new Vector2D(-vec1.x / 2, vec1.y / 2).rotateBy(num).incrementBy(vec2));
-      return vecs;
-    }
-  }
-
-  public static drawPolygon(graphicsInst: Graphics, points: Vector2D[], len: number = 1) {
+  public static drawPolygon(
+    graphicsInst: Graphics,
+    points: any[],
+    len: number = 1
+  ) {
     const vec = points;
 
     if (!vec.length) {
@@ -146,7 +184,11 @@ export default class GraphicsTool {
     graphicsInst.lineTo(vec[0].x * len, vec[0].y * len);
   }
 
-  public static drawPolygonDash(graphicsInst: Graphics, points: Vector2D[], len: number = 1) {
+  public static drawPolygonDash(
+    graphicsInst: Graphics,
+    points: Vector2D[],
+    len: number = 1
+  ) {
     const vec = points;
 
     if (!vec.length) {
@@ -164,12 +206,12 @@ export default class GraphicsTool {
     // graphicsInst.lineTo(vec[0].x * len, vec[0].y * len);
   }
 
-  public static drawCircle(graphics: Graphics, point: Vector2D, radius: number) {
+  public static drawCircle(graphics: Graphics, point: Point, radius: number) {
     graphics.drawCircle(point.x, point.y, radius);
   }
 
   // 销毁子对象
-  public static destroy(view, destroySelf?: boolean) {
+  public static destroy(view: any, destroySelf?: boolean) {
     if (view.children) {
       const oldChildren = view.removeChildren(0, view.children.length);
       for (const child of oldChildren) {
@@ -179,34 +221,53 @@ export default class GraphicsTool {
     }
   }
 
-  public static drawTriangle(p: Vector2D, h: number, base: number, dir: Vector2D): Vector2D[] {
-    const points: Vector2D[] = [p];
-    dir.normalize();
-    const dropPoint = p.addV(dir.multiplyByNo(h));
-    const baseDir = dir.getLeftNormal();
-    const p1 = dropPoint.addV(baseDir.multiplyByNo(base / 2));
-    const p2 = dropPoint.addV(baseDir.multiplyByNo(-base / 2));
+  public static drawTriangle(
+    p: Point,
+    h: number,
+    base: number,
+    dir: Vector2
+  ): Point[] {
+    const points: Point[] = [p];
+    const nDir: Vector2 = dir.normalize;
+    const dropPoint = p.translate(nDir.multiply(h));
+    const baseDir = nDir.ccwNormal;
+    const p1 = dropPoint.translate(baseDir.multiply(base / 2));
+    const p2 = dropPoint.translate(baseDir.multiply(-base / 2));
     points.push(p1);
     points.push(p2);
     return points;
   }
 
-  public static drawArrow(grap: Graphics, start: Vector2D, end: Vector2D, arrowWidth: number, color: number): Graphics {
-    const direction = end.subtract(start).normalizeNo();
+  public static drawArrow(
+    grap: Graphics,
+    start: Point,
+    end: Point,
+    arrowWidth: number,
+    color: number
+  ): Graphics {
+    const direction = end.subtract(start).normalize;
     const trianglePoints2 = GraphicsTool.drawTriangle(
       end,
       arrowWidth,
       arrowWidth,
-      direction.multiplyByNo(-1),
+      direction.multiply(-1)
     );
-    grap.lineStyle(1.5, color);
-    const newEnd = end.addV(direction.multiplyByNo(-arrowWidth));
-    GraphicsTool.drawLine(grap, start, newEnd);
+    const newEnd = end.translate(direction.multiply(-arrowWidth));
+    GraphicsTool.drawLine(grap, start, newEnd, {
+      lineWidth: 1.5,
+      color: color,
+    });
     grap.lineStyle(0, color);
     grap.beginFill(color, 1);
     grap.endFill();
     grap.beginFill(color, 1);
     GraphicsTool.drawPolygon(grap, trianglePoints2);
+    grap.endFill();
     return grap;
+  }
+
+  public static drawBox(grp: Graphics, box: Box) {
+    grp.lineStyle(1, Constant.colorMap.RED, 1);
+    grp.drawRect(box.min.x, box.min.y, box.width, box.height);
   }
 }

@@ -2,7 +2,8 @@
  * * by lianbo.guo
  **/
 
-import "pixi-layers";
+import 'pixi-layers';
+import * as PIXI from 'pixi.js';
 
 // export class Group {
 //   private _index: number;
@@ -13,7 +14,8 @@ import "pixi-layers";
 //   }
 // }
 export enum LayerOrder {
-  Column = 0,
+  Room,
+  Structure,
   Controller,
   Camera,
 }

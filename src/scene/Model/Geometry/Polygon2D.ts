@@ -17,22 +17,25 @@ import Vector2D from './Vector2D';
 // const preprocessPolygon = require('point-in-big-polygon');
 // declare function require(moduleName: string): any;
 export default class Polygon2D {
+  private _invalidateFlag: boolean;
+
+  constructor(vecs: Vector2D[]) {
+    this._vertices = [];
+    this._boundingBox = new BoundingBox2D();
+    this._invalidateFlag = false;
+
+    if (vecs) {
+      this.vertices = vecs.concat();
+      // console.error("this.vertices :" + this.vertices.toString())
+    }
+  }
+
   get debugCad(): string {
     return Vector2DTool.getCadDebugString(this.vertices);
   }
 
   set debugCad(s: string) {
     // only for debug
-  }
-
-  get vertices(): Vector2D[] {
-    return this._vertices;
-  }
-
-  set vertices(vecs: Vector2D[]) {
-    this._vertices = vecs;
-    this.invalidate();
-    return;
   }
 
   get barryCenter(): Vector2D {
@@ -73,12 +76,7 @@ export default class Polygon2D {
     return this.boundingBox.getArea();
   }
 
-  get boundingBox(): BoundingBox2D {
-    if (!this._invalidateFlag) {
-      this.build();
-    }
-    return this._boundingBox;
-  }
+  private _boundingPoly!: Polygon2D;
 
   get boundingPoly(): Polygon2D {
     if (!this._boundingPoly) {
@@ -89,10 +87,26 @@ export default class Polygon2D {
     return this._boundingPoly;
   }
 
-  private _boundingPoly: Polygon2D;
   private _vertices: Vector2D[];
+
+  get vertices(): Vector2D[] {
+    return this._vertices;
+  }
+
+  set vertices(vecs: Vector2D[]) {
+    this._vertices = vecs;
+    this.invalidate();
+    return;
+  }
+
   private _boundingBox: BoundingBox2D;
-  private _invalidateFlag: boolean;
+
+  get boundingBox(): BoundingBox2D {
+    if (!this._invalidateFlag) {
+      this.build();
+    }
+    return this._boundingBox;
+  }
 
   public static isIntersected(polygon1: Polygon2D, polygon2: Polygon2D): boolean {
     const poly6: BoundingBox2D = polygon1.boundingBox;
@@ -103,12 +117,12 @@ export default class Polygon2D {
     const len1: number = polygon1.vertices.length;
     const len2: number = polygon2.vertices.length;
     if (
-        polygon1.contains(polygon2.vertices[0]) ||
-        polygon1.contains(polygon2.vertices[len2 - 1]) ||
-        polygon1.contains(polygon2.vertices[len2 / 2]) ||
-        polygon2.contains(polygon1.vertices[0]) ||
-        polygon2.contains(polygon1.vertices[len1 - 1]) ||
-        polygon2.contains(polygon1.vertices[len1 / 2])
+      polygon1.contains(polygon2.vertices[0]) ||
+      polygon1.contains(polygon2.vertices[len2 - 1]) ||
+      polygon1.contains(polygon2.vertices[len2 / 2]) ||
+      polygon2.contains(polygon1.vertices[0]) ||
+      polygon2.contains(polygon1.vertices[len1 - 1]) ||
+      polygon2.contains(polygon1.vertices[len1 / 2])
     ) {
       return true;
     }
@@ -130,7 +144,11 @@ export default class Polygon2D {
    *
    * @return 是否相交
    * */
-  public static isIntersectedIgnoreSide(polygon1: Polygon2D, polygon2: Polygon2D, tolOnSide: number = 1e-3): boolean {
+  public static isIntersectedIgnoreSide(
+    polygon1: Polygon2D,
+    polygon2: Polygon2D,
+    tolOnSide: number = 1e-3,
+  ): boolean {
     const lines1: Lineseg2D[] = polygon1.getSegEdges();
     const lines2: Lineseg2D[] = polygon2.getSegEdges();
 
@@ -139,13 +157,12 @@ export default class Polygon2D {
         const ptIntersect: Vector2D = Lineseg2D.getIntersection(line1, line2, tolOnSide, 5);
         if (ptIntersect) {
           if (
-              // 交点是线段端点的情况
-              ptIntersect.equals(line1.start, tolOnSide) ||
-              ptIntersect.equals(line1.end, tolOnSide) ||
-              ptIntersect.equals(line2.start, tolOnSide) ||
-              ptIntersect.equals(line2.end, tolOnSide)
+            // 交点是线段端点的情况
+            ptIntersect.equals(line1.start, tolOnSide) ||
+            ptIntersect.equals(line1.end, tolOnSide) ||
+            ptIntersect.equals(line2.start, tolOnSide) ||
+            ptIntersect.equals(line2.end, tolOnSide)
           ) {
-            continue;
           } else {
             return true;
           }
@@ -161,7 +178,11 @@ export default class Polygon2D {
    *
    * @return 是否相交
    * */
-  public static isIntersectedForPolygon(polygon1: Polygon2D, polygon2: Polygon2D, tolOnSide: number = 1e-3): boolean {
+  public static isIntersectedForPolygon(
+    polygon1: Polygon2D,
+    polygon2: Polygon2D,
+    tolOnSide: number = 1e-3,
+  ): boolean {
     const lines1: Lineseg2D[] = polygon1.getSegEdges();
     const lines2: Lineseg2D[] = polygon2.getSegEdges();
     // MarsTest.clear();
@@ -170,12 +191,11 @@ export default class Polygon2D {
         const ptIntersect: Vector2D = Lineseg2D.getIntersection(line1, line2, tolOnSide, 5);
         if (ptIntersect) {
           if (
-              // 交点是线段端点的情况
-              ptIntersect.equals(line1.start, tolOnSide) ||
-              ptIntersect.equals(line1.end, tolOnSide)
+            // 交点是线段端点的情况
+            ptIntersect.equals(line1.start, tolOnSide) ||
+            ptIntersect.equals(line1.end, tolOnSide)
           ) {
             // MarsTest.drawPoint(ptIntersect);
-            continue;
           } else {
             return true;
           }
@@ -194,9 +214,9 @@ export default class Polygon2D {
    * @returns true 表示相交或包含，false表示不包含不相交
    */
   public static isIntersectedIgnoreSideAdvance(
-      polygon1: Polygon2D,
-      polygon2: Polygon2D,
-      tolOnSide: number = 1e-3,
+    polygon1: Polygon2D,
+    polygon2: Polygon2D,
+    tolOnSide: number = 1e-3,
   ): boolean {
     let isValid = this.isIntersectedIgnoreSide(polygon1, polygon2, tolOnSide);
     // 当边不相交时判断中心点是否存在包含
@@ -214,8 +234,8 @@ export default class Polygon2D {
    * */
   public static isOneContainOne(polygon1: Polygon2D, polygon2: Polygon2D): number {
     let nPreRet: number = 0;
-    let polygonBig: Polygon2D = null;
-    let polygonSmall: Polygon2D = null;
+    let polygonBig!: Polygon2D;
+    let polygonSmall!: Polygon2D;
     if (polygon1.contains(polygon2.vertices[0])) {
       nPreRet = 1;
       polygonBig = polygon1;
@@ -245,8 +265,8 @@ export default class Polygon2D {
    * */
   public static isOneContainOneInclusiveSide(polygon1: Polygon2D, polygon2: Polygon2D): number {
     let nPreRet: number = 0;
-    let polygonBig: Polygon2D = null;
-    let polygonSmall: Polygon2D = null;
+    let polygonBig!: Polygon2D;
+    let polygonSmall!: Polygon2D;
     if (polygon1.containsInclusive(polygon2.vertices[0])) {
       nPreRet = 1;
       polygonBig = polygon1;
@@ -277,9 +297,9 @@ export default class Polygon2D {
    * @return EPolygonContainType
    */
   public static calcContainRelationForTurf(
-      polygonA: Polygon2D,
-      polygonB: Polygon2D,
-      toleranceArea = 1e-3,
+    polygonA: Polygon2D,
+    polygonB: Polygon2D,
+    toleranceArea = 1e-3,
   ): EPolygonContainType {
     const polygonIntersect: Polygon2D = polygonA.intersectPolygon(polygonB, toleranceArea);
     if (polygonIntersect === null) {
@@ -290,8 +310,8 @@ export default class Polygon2D {
       return EPolygonContainType.Split;
     } else {
       if (
-          !MathTool.numberEquals(polygonIntersect.area, polygonB.area, toleranceArea) &&
-          !MathTool.numberEquals(polygonIntersect.area, polygonA.area, toleranceArea)
+        !MathTool.numberEquals(polygonIntersect.area, polygonB.area, toleranceArea) &&
+        !MathTool.numberEquals(polygonIntersect.area, polygonA.area, toleranceArea)
       ) {
         // MarsTest.clear();
         // MarsTest.drawPolygon(polygonIntersect);
@@ -591,20 +611,77 @@ export default class Polygon2D {
     let result: boolean;
     for (let i = 0; i < vecs.length - 1; ++i) {
       result = pol.isLineIntersectRectangle(
-          vecs[i].x,
-          vecs[i].y,
-          vecs[i + 1].x,
-          vecs[i + 1].y,
-          polTopLeft.x,
-          polTopLeft.y,
-          polBottumRight.x,
-          polBottumRight.y,
+        vecs[i].x,
+        vecs[i].y,
+        vecs[i + 1].x,
+        vecs[i + 1].y,
+        polTopLeft.x,
+        polTopLeft.y,
+        polBottumRight.x,
+        polBottumRight.y,
       );
       if (result) {
         return true;
       }
     }
     return false;
+  }
+
+  public static buildFromTurfs(poly: Polygon | MultiPolygon): Polygon2D[] {
+    try {
+      const Polygon2Ds: Polygon2D[] = [];
+      for (const positions of poly.coordinates) {
+        const ps: Vector2D[] = [];
+        for (const position of positions[0]) {
+          // @ts-ignore
+          ps.push(new Vector2D(position[0], position[1]));
+        }
+        const newPoly: Polygon2D = new Polygon2D(ps);
+        newPoly.vertices.pop();
+        Polygon2Ds.push(newPoly);
+      }
+      return Polygon2Ds;
+    } catch (e) {
+      // @ts-ignore
+      return null;
+    }
+  }
+
+  public static buildFromTurf(poly: Polygon | MultiPolygon): Polygon2D {
+    try {
+      let positions = poly.coordinates[0] as number[][];
+      positions = positions.slice(0, positions.length - 1);
+      return new Polygon2D([...positions.map(coordinate => new Vector2D(...coordinate))]);
+    } catch (e) {
+      // @ts-ignore
+      return null;
+    }
+  }
+
+  public static rectToPolygon(
+    pos: Vector2D,
+    length: number,
+    width: number,
+    angle: number,
+  ): Polygon2D {
+    const horizontalV = new Vector2D(Math.cos(angle), Math.sin(angle));
+    const verticalV = horizontalV.getRightNormal();
+    const halfLength = length / 2;
+    const halfWidth = width / 2;
+    const p0 = pos
+      .addV(horizontalV.multiplyByNo(halfLength))
+      .addV(verticalV.multiplyByNo(halfWidth));
+    const p1 = pos
+      .addV(horizontalV.multiplyByNo(-halfLength))
+      .addV(verticalV.multiplyByNo(halfWidth));
+    const p2 = pos
+      .addV(horizontalV.multiplyByNo(-halfLength))
+      .addV(verticalV.multiplyByNo(-halfWidth));
+    const p3 = pos
+      .addV(horizontalV.multiplyByNo(halfLength))
+      .addV(verticalV.multiplyByNo(-halfWidth));
+
+    return new Polygon2D([p0, p1, p2, p3]);
   }
 
   public containsBox(box2d: Box2D): boolean {
@@ -617,18 +694,6 @@ export default class Polygon2D {
     return true;
   }
 
-  constructor(vecs: Vector2D[] = null) {
-    this._boundingPoly = null;
-    this._vertices = [];
-    this._boundingBox = new BoundingBox2D();
-    this._invalidateFlag = false;
-
-    if (vecs) {
-      this.vertices = vecs.concat();
-      // console.error("this.vertices :" + this.vertices.toString())
-    }
-  }
-
   public build() {
     this._invalidateFlag = true;
     this._boundingBox.invalidate();
@@ -637,24 +702,6 @@ export default class Polygon2D {
     }
     this._boundingBox.includeValues(this._vertices);
     return;
-  }
-
-  public clockwise() {
-    if (!this.isClockwise()) {
-      this._vertices.reverse();
-    }
-    return;
-  }
-
-  public counterClockwise() {
-    if (this.isClockwise()) {
-      this._vertices.reverse();
-    }
-    return;
-  }
-
-  public isClockwise(): boolean {
-    return Polygon2D.calculateSignedArea(this._vertices) > 0;
   }
 
   //     getLeftBottom() : Vector2D
@@ -736,6 +783,24 @@ export default class Polygon2D {
   // 	sorts.sort(compare);
   // 	return sorts[0];
   // }
+
+  public clockwise() {
+    if (!this.isClockwise()) {
+      this._vertices.reverse();
+    }
+    return;
+  }
+
+  public counterClockwise() {
+    if (this.isClockwise()) {
+      this._vertices.reverse();
+    }
+    return;
+  }
+
+  public isClockwise(): boolean {
+    return Polygon2D.calculateSignedArea(this._vertices) > 0;
+  }
 
   public getEdges(): Line2D[] {
     let num1: number = 0;
@@ -825,28 +890,28 @@ export default class Polygon2D {
    * @return 是否相交
    */
   public isLineIntersectRectangle(
-      linePointX1: number,
-      linePointY1: number,
-      linePointX2: number,
-      linePointY2: number,
-      rectangleLeftTopX: number,
-      rectangleLeftTopY: number,
-      rectangleRightBottomX: number,
-      rectangleRightBottomY: number,
+    linePointX1: number,
+    linePointY1: number,
+    linePointX2: number,
+    linePointY2: number,
+    rectangleLeftTopX: number,
+    rectangleLeftTopY: number,
+    rectangleRightBottomX: number,
+    rectangleRightBottomY: number,
   ): boolean {
     const lineHeight: number = linePointY1 - linePointY2;
     const lineWidth: number = linePointX2 - linePointX1; // 计算叉乘
     const c: number = linePointX1 * linePointY2 - linePointX2 * linePointY1;
 
     if (
-        (lineHeight * rectangleLeftTopX + lineWidth * rectangleLeftTopY + c >= 0 &&
-            lineHeight * rectangleRightBottomX + lineWidth * rectangleRightBottomY + c <= 0) ||
-        (lineHeight * rectangleLeftTopX + lineWidth * rectangleLeftTopY + c <= 0 &&
-            lineHeight * rectangleRightBottomX + lineWidth * rectangleRightBottomY + c >= 0) ||
-        (lineHeight * rectangleLeftTopX + lineWidth * rectangleRightBottomY + c >= 0 &&
-            lineHeight * rectangleRightBottomX + lineWidth * rectangleLeftTopY + c <= 0) ||
-        (lineHeight * rectangleLeftTopX + lineWidth * rectangleRightBottomY + c <= 0 &&
-            lineHeight * rectangleRightBottomX + lineWidth * rectangleLeftTopY + c >= 0)
+      (lineHeight * rectangleLeftTopX + lineWidth * rectangleLeftTopY + c >= 0 &&
+        lineHeight * rectangleRightBottomX + lineWidth * rectangleRightBottomY + c <= 0) ||
+      (lineHeight * rectangleLeftTopX + lineWidth * rectangleLeftTopY + c <= 0 &&
+        lineHeight * rectangleRightBottomX + lineWidth * rectangleRightBottomY + c >= 0) ||
+      (lineHeight * rectangleLeftTopX + lineWidth * rectangleRightBottomY + c >= 0 &&
+        lineHeight * rectangleRightBottomX + lineWidth * rectangleLeftTopY + c <= 0) ||
+      (lineHeight * rectangleLeftTopX + lineWidth * rectangleRightBottomY + c <= 0 &&
+        lineHeight * rectangleRightBottomX + lineWidth * rectangleLeftTopY + c >= 0)
     ) {
       if (rectangleLeftTopX > rectangleRightBottomX) {
         const temp: number = rectangleLeftTopX;
@@ -859,10 +924,10 @@ export default class Polygon2D {
         rectangleRightBottomY = temp1;
       }
       if (
-          (linePointX1 < rectangleLeftTopX && linePointX2 < rectangleLeftTopX) ||
-          (linePointX1 > rectangleRightBottomX && linePointX2 > rectangleRightBottomX) ||
-          (linePointY1 > rectangleLeftTopY && linePointY2 > rectangleLeftTopY) ||
-          (linePointY1 < rectangleRightBottomY && linePointY2 < rectangleRightBottomY)
+        (linePointX1 < rectangleLeftTopX && linePointX2 < rectangleLeftTopX) ||
+        (linePointX1 > rectangleRightBottomX && linePointX2 > rectangleRightBottomX) ||
+        (linePointY1 > rectangleLeftTopY && linePointY2 > rectangleLeftTopY) ||
+        (linePointY1 < rectangleRightBottomY && linePointY2 < rectangleRightBottomY)
       ) {
         return false;
       } else {
@@ -872,6 +937,18 @@ export default class Polygon2D {
       return false;
     }
   }
+
+  // containsBox(box2d: Box2D): boolean {
+  //   //var edges:Line2D[] = box2d.getEdges();
+  //   var edges: Line2D[]
+
+  //   for (var edge of edges) {
+  //     if (!this.containsSegment(edge)) {
+  //       return false
+  //     }
+  //   }
+  //   return true
+  // }
 
   /**
    * 点在多边形内或包含边上
@@ -915,18 +992,6 @@ export default class Polygon2D {
     return this.contains(vec);
   }
 
-  // containsBox(box2d: Box2D): boolean {
-  //   //var edges:Line2D[] = box2d.getEdges();
-  //   var edges: Line2D[]
-
-  //   for (var edge of edges) {
-  //     if (!this.containsSegment(edge)) {
-  //       return false
-  //     }
-  //   }
-  //   return true
-  // }
-
   public containsSegment(line: Line2D, beTRUE: boolean = false): boolean {
     const edges: Line2D[] = this.getEdges();
     if (!this.containsInclusive(line.start) || !this.containsInclusive(line.end)) {
@@ -966,14 +1031,21 @@ export default class Polygon2D {
    */
   public intersectLine(line: Line2D): Vector2D[] {
     return this.getEdges()
-        .reduce((prev, next) => {
-          const result = Line2D.getIntersectionSegment(next, line);
-          if (result) {
-            return prev.concat(result);
-          }
-          return prev;
-        }, [])
-        .sort((prev, next) => next.distance(line.start) - prev.distance(line.start));
+      .reduce((prev, next) => {
+        const result = Line2D.getIntersectionSegment(next, line);
+        if (result) {
+          // @ts-ignore
+          return prev.concat(result);
+        }
+        return prev;
+      }, [])
+      .sort(
+        // @ts-ignore
+        (prev, next) => {
+          // @ts-ignore
+          next.distance(line.start) - prev.distance(line.start);
+        },
+      );
   }
 
   /**
@@ -982,11 +1054,11 @@ export default class Polygon2D {
    */
   public isRectangle(): boolean {
     let num8: number = 0;
-    let vec7: Vector2D = null;
-    let vec5: Vector2D = null;
-    let vec4: Vector2D = null;
-    let vec1: Vector2D = null;
-    let vec3: Vector2D = null;
+    let vec7: Vector2D;
+    let vec5: Vector2D;
+    let vec4: Vector2D;
+    let vec1: Vector2D;
+    let vec3: Vector2D;
     let num: number = NaN;
     this.counterClockwise();
     const len: number = this._vertices.length;
@@ -1029,9 +1101,13 @@ export default class Polygon2D {
 
   public isPathSplitCross(vecs: Vector2D[]): boolean {
     let num4: number = 0;
-    let line2: Line2D = null;
+    let line2: Line2D;
     const vecs3: Vector2D[] = vecs.concat();
-    if (vecs.length < 2 || !this.isPointOnEdges(vecs3[0]) || !this.isPointOnEdges(vecs3[vecs3.length - 1])) {
+    if (
+      vecs.length < 2 ||
+      !this.isPointOnEdges(vecs3[0]) ||
+      !this.isPointOnEdges(vecs3[vecs3.length - 1])
+    ) {
       return false;
     }
 
@@ -1261,8 +1337,8 @@ export default class Polygon2D {
     const checkTwoPolygonByDirection = (polygon1: Polygon2D, polygon2: Polygon2D) => {
       // 得到一个多边形的极值数组［左，上，右，下］
       function getDirection(shape: Polygon2D) {
-        const shapeEastAndWest = [],
-            shapeSourceAndNorth = [];
+        const shapeEastAndWest: any[] = [],
+          shapeSourceAndNorth: any[] = [];
         shape.vertices.forEach(point => {
           shapeEastAndWest.push(point.x);
           shapeSourceAndNorth.push(point.y);
@@ -1274,13 +1350,14 @@ export default class Polygon2D {
           Math.min.apply(null, shapeSourceAndNorth),
         ];
       }
+
       const direction1 = getDirection(polygon1),
-          direction2 = getDirection(polygon2);
+        direction2 = getDirection(polygon2);
       if (
-          direction1[0] > direction2[2] ||
-          direction1[2] < direction2[0] ||
-          direction1[1] < direction2[3] ||
-          direction1[3] > direction2[1]
+        direction1[0] > direction2[2] ||
+        direction1[2] < direction2[0] ||
+        direction1[1] < direction2[3] ||
+        direction1[3] > direction2[1]
       ) {
         return true;
       }
@@ -1296,24 +1373,30 @@ export default class Polygon2D {
 
     const checkTwoPolygonByPolygonLines = (polygon1: Polygon2D, polygon2: Polygon2D) => {
       // 计算向量叉乘
-      function crossMul(v1, v2) {
+      function crossMul(v1: any, v2: any) {
         return v1.x * v2.y - v1.y * v2.x;
       }
+
       // 计算两条线是否相交
-      function checkCross(p1, p2, p3, p4) {
+      function checkCross(p1: any, p2: any, p3: any, p4: any) {
         const isPlus = ignoreBoundary ? -1 : 1;
-        return checkTwoCross(p1, p2, p3, p4) <= isPlus * 1e-3 && checkTwoCross(p3, p4, p2, p1) <= isPlus * 1e-3;
+        return (
+          checkTwoCross(p1, p2, p3, p4) <= isPlus * 1e-3 &&
+          checkTwoCross(p3, p4, p2, p1) <= isPlus * 1e-3
+        );
       }
+
       // 计算两个向量叉乘相乘是否为负
-      function checkTwoCross(p1, p2, p3, p4) {
+      function checkTwoCross(p1: any, p2: any, p3: any, p4: any) {
         const v1 = { x: p1.x - p3.x, y: p1.y - p3.y },
-            v2 = { x: p2.x - p3.x, y: p2.y - p3.y },
-            v3 = { x: p4.x - p3.x, y: p4.y - p3.y },
-            v = crossMul(v1, v3) * crossMul(v2, v3);
+          v2 = { x: p2.x - p3.x, y: p2.y - p3.y },
+          v3 = { x: p4.x - p3.x, y: p4.y - p3.y },
+          v = crossMul(v1, v3) * crossMul(v2, v3);
         return v;
       }
+
       const vectors1 = polygon1.vertices,
-          vectors2 = polygon2.vertices;
+        vectors2 = polygon2.vertices;
       for (let i = 0, l = vectors1.length, j = l - 1; i < l; j = i, i++) {
         for (let i2 = 0, l2 = vectors2.length, j2 = l2 - 1; i2 < l; j2 = i2, i2++) {
           if (checkCross(vectors1[i], vectors1[j], vectors2[i2], vectors2[j2])) {
@@ -1331,15 +1414,15 @@ export default class Polygon2D {
     // 多边形顶点判断多边形相交
     const checkTwoPolygonByRay = (polygon1: Polygon2D, polygon2: Polygon2D) => {
       // 判断多边形顶点在另一个多边形里
-      function rayCasting(p, poly: Vector2D[]) {
+      function rayCasting(p: Vector2D, poly: Vector2D[]) {
         const px = p.x,
-            py = p.y;
+          py = p.y;
         let flag = false;
         for (let i = 0, l = poly.length, j = l - 1; i < l; j = i, i++) {
           const sx = poly[i].x,
-              sy = poly[i].y,
-              tx = poly[j].x,
-              ty = poly[j].y;
+            sy = poly[i].y,
+            tx = poly[j].x,
+            ty = poly[j].y;
           // 点与多边形顶点重合
           if ((sx === px && sy === py) || (tx === px && ty === py)) {
             return true;
@@ -1361,6 +1444,7 @@ export default class Polygon2D {
         // 射线穿过多边形边界的次数为奇数时点在多边形内
         return flag;
       }
+
       for (const vec of polygon1.vertices) {
         if (rayCasting(vec, polygon2.vertices)) {
           return true;
@@ -1376,14 +1460,14 @@ export default class Polygon2D {
 
     // 通过多边形1的极点都比多边形2的极点小或者都比多边形2的极点大来进入 通过多边形的顶点在另一个多边形内的算法
     if (
-        (directions[0][0] < directions[1][0] &&
-            directions[0][1] > directions[1][1] &&
-            directions[0][2] > directions[1][2] &&
-            directions[0][3] < directions[1][3]) ||
-        (directions[1][0] < directions[0][0] &&
-            directions[1][1] > directions[0][1] &&
-            directions[1][2] > directions[0][2] &&
-            directions[1][3] < directions[0][3])
+      (directions[0][0] < directions[1][0] &&
+        directions[0][1] > directions[1][1] &&
+        directions[0][2] > directions[1][2] &&
+        directions[0][3] < directions[1][3]) ||
+      (directions[1][0] < directions[0][0] &&
+        directions[1][1] > directions[0][1] &&
+        directions[1][2] > directions[0][2] &&
+        directions[1][3] < directions[0][3])
     ) {
       return checkTwoPolygonByRay(this, targetPolygon);
     }
@@ -1396,6 +1480,7 @@ export default class Polygon2D {
    * @param toleranceArea 容差面积
    * @returns {any} 返回相交部分的多边形 or null
    */
+  // @ts-ignore
   public intersectPolygon(targetPolygon: Polygon2D, toleranceArea = 1e-3): Polygon2D {
     try {
       const intersectResult = intersect(this.toTurf(), targetPolygon.toTurf());
@@ -1410,6 +1495,8 @@ export default class Polygon2D {
       // MarsTest.clear();
       // MarsTest.drawPolygon(targetPolygon);
       console.log(error);
+
+      // @ts-ignore
       return null;
     }
   }
@@ -1423,12 +1510,14 @@ export default class Polygon2D {
   public differencePolygon(targetPolygon: Polygon2D, toleranceArea = 1e-3): Polygon2D {
     const intersectResult = difference(this.toTurf(), targetPolygon.toTurf());
     if (intersectResult) {
+      // @ts-ignore
       const polygonResult = Polygon2D.buildFromTurf(intersectResult.geometry);
 
       if (polygonResult.area > toleranceArea) {
         return polygonResult;
       }
     }
+    // @ts-ignore
     return null;
   }
 
@@ -1447,66 +1536,23 @@ export default class Polygon2D {
 
     const intersectResult = difference(myPolygon, tarPolygon);
     if (!intersectResult) {
+      // @ts-ignore
       return null;
     }
 
+    // @ts-ignore
     if (intersectResult.geometry.type === 'MultiPolygon') {
       const polyTemp = intersectResult.geometry as MultiPolygon;
       return Polygon2D.buildFromTurfs(polyTemp);
-    } else if (intersectResult.geometry.type === 'Polygon') {
-      const polyTemp = intersectResult.geometry as Polygon;
-      return [Polygon2D.buildFromTurf(polyTemp)];
-    }
-    return null;
-  }
-
-  public differencePolygons(targetPolygon: Polygon2D): Polygon2D[] {
-    const myPolygon = this.toTurf();
-    const tarPolygon = targetPolygon.toTurf();
-    // console.log(myPolygon.geometry.coordinates);
-    // console.log(tarPolygon.geometry.coordinates);
-    // MarsTest.drawPolygon(this, false, 0x66bb6a);
-    // MarsTest.drawPolygon(targetPolygon);
-    const intersectResult = difference(myPolygon, tarPolygon);
-    if (!intersectResult) {
-      return null;
-    }
-
-    if (intersectResult.geometry.type === 'MultiPolygon') {
-      const polyTemp = intersectResult.geometry as MultiPolygon;
-      return Polygon2D.buildFromTurfs(polyTemp);
-    } else if (intersectResult.geometry.type === 'Polygon') {
-      const polyTemp = intersectResult.geometry as Polygon;
-      return [Polygon2D.buildFromTurf(polyTemp)];
-    }
-    return null;
-  }
-  public static buildFromTurfs(poly: Polygon | MultiPolygon): Polygon2D[] {
-    try {
-      const Polygon2Ds: Polygon2D[] = [];
-      for (const positions of poly.coordinates) {
-        const ps: Vector2D[] = [];
-        for (const position of positions[0]) {
-          ps.push(new Vector2D(position[0], position[1]));
-        }
-        const newPoly: Polygon2D = new Polygon2D(ps);
-        newPoly.vertices.pop();
-        Polygon2Ds.push(newPoly);
+    } else {
+      // @ts-ignore
+      if (intersectResult.geometry.type === 'Polygon') {
+        const polyTemp = intersectResult.geometry as Polygon;
+        return [Polygon2D.buildFromTurf(polyTemp)];
       }
-      return Polygon2Ds;
-    } catch (e) {
-      return null;
     }
-  }
-
-  public static buildFromTurf(poly: Polygon | MultiPolygon): Polygon2D {
-    try {
-      let positions = poly.coordinates[0] as number[][];
-      positions = positions.slice(0, positions.length - 1);
-      return new Polygon2D([...positions.map(coordinate => new Vector2D(...coordinate))]);
-    } catch (e) {
-      return null;
-    }
+    // @ts-ignore
+    return null;
   }
 
   // /**
@@ -1527,6 +1573,34 @@ export default class Polygon2D {
   //   const result = classifyPoint([p.x, p.y]);
   //   return result;
   // }
+
+  public differencePolygons(targetPolygon: Polygon2D): Polygon2D[] {
+    const myPolygon = this.toTurf();
+    const tarPolygon = targetPolygon.toTurf();
+    // console.log(myPolygon.geometry.coordinates);
+    // console.log(tarPolygon.geometry.coordinates);
+    // MarsTest.drawPolygon(this, false, 0x66bb6a);
+    // MarsTest.drawPolygon(targetPolygon);
+    const intersectResult = difference(myPolygon, tarPolygon);
+    if (!intersectResult) {
+      // @ts-ignore
+      return null;
+    }
+
+    // @ts-ignore
+    if (intersectResult.geometry.type === 'MultiPolygon') {
+      const polyTemp = intersectResult.geometry as MultiPolygon;
+      return Polygon2D.buildFromTurfs(polyTemp);
+    } else {
+      // @ts-ignore
+      if (intersectResult.geometry.type === 'Polygon') {
+        const polyTemp = intersectResult.geometry as Polygon;
+        return [Polygon2D.buildFromTurf(polyTemp)];
+      }
+    }
+    // @ts-ignore
+    return null;
+  }
 
   /**
    * @Description: 是否包含一个polygon&内相切
@@ -1576,6 +1650,7 @@ export default class Polygon2D {
     return true;
   }
 
+  // @ts-ignore
   public containsPointTurf(p: Vector2D, ignoreBoundary): boolean {
     if (this.vertices.length === 0) {
       return false;
@@ -1583,19 +1658,6 @@ export default class Polygon2D {
 
     const turfPolygon = this.toTurf();
     return booleanPointInPolygon([p.x, p.y], turfPolygon, { ignoreBoundary });
-  }
-
-  public static rectToPolygon(pos: Vector2D, length: number, width: number, angle: number): Polygon2D {
-    const horizontalV = new Vector2D(Math.cos(angle), Math.sin(angle));
-    const verticalV = horizontalV.getRightNormal();
-    const halfLength = length / 2;
-    const halfWidth = width / 2;
-    const p0 = pos.addV(horizontalV.multiplyByNo(halfLength)).addV(verticalV.multiplyByNo(halfWidth));
-    const p1 = pos.addV(horizontalV.multiplyByNo(-halfLength)).addV(verticalV.multiplyByNo(halfWidth));
-    const p2 = pos.addV(horizontalV.multiplyByNo(-halfLength)).addV(verticalV.multiplyByNo(-halfWidth));
-    const p3 = pos.addV(horizontalV.multiplyByNo(halfLength)).addV(verticalV.multiplyByNo(-halfWidth));
-
-    return new Polygon2D([p0, p1, p2, p3]);
   }
 
   public clone(): Polygon2D {
@@ -1608,31 +1670,5 @@ export default class Polygon2D {
     });
 
     return this;
-  }
-
-  /**
-   * @author lianbo
-   * @date 2020-41-29 20:41:57
-   * @Description: 多边形的质点 from d3-polygon
-   */
-  public centroid():Vector2D{
-    var i = -1,
-        n = this.vertices.length,
-        x = 0,
-        y = 0,
-        a,
-        b = this.vertices[n - 1],
-        c,
-        k = 0;
-
-    while (++i < n) {
-      a = b;
-      b = this.vertices[i];
-      k += c = a.x * b.y - b.x * a.y;
-      x += (a.x + b.x) * c;
-      y += (a.y + b.y) * c;
-    }
-    k *= 3;
-    return new Vector2D(x / k, y / k);
   }
 }
