@@ -1,10 +1,7 @@
-import Room from "@/scene/Model/Home/Room";
-import ConfigStructure from "@/utils/ConfigStructure";
-import LianBoTest from "@/utils/LianBoTest";
-import Vector2 from "@/utils/Math/geometry/Vector2";
-import { polygon } from "@turf/helpers";
 import { reaction } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
+import ConfigStructure from "../../../utils/ConfigStructure";
+import Vector2 from "../../../utils/Math/geometry/Vector2";
 import BaseEvent from "../../Base/BaseEvent";
 import Structure from "../../Model/Home/Structure";
 import Scene2D from "../index";

@@ -1,20 +1,3 @@
-import { LayerOrder, layerOrderGroups } from "@/scene/2D/Layer/LayerOrder";
-import JSTSUtils from "@/scene/2D/Utils/JSTSUtils";
-import Level from "@/scene/Model/Home/Level";
-import Room from "@/scene/Model/Home/Room";
-import Structure, { StType } from "@/scene/Model/Home/Structure";
-import ObserveVector3 from "@/scene/Model/ObserveMath/ObserveVector3";
-import ConfigStructure from "@/utils/ConfigStructure";
-import Constant from "@/utils/Math/contanst/constant";
-import Point from "@/utils/Math/geometry/Point";
-import Polygon from "@/utils/Math/geometry/Polygon";
-import Segment from "@/utils/Math/geometry/Segment";
-import Vector2 from "@/utils/Math/geometry/Vector2";
-import MathUtils from "@/utils/Math/math/MathUtils";
-import Quadtree from "@/utils/Math/math/Quadtree";
-import PolygonClipper from "@/utils/PolygonClipper";
-import { union } from "@turf/turf";
-import { reaction } from "mobx";
 import maxBy from "lodash/maxBy";
 import {
   Color,
@@ -29,8 +12,21 @@ import {
   Vector3,
 } from "three";
 import Scene2D from "../scene/2D";
+import { LayerOrder, layerOrderGroups } from "../scene/2D/Layer/LayerOrder";
 import GraphicsTool from "../scene/2D/Utils/GraphicsTool";
+import JSTSUtils from "../scene/2D/Utils/JSTSUtils";
 import GeoSurface from "../scene/Model/Geometry/GeoSurface";
+import Structure, { StType } from "../scene/Model/Home/Structure";
+import ObserveVector3 from "../scene/Model/ObserveMath/ObserveVector3";
+import ConfigStructure from "./ConfigStructure";
+import Constant from "./Math/contanst/constant";
+import Point from "./Math/geometry/Point";
+import Polygon from "./Math/geometry/Polygon";
+import Segment from "./Math/geometry/Segment";
+import Vector2 from "./Math/geometry/Vector2";
+import MathUtils from "./Math/math/MathUtils";
+import Quadtree from "./Math/math/Quadtree";
+import PolygonClipper from "./PolygonClipper";
 import GeometryFactory = jsts.geom.GeometryFactory;
 import Geometry = jsts.geom.Geometry;
 import Coordinate = jsts.geom.Coordinate;
@@ -197,9 +193,9 @@ class LianBoTest {
           item.visible &&
           (item.stType === StType.Column ||
             item.stType === StType.Framing ||
-            item.stType === StType.Wall ||
-            item.stType === StType.Window ||
-            item.stType === StType.Door)
+            item.stType === StType.Wall) // ||
+          // item.stType === StType.Window ||
+          // item.stType === StType.Door)
         );
       }
     );
@@ -213,9 +209,10 @@ class LianBoTest {
     const strs = Scene2D.getInstance()
       .home.curLevel.quadTree.retrieve(startWall.quadData)
       .filter(
-        (item) => item.data !== startWall && item.data.stType !== StType.PCWall
+        (item: any) =>
+          item.data !== startWall && item.data.stType !== StType.PCWall
       )
-      .map((item) => item.data);
+      .map((item: any) => item.data);
     const segs = startWall.outFace(strs);
     this.drawSegs(segs);
   }

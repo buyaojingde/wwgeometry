@@ -1,4 +1,4 @@
-import MathUtils from "@/utils/Math/math/MathUtils";
+import MathUtils from "../math/MathUtils";
 
 export default class Constant {
   public static colorMap = {

@@ -186,7 +186,7 @@ export default class MathTool {
   public static randomFloat(
     num2: number,
     param2: number,
-    num3: number[] = null
+    num3: number[] = []
   ): number {
     let num5: number = 0;
     let num4: number = Math.random() * (num2 - param2) + param2;
@@ -209,7 +209,7 @@ export default class MathTool {
   public static randomInt(
     num1: number,
     num2: number,
-    num3: number[] = null
+    num3: number[] = []
   ): number {
     let num5: number = 0;
     let num4: number = Math.floor(Math.random() * (num1 - num2) + num2);

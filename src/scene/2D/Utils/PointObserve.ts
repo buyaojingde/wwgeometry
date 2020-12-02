@@ -7,9 +7,9 @@ import Vector2D from "../../Model/Geometry/Vector2D";
 
 export default class PointObserve extends ObservablePoint {
   @observable
-  public _x: number;
+  public _x!: number;
   @observable
-  public _y: number;
+  public _y!: number;
 
   public toVector(): Vector2D {
     const { _x, _y } = this;

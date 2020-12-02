@@ -1,12 +1,12 @@
-import Structure from "@/scene/Model/Home/Structure";
-import Constant from "@/utils/Math/contanst/constant";
-import Point from "@/utils/Math/geometry/Point";
-import {AdsorptionTool} from "@/utils/Math/tool/AdsorptionTool";
-import {reaction} from 'mobx';
-import Vue from 'vue';
-import Model2DActive from '../../../store/Model2DActive';
-import BaseEvent from '../../Base/BaseEvent';
-import Scene2D from '../index';
+import { reaction } from "mobx";
+import Vue from "vue";
+import Model2DActive from "../../../store/Model2DActive";
+import Constant from "../../../utils/Math/contanst/constant";
+import Point from "../../../utils/Math/geometry/Point";
+import { AdsorptionTool } from "../../../utils/Math/tool/AdsorptionTool";
+import BaseEvent from "../../Base/BaseEvent";
+import Structure from "../../Model/Home/Structure";
+import Scene2D from "../index";
 import Container = PIXI.Container;
 import Graphics = PIXI.Graphics;
 
@@ -38,27 +38,27 @@ export default class EditVerticesAction extends BaseEvent {
       () => {
         return Model2DActive.editVertexState;
       },
-      state => {
+      (state) => {
         this.enable = state;
         this._readSelect = true;
         if (this.enable) {
-          this.start()
+          this.start();
         } else {
           this.end();
         }
-      },
+      }
     );
   }
 
   public initEvents(): void {
     // @ts-ignore
-    this.on('input.move', event => this.moveHandler(event));
+    this.on("input.move", (event) => this.moveHandler(event));
     // @ts-ignore
-    this.on('tap', event => this.tapHandler(event));
+    this.on("tap", (event) => this.tapHandler(event));
   }
 
   private start() {
-    Model2DActive.setCanvasCursor('pointer');
+    Model2DActive.setCanvasCursor("pointer");
     this._scene2D.pickupController.enable = false;
     this.initVertices();
   }
@@ -74,7 +74,7 @@ export default class EditVerticesAction extends BaseEvent {
     for (const structure of structures) {
       if (structure.visible) {
         for (const v of structure.boundingPoints) {
-          const vc: IColumnVertices = {vertex: v, structure: structure};
+          const vc: IColumnVertices = { vertex: v, structure: structure };
           this._vertices.push(vc);
         }
       }
@@ -84,7 +84,7 @@ export default class EditVerticesAction extends BaseEvent {
   private end() {
     this._activeLayer.removeChildren();
     this.editSt && this.editSt.setEdit(false);
-    Model2DActive.setCanvasCursor('default');
+    Model2DActive.setCanvasCursor("default");
     this._scene2D.pickupController.enable = true;
     this._scene2D.editStructure.structure = null;
     this._scene2D.editStructure.index = null;
@@ -96,12 +96,16 @@ export default class EditVerticesAction extends BaseEvent {
       return p.distanceToPointSquared(other.vertex);
     };
     if (this._readSelect) {
-      const {pageX, pageY} = event;
+      const { pageX, pageY } = event;
       const pPoint = this._scene2D.pickupController.getPoint(pageX, pageY);
       const point: Point = new Point(pPoint.x, pPoint.y);
-      this.currentP = AdsorptionTool.findAdsorptionPoint(point, this._vertices, distance);
+      this.currentP = AdsorptionTool.findAdsorptionPoint(
+        point,
+        this._vertices,
+        distance
+      );
       if (this.currentP) {
-        this.drawCircle(this.currentP.vertex)
+        this.drawCircle(this.currentP.vertex);
       } else {
         this._circleGrp && this._circleGrp.clear();
       }
@@ -130,10 +134,10 @@ export default class EditVerticesAction extends BaseEvent {
         Model2DActive.setStructureVec(geoV);
         this.activeStructure(structure, idx);
       } else {
-        console.error('why?');
+        console.error("why?");
       }
     } else {
-      Vue.prototype.$message({type: 'error', message: '请选择构建顶点'});
+      Vue.prototype.$message({ type: "error", message: "请选择构建顶点" });
       return;
     }
   }

@@ -1,9 +1,9 @@
-import Room from "@/scene/Model/Home/Room";
-import ConfigStructure from "@/utils/ConfigStructure";
-import Box from "@/utils/Math/geometry/Box";
-import Quadtree from "@/utils/Math/math/Quadtree";
+import ConfigStructure from "../../../utils/ConfigStructure";
+import Box from "../../../utils/Math/geometry/Box";
+import Quadtree from "../../../utils/Math/math/Quadtree";
 import IBuildable from "../BaseInterface/IBuildable";
 import ObjectNamed from "../BaseInterface/ObjectNamed";
+import Room from "./Room";
 import Structure, { StType } from "./Structure";
 
 export default class Level extends ObjectNamed implements IBuildable {
@@ -178,7 +178,7 @@ export default class Level extends ObjectNamed implements IBuildable {
    */
   public findByRvtId(rvtId: string): any {
     const result = [...this.structures, ...this.rooms].find(
-      (item) => item.rvtId === rvtId
+      (item: any) => item.rvtId === rvtId
     );
     return result;
   }

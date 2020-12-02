@@ -1,9 +1,9 @@
-import ObjectNamed from "@/scene/Model/BaseInterface/ObjectNamed";
-import Level from "@/scene/Model/Home/Level";
-import Structure from "@/scene/Model/Home/Structure";
-import Point from "@/utils/Math/geometry/Point";
-import Polygon from "@/utils/Math/geometry/Polygon";
 import { observable } from "mobx";
+import Point from "../../../utils/Math/geometry/Point";
+import Polygon from "../../../utils/Math/geometry/Polygon";
+import ObjectNamed from "../BaseInterface/ObjectNamed";
+import Level from "./Level";
+import Structure from "./Structure";
 
 export default class Room extends ObjectNamed {
   get level(): Level {

@@ -1,5 +1,3 @@
-import JSTSUtils from "@/scene/2D/Utils/JSTSUtils";
-import Segments from "@/utils/Math/geometry/Segments";
 import Level from "../../../scene/Model/Home/Level";
 import Room from "../../../scene/Model/Home/Room";
 import Model2DActive from "../../../store/Model2DActive";
@@ -7,13 +5,14 @@ import ConfigStructure from "../../../utils/ConfigStructure";
 import Box from "../../../utils/Math/geometry/Box";
 import Polygon from "../../../utils/Math/geometry/Polygon";
 import Segment from "../../../utils/Math/geometry/Segment";
+import Segments from "../../../utils/Math/geometry/Segments";
 import Vector2 from "../../../utils/Math/geometry/Vector2";
 import { action, observable } from "mobx";
 import Point from "../../../utils/Math/geometry/Point";
+import JSTSUtils from "../../2D/Utils/JSTSUtils";
 import { IDataObject } from "../../Interface/IDataObject";
 import IBuildable from "../BaseInterface/IBuildable";
 import ObjectIndex from "../BaseInterface/ObjectIndex";
-import flatten from "lodash/flatten";
 
 export const StType = {
   Wall: "OST_Walls",
@@ -395,19 +394,24 @@ export default class Structure
         remainderEdges.push(...difference);
       }
     }
-    return remainderEdges;
+    // return remainderEdges;
     // 过滤有梁在房间种的情况
     const roomBoxs = filterOtherSt
       .filter(
-        (item) =>
-          item instanceof Room ||
-          item.stType === StType.Wall ||
-          item.stType === StType.Framing ||
-          item.stType === StType.Column
+        (item) => item instanceof Room //||
+        // item.stType === StType.Wall ||
+        // item.stType === StType.Framing ||
+        // item.stType === StType.Column
       )
-      .map((item) => item.polygon.box.offset(3));
+      .map((item) => item.polygon.box.offset(1));
     return remainderEdges.filter(
-      (rEdge) => !roomBoxs.some((item) => item.containSeg(rEdge))
+      (rEdge) => !roomBoxs.some((item) => item.containSeg(rEdge)) //&&
+      // this.parallelSeg(rEdge)
     );
+  }
+
+  private parallelSeg(seg: Segment): boolean {
+    if (!this.midSeg) return true;
+    return this.midSeg.parallel(seg);
   }
 }

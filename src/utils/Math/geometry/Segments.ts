@@ -1,5 +1,4 @@
-import Point from "@/utils/Math/geometry/Point";
-import Segment from "@/utils/Math/geometry/Segment";
+import Segment from "./Segment";
 
 export default class Segments {
   public constructor(ps: Segment[]) {

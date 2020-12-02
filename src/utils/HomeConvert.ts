@@ -1,12 +1,12 @@
-import Room from "@/scene/Model/Home/Room";
-import Model2DActive from "@/store/Model2DActive";
-import ConfigStructure from "@/utils/ConfigStructure";
-import Point from "@/utils/Math/geometry/Point";
 import { Vector3 } from "three";
 import GeoSurface from "../scene/Model/Geometry/GeoSurface";
 import Home from "../scene/Model/Home/Home";
 import Level from "../scene/Model/Home/Level";
+import Room from "../scene/Model/Home/Room";
 import Structure from "../scene/Model/Home/Structure";
+import Model2DActive from "../store/Model2DActive";
+import ConfigStructure from "./ConfigStructure";
+import Point from "./Math/geometry/Point";
 import GeometryTool from "./Math/tool/GeometryTool";
 
 class HomeConvert {

@@ -1,10 +1,7 @@
 import GraphicsTool from "../../../scene/2D/Utils/GraphicsTool";
 import Room from "../../../scene/Model/Home/Room";
 import LianBoTest from "../../../utils/LianBoTest";
-import Constant from "../../../utils/Math/contanst/constant";
 import Box from "../../../utils/Math/geometry/Box";
-import Point from "../../../utils/Math/geometry/Point";
-import PolygonClipper from "../../../utils/PolygonClipper";
 import { reaction } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
 import BaseEvent from "../../Base/BaseEvent";

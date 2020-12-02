@@ -35,7 +35,6 @@ import ViewController from "./Manager/ViewController";
 import { pointToVector, vectorToPoint } from "./Utils";
 import DOMEventManager from "./Utils/DOMEventManager";
 import GraphicsTool from "./Utils/GraphicsTool";
-import PointObserve from "./Utils/PointObserve";
 import ViewObject from "./ViewObject/ViewObject";
 import Layer = PIXI.display.Layer;
 import Stage = PIXI.display.Stage;
@@ -315,7 +314,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.setResetPosition(levelBoundingBox, rect);
   }
 
-  // @ts-ignore
   public resetViewBox(
     levelBoundingBox: BoundingBox2D = null,
     rect: IDOMRect = null

@@ -1,7 +1,7 @@
-import Room2D from '@/scene/2D/ViewObject/Room2D';
-import Room from '@/scene/Model/Home/Room';
-import LayerBase, { LayerName } from '../../Base/LayerBase';
-import { IDataObject } from '../../Interface/IDataObject';
+import LayerBase, { LayerName } from "../../Base/LayerBase";
+import { IDataObject } from "../../Interface/IDataObject";
+import Room from "../../Model/Home/Room";
+import Room2D from "../ViewObject/Room2D";
 
 export default class RoomLayer extends LayerBase {
   protected _layerName = LayerName.Room;
@@ -10,7 +10,7 @@ export default class RoomLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Room) {
         const room2D: Room2D = new Room2D(dataObj);
-        const disposeF = (dataObj as Room).on('destroyLayerData', () => {
+        const disposeF = (dataObj as Room).on("destroyLayerData", () => {
           this.remove(dataObj);
         });
         this._disposeArr.push(disposeF);
@@ -65,7 +65,10 @@ export default class RoomLayer extends LayerBase {
     }
     // 对home数据做同步，对dataMap做数据清洗
     for (const dataObj of this.getDatas()) {
-      if (this.container.home.curLevel && !this.container.home.curLevel.rooms.includes(dataObj)) {
+      if (
+        this.container.home.curLevel &&
+        !this.container.home.curLevel.rooms.includes(dataObj)
+      ) {
         this.remove(dataObj);
       }
     }
@@ -93,7 +96,7 @@ export default class RoomLayer extends LayerBase {
    */
   public checkLeaveLayerShow(routeName: string) {
     const models = this.getDatas() as Room[];
-    models.forEach(model => {
+    models.forEach((model) => {
       switch (routeName) {
         default:
       }
@@ -111,7 +114,7 @@ export default class RoomLayer extends LayerBase {
   protected checkLayerShow(routeName: string) {
     const layerObjects: Room2D[] = this.getObjects() as Room2D[];
 
-    layerObjects.forEach(object => {
+    layerObjects.forEach((object) => {
       const room = object.room;
       if (!!room) {
         object.interactive = true;

@@ -1,8 +1,8 @@
-import RoomLayer from '@/scene/2D/Layer/RoomLayer';
-import 'pixi-layers';
-import * as PIXI from 'pixi.js';
-import View2DData from '../../../store/View2DData';
-import StructureLayer from './StructureLayer';
+import "pixi-layers";
+import * as PIXI from "pixi.js";
+import View2DData from "../../../store/View2DData";
+import RoomLayer from "./RoomLayer";
+import StructureLayer from "./StructureLayer";
 import Stage = PIXI.display.Stage;
 
 export enum HomeLayers {
@@ -10,7 +10,7 @@ export enum HomeLayers {
   Room,
 }
 
-const SCENE_2D = 'scene2D';
+const SCENE_2D = "scene2D";
 export default class HomePlan2D {
   // private container: any;
   public container: Stage;
@@ -18,19 +18,19 @@ export default class HomePlan2D {
   private _roomLayer: RoomLayer;
 
   public constructor(scene: any) {
-    console.log('new HomePlan');
+    console.log("new HomePlan");
     this.scene = scene;
     this.container = new Stage();
     this.container.interactive = false;
-    this.container.name = SCENE_2D + '_HP';
-    Object.defineProperty(this.container, 'scaleNumber', {
+    this.container.name = SCENE_2D + "_HP";
+    Object.defineProperty(this.container, "scaleNumber", {
       get: () => View2DData.scaleNumber,
     });
     const homePlanScene = {
       getStage: () => this.container,
       getScene: () => this.scene,
     };
-    Object.defineProperty(homePlanScene, 'home', {
+    Object.defineProperty(homePlanScene, "home", {
       get: () => scene.home,
     });
 
@@ -58,25 +58,28 @@ export default class HomePlan2D {
 
   public render(ignoreLayerList: any[] = []) {
     Object.values(this._layers)
-      .filter(layer => !ignoreLayerList.some(layerClass => layer instanceof layerClass))
-      .forEach(layer => layer && layer.render());
+      .filter(
+        (layer) =>
+          !ignoreLayerList.some((layerClass) => layer instanceof layerClass)
+      )
+      .forEach((layer) => layer && layer.render());
 
     this.checkLayerShow(ignoreLayerList);
   }
 
   public load() {
-    Object.values(this._layers).forEach(layer => layer.load());
+    Object.values(this._layers).forEach((layer) => layer.load());
   }
 
   public clear(): void {
-    Object.values(this._layers).forEach(layer => {
+    Object.values(this._layers).forEach((layer) => {
       layer.clear();
       layer.disposeArr();
     });
   }
 
   public clearMaps() {
-    Object.values(this._layers).forEach(layer => layer.clearMap());
+    Object.values(this._layers).forEach((layer) => layer.clearMap());
   }
 
   public checkIsEmpty() {
@@ -90,7 +93,9 @@ export default class HomePlan2D {
    */
   public destroy() {
     this.container.parent && this.container.parent.removeChild(this.container);
-    Object.values(this._layers).forEach(layer => layer.destroy && layer.destroy());
+    Object.values(this._layers).forEach(
+      (layer) => layer.destroy && layer.destroy()
+    );
     this.scene = null;
     this.clearMaps();
   }
@@ -99,13 +104,13 @@ export default class HomePlan2D {
    * 检查Layer显示
    */
   public checkLayerShow(ignoreLayerList: any[] = []) {
-    Object.values(this._layers).forEach(layer => {
+    Object.values(this._layers).forEach((layer) => {
       if (ignoreLayerList.includes(layer)) {
         return;
       }
       if (!!layer && !!layer.checkLayerShow) {
         this.hideLayer(layer);
-        layer.checkLayerShow('');
+        layer.checkLayerShow("");
       }
     });
   }
@@ -116,12 +121,12 @@ export default class HomePlan2D {
    * @param ignoreLayerList
    */
   public checkLeaveLayerShow(routeName: string, ignoreLayerList: any[] = []) {
-    Object.values(this._layers).forEach(layer => {
+    Object.values(this._layers).forEach((layer) => {
       if (ignoreLayerList.includes(layer)) {
         return;
       }
       if (!!layer.checkLeaveLayerShow) {
-        layer.checkLeaveLayerShow('');
+        layer.checkLeaveLayerShow("");
       }
     });
   }
@@ -133,7 +138,7 @@ export default class HomePlan2D {
   public hideLayer(layer) {
     const layerObjects = layer.getObjects();
     // @ts-ignore
-    layerObjects.forEach(val => {
+    layerObjects.forEach((val) => {
       if (val.visible !== undefined) {
         val.visible = false;
       }

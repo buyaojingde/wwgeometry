@@ -3,7 +3,6 @@
  * @date 2020-10-13 14:41:15
  * @Description: 和Vector相关的工具，不适合直接在Vector中实现
  */
-import Segment from "@/utils/Math/geometry/Segment";
 
 export default class GeometryTool {
   /**

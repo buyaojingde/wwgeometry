@@ -1,10 +1,10 @@
-import { LayerOrder, layerOrderGroups } from "@/scene/2D/Layer/LayerOrder";
-import GraphicsTool from "@/scene/2D/Utils/GraphicsTool";
-import ViewObject from "@/scene/2D/ViewObject/ViewObject";
-import Room from "@/scene/Model/Home/Room";
-import Model2DActive from "@/store/Model2DActive";
-import Constant from "@/utils/Math/contanst/constant";
 import { computed, reaction } from "mobx";
+import Model2DActive from "../../../store/Model2DActive";
+import Constant from "../../../utils/Math/contanst/constant";
+import Room from "../../Model/Home/Room";
+import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
+import GraphicsTool from "../Utils/GraphicsTool";
+import ViewObject from "./ViewObject";
 
 export default class Room2D extends ViewObject {
   constructor(room: Room) {

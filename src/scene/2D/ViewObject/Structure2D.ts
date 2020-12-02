@@ -1,11 +1,11 @@
-import GraphicsTool from "@/scene/2D/Utils/GraphicsTool";
-import Constant from "@/utils/Math/contanst/constant";
 import { computed, reaction } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
+import Constant from "../../../utils/Math/contanst/constant";
 import { IViewObject } from "../../Interface/IViewObject";
 import Structure, { StType } from "../../Model/Home/Structure";
 import ObserveVector2D from "../../Model/ObserveMath/ObserveVector2D";
 import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
+import GraphicsTool from "../Utils/GraphicsTool";
 import ViewObject from "./ViewObject";
 
 // declare function require(moduleName: string): any;

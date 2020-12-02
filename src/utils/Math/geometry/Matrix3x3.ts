@@ -1,5 +1,4 @@
-import MathUtils from '../math/MathUtils';
-import Point from './Point';
+import Point from "./Point";
 
 /**
  * @author lianbo
@@ -169,9 +168,13 @@ export default class Matrix3x3 {
     const y = pos.y;
 
     newPos.x =
-      this.m11 * id * x + -this.m01 * id * y + (this.m12 * this.m01 - this.m02 * this.m11) * id;
+      this.m11 * id * x +
+      -this.m01 * id * y +
+      (this.m12 * this.m01 - this.m02 * this.m11) * id;
     newPos.y =
-      this.m00 * id * y + -this.m10 * id * x + (-this.m12 * this.m00 + this.m02 * this.m10) * id;
+      this.m00 * id * y +
+      -this.m10 * id * x +
+      (-this.m12 * this.m00 + this.m02 * this.m10) * id;
 
     return newPos;
   }
