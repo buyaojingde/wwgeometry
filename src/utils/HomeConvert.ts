@@ -1,4 +1,5 @@
 import { Vector3 } from "three";
+import JSTSUtils from "../scene/2D/Utils/JSTSUtils";
 import GeoSurface from "../scene/Model/Geometry/GeoSurface";
 import Home from "../scene/Model/Home/Home";
 import Level from "../scene/Model/Home/Level";
@@ -7,6 +8,8 @@ import Structure from "../scene/Model/Home/Structure";
 import Model2DActive from "../store/Model2DActive";
 import ConfigStructure from "./ConfigStructure";
 import Point from "./Math/geometry/Point";
+import Polygon from "./Math/geometry/Polygon";
+import MathUtils from "./Math/math/MathUtils";
 import GeometryTool from "./Math/tool/GeometryTool";
 
 class HomeConvert {
@@ -15,7 +18,7 @@ class HomeConvert {
   eles!: any[];
   spaces!: any[];
   convert(): Home {
-    const obj = require("../../devTools/博智林机器人创研中心4号楼土建模型20200619增加施工电梯3-4数据.json");
+    const obj = require("../../devTools/博智林机器人创研中心6号楼土建6F.json");
     const home = new Home();
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;
@@ -128,7 +131,10 @@ class HomeConvert {
         const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
         const wGeo = this.geo.find((item) => item.id === wGeoId.geomIDs[0]);
         if (wGeo.solids.length > 0) {
-          columns.push(this.convertColumn(wGeo, ele));
+          const st = this.convertColumn(wGeo, ele);
+          if (st) {
+            columns.push(st);
+          }
         }
       }
     }
@@ -137,11 +143,70 @@ class HomeConvert {
 
   /**
    * @author lianbo
+   * @date 2020-12-03 17:48:19
+   * @Description: 找solid的在XY平面的投影面
+   */
+  findSolidProjection(faces: any[]): Polygon | null {
+    let maxHeight = Number.NEGATIVE_INFINITY;
+    let topFace = null;
+    const polys: Polygon[] = [];
+    for (const face of faces) {
+      for (const outLoop of face.outLoop) {
+        if (!this.isVertical(outLoop)) {
+          const ps: Point[] = [];
+          for (const v of outLoop) {
+            const smallV = ConfigStructure.smallVertex(v);
+            const p = GeometryTool.vector3toVector2Revit(smallV); // 删除坐标
+            ps.push(new Point(p.x, -p.y));
+          }
+          const plg = new Polygon(ps);
+          polys.push(plg);
+        }
+      }
+    }
+    if (polys.length === 1) return polys[0];
+    if (polys.length < 1) return null;
+    // return JSTSUtils.iUnion(polys[0], polys[1]);
+    return polys[0];
+  }
+
+  isHorizontal(face: any[]): boolean {
+    if (face.length < 1) return false;
+    const zCoordinate = face[0].Z;
+    return face.every((item) => MathUtils.equal(zCoordinate, item.Z));
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-03 19:25:25
+   * @Description: 垂直于XZ平面的面
+   */
+  isVertical(face: any[]): boolean {
+    const nor = GeometryTool.normalized(
+      GeometryTool.normal(face.map((item) => GeometryTool.convert(item)))
+    );
+    if (!nor) return false;
+    const verticalV = { x: 0, y: 0, z: 1 };
+    if (MathUtils.equalZero(GeometryTool.dot(nor, verticalV))) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @author lianbo
    * @date 2020-11-04 15:36:40
    * @Description: 通过几何数据实例化构建信息
    */
-  convertColumn(geo: any, ele: any): Structure {
-    const solid = geo.solids[0];
+  convertColumn(geo: any, ele: any): Structure | null {
+    let solid = null;
+
+    for (const s of geo.solids) {
+      if (s.faces.length > 0) {
+        solid = s;
+      }
+    }
+    if (!solid) return null;
     let topFace!: GeoSurface;
     let maxHeight = Number.NEGATIVE_INFINITY;
     const structure: Structure = new Structure();
@@ -161,6 +226,7 @@ class HomeConvert {
         }
       }
     }
+    if (!topFace) return null;
     const v2ds = topFace.points.map((item) =>
       GeometryTool.vector3toVector2(item)
     );
