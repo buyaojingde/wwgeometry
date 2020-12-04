@@ -314,10 +314,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.setResetPosition(levelBoundingBox, rect);
   }
 
-  public resetViewBox(
-    levelBoundingBox: BoundingBox2D = null,
-    rect: IDOMRect = null
-  ) {
+  public resetViewBox(levelBoundingBox: BoundingBox2D, rect: IDOMRect) {
     if (!rect) {
       rect = (this.rendererDom as HTMLElement).getBoundingClientRect() as any;
     }
@@ -620,12 +617,13 @@ export default class Scene2D extends SceneBase implements IScene2D {
   // @ts-ignore
   private setResetScale(
     levelBoundingBox: BoundingBox2D,
-    rect: IDOMRect = null
+    rect: IDOMRect | null = null
   ) {
     // calculate the house size
     const sizeVec = levelBoundingBox.getSize(new Vector2());
 
     // calculate the screen size
+    // @ts-ignore
     const screenSize = new Vector2(rect.width, rect.height);
 
     // calculate the padding
@@ -640,7 +638,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   // @ts-ignore
   private setResetPosition(
     levelBoundingBox: BoundingBox2D,
-    rect: IDOMRect = null
+    rect: IDOMRect | null = null
   ) {
     // calculate the house center position
     const point = vectorToPoint(levelBoundingBox.getCenter());
@@ -653,7 +651,9 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     // calculate the screen center position
     const pointCenter = this.pickupController.getPoint(
+      // @ts-ignore
       rect.left + rect.width / 2,
+      // @ts-ignore
       rect.top + rect.height / 2,
       true
     );

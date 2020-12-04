@@ -3,9 +3,9 @@
  * * by lianbo.guo
  **/
 import Room2D from "../../../scene/2D/ViewObject/Room2D";
-import ConfigStructure from "@/utils/ConfigStructure";
 import { action } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
+import ConfigStructure from "../../../utils/ConfigStructure";
 import Vector2D from "../../Model/Geometry/Vector2D";
 import { getRootObject } from "../Utils";
 import BaseScene from "../Utils/BaseScene";
@@ -228,8 +228,8 @@ export default class PickupController extends BaseController {
 
     // @ts-ignore
     point.x = x / ((this.renderDom.width / rect.width) * resolutionMultiplier);
-    // @ts-ignore
-    point.y =
+
+    point.y = // @ts-ignore
       y / ((this.renderDom.height / rect.height) * resolutionMultiplier);
 
     if (isScreenOffset) {

@@ -144,7 +144,11 @@ class LianBoTest {
 
   testMain() {
     // this.testJSTS();
-    this.drawRemainder();
+    // this.drawRemainder();
+    const fr = new FileReader();
+    fr.onabort = (event) => {
+      console.log("abort");
+    };
     console.log("result");
   }
 

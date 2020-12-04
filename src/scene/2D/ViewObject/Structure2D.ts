@@ -150,10 +150,6 @@ export default class Structure2D extends ViewObject implements IViewObject {
     this._fillGraphics = value;
   }
 
-  public containerRenderWebGL(renderer: PIXI.Renderer): void {
-    super.containerRenderWebGL(renderer);
-  }
-
   drawMid(arg: any) {
     const startSeg = this.strct.box.edges[arg[0]].center;
     const endSeg = this.strct.box.edges[arg[1]].center;
