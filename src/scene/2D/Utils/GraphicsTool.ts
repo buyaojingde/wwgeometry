@@ -104,17 +104,6 @@ export default class GraphicsTool {
     GraphicsTool.drawDashedLine(graphicsInst, point1, point2, gap);
   }
 
-  public static graphicsLineTo(graphics: Graphics, line: Line2D | Lineseg2D) {
-    if (!line) {
-      return;
-    }
-    const tran: Vector2D = line.getDirectionUnit().multiply(100000);
-    const ptStart: Vector2D = line.start.transform(tran);
-    const ptEnd: Vector2D = line.end.transform(tran.negate());
-    graphics.moveTo(ptStart.x, ptStart.y);
-    graphics.lineTo(ptEnd.x, ptEnd.y);
-  }
-
   public static drawSector(
     graphicsInst: Graphics,
     param2: Vector2D,
