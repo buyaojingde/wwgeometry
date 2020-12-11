@@ -208,7 +208,7 @@ export default observer({
 .container2d {
   position: relative;
   width: 100%;
-  height: 90%;
+  height: 100%;
   background: #464646;
   z-index: 1;
   /*display: flex;*/

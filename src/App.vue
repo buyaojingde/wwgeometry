@@ -24,7 +24,7 @@ body,
 }
 
 .main-view {
-  height: 90%;
+  height: 100%;
   width: 100%;
 }
 </style>
