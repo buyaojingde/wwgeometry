@@ -1,7 +1,7 @@
-import LayerBase, { LayerName } from '../../Base/LayerBase';
-import { IDataObject } from '../../Interface/IDataObject';
-import Structure from '../../Model/Home/Structure';
-import Structure2D from '../ViewObject/Structure2D';
+import LayerBase, { LayerName } from "../../Base/LayerBase";
+import { IDataObject } from "../../Interface/IDataObject";
+import Structure from "../../Model/Home/Structure";
+import Structure2D from "../ViewObject/Structure2D";
 
 export default class StructureLayer extends LayerBase {
   protected _layerName = LayerName.Structure;
@@ -10,7 +10,7 @@ export default class StructureLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Structure) {
         const Column2d: Structure2D = new Structure2D(dataObj);
-        const disposeF = (dataObj as Structure).on('destroyLayerData', () => {
+        const disposeF = (dataObj as Structure).on("destroyLayerData", () => {
           this.remove(dataObj);
         });
         this._disposeArr.push(disposeF);
@@ -96,7 +96,7 @@ export default class StructureLayer extends LayerBase {
    */
   public checkLeaveLayerShow(routeName: string) {
     const models = this.getDatas() as Structure[];
-    models.forEach(model => {
+    models.forEach((model) => {
       switch (routeName) {
         default:
       }
@@ -114,9 +114,9 @@ export default class StructureLayer extends LayerBase {
   protected checkLayerShow(routeName: string) {
     const layerObjects: Structure2D[] = this.getObjects() as Structure2D[];
 
-    layerObjects.forEach(object => {
+    layerObjects.forEach((object) => {
       const structure = object.strct;
-      if (!!structure) {
+      if (structure) {
         object.interactive = true;
         object.visible = structure.visible;
       }

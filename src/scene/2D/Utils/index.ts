@@ -1,9 +1,9 @@
 import Stage = PIXI.Container;
 import DisplayObject = PIXI.DisplayObject;
 import Point = PIXI.Point;
-import { Vector2 } from 'three';
-import BoundingBox2D from '../../Model/Geometry/BoundingBox2D';
-import Vector2D from '../../Model/Geometry/Vector2D';
+import { Vector2 } from "three";
+import BoundingBox2D from "../../Model/Geometry/BoundingBox2D";
+import Vector2D from "../../Model/Geometry/Vector2D";
 
 export function pointToVector(point: Point): Vector2D {
   const { x, y } = point;
@@ -44,8 +44,11 @@ export function checkHumanCanVisible(angle) {
 export function getBoundingBoxFromPixiDisplayObject(container: DisplayObject) {
   const pixiBounds = container.getLocalBounds();
   const homeBoundBox: BoundingBox2D = new BoundingBox2D().setFromCenterAndSize(
-    new Vector2D(pixiBounds.x + pixiBounds.width / 2, pixiBounds.y + pixiBounds.height / 2),
-    new Vector2D(pixiBounds.width, pixiBounds.height),
+    new Vector2D(
+      pixiBounds.x + pixiBounds.width / 2,
+      pixiBounds.y + pixiBounds.height / 2
+    ),
+    new Vector2D(pixiBounds.width, pixiBounds.height)
   );
 
   return homeBoundBox;

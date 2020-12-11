@@ -6,7 +6,7 @@
  * @Description:
  */
 export default class CircularLinkedList {
-  public length: number = 0;
+  public length = 0;
   public last: any; // 人人都是头
   public get isEmpty(): boolean {
     return this.length === 0;

@@ -69,7 +69,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     return this.scene.stage as Stage;
   }
 
-  public lineWidth: number = 0;
+  public lineWidth = 0;
   private allEvents: BaseEvent2D[] = [];
   // @ts-ignore
   private scene: Application; // 场景
@@ -270,7 +270,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     autorun(() => this.drawAxisNet());
   }
 
-  public resize(width: number = 0, height: number = 0) {
+  public resize(width = 0, height = 0) {
     if (!width && !height) {
       if (!this.bindNode) {
         return;

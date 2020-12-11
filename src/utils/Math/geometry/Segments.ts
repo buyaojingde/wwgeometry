@@ -42,7 +42,7 @@ export default class Segments {
         if (difference.length === 0) {
           break;
         }
-        let result: any[] = [];
+        const result: any[] = [];
         for (const seg of difference) {
           const dif = seg.subtract(other);
           if (dif.length > 0) {

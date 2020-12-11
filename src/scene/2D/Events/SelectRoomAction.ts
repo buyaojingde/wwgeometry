@@ -57,7 +57,7 @@ export default class SelectRoomAction extends BaseEvent {
     // this.drawOffsetRoom();
   }
 
-  private scale: number = 10000;
+  private scale = 10000;
 
   private drawOffsetRoom() {
     LianBoTest.testTurfUnion([this.room, ...this.room.relStructures]);

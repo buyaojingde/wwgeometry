@@ -158,7 +158,7 @@ export default class DOMEventManager extends EventEmitter {
 
   // @ts-ignore
   public getElementOffset(obj, parent = document.body) {
-    var pos = {
+    const pos = {
       top: 0,
       left: 0,
     };

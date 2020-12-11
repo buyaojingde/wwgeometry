@@ -15,10 +15,10 @@ import DisplayObject = PIXI.DisplayObject;
 import InteractionManager = PIXI.InteractionManager;
 import Point = PIXI.Point;
 
-declare var navigator: any;
+declare let navigator: any;
 
 export default class PickupController extends BaseController {
-  public isEdit: boolean = false;
+  public isEdit = false;
   protected scene: any;
   private interactionManager: InteractionManager;
   private renderDom: any;
@@ -145,7 +145,7 @@ export default class PickupController extends BaseController {
       object = this.interactionManager.hitTest(point, stage);
       !!object && (object = getRootObject(object));
 
-      if (!!object) {
+      if (object) {
         break;
       }
     }
@@ -178,7 +178,7 @@ export default class PickupController extends BaseController {
     if (!object) {
       return null;
     }
-    let pos = object.position;
+    const pos = object.position;
     const { x, y } = this.stage.toGlobal(pos);
     return this.mapPointToPosition(x, y, isScreenPos);
   }

@@ -3,7 +3,7 @@
  * @date 2020-10-20 17:07:35
  * @Description: 计算吸附的工具
  */
-import MathUtils from '../math/MathUtils';
+import MathUtils from "../math/MathUtils";
 
 export class AdsorptionTool {
   /**
@@ -12,7 +12,12 @@ export class AdsorptionTool {
    * @accuracy 精度
    * @date 2018/11/05 14:52:16
    */
-  public static findAdsorptionPoint(p: any, vs: any[], fn: any, accuracy: number = 10): any {
+  public static findAdsorptionPoint(
+    p: any,
+    vs: any[],
+    fn: any,
+    accuracy = 10
+  ): any {
     const allowanceSquared = accuracy * accuracy;
     let min: number = Number.MAX_VALUE;
     let minPos: any = null;
@@ -33,7 +38,12 @@ export class AdsorptionTool {
    * @date 2020-11-13 09:11:36
    * @Description: 寻找吸附的线段
    */
-  public static findAdsorptionSeg(p: any, segs: any[], fn: any, accuracy: number = 10): any {
+  public static findAdsorptionSeg(
+    p: any,
+    segs: any[],
+    fn: any,
+    accuracy = 10
+  ): any {
     let min: number = Number.MAX_VALUE;
     let closestP: any = null;
     let closestSeg: any = null;

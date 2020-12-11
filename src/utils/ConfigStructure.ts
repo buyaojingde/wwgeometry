@@ -9,7 +9,7 @@ class ConfigStructure {
   minGeoV3!: { x: number; y: number; z: number };
   maxCanvasV3!: { x: number; y: number };
   minCanvasV3!: { x: number; y: number };
-  debugger: boolean = false;
+  debugger = false;
   public accuracy = 0.1;
 
   /**

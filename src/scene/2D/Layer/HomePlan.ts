@@ -125,7 +125,7 @@ export default class HomePlan2D {
       if (ignoreLayerList.includes(layer)) {
         return;
       }
-      if (!!layer.checkLeaveLayerShow) {
+      if (layer.checkLeaveLayerShow) {
         layer.checkLeaveLayerShow("");
       }
     });

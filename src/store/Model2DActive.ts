@@ -12,7 +12,7 @@ class Model2DActive {
   public selection!: any | null; // 正在选择构建
   // 正在选择构建
   @observable
-  public cursorText: string = "default"; // canvas中需要显示的光标
+  public cursorText = "default"; // canvas中需要显示的光标
   @observable
   public editVertexState = false;
   @observable
@@ -24,14 +24,14 @@ class Model2DActive {
   @observable
   public homeTree: any[] = [];
   @observable
-  public radians: number = 0;
+  public radians = 0;
 
   public subjectVec3: ObserveVector3 = new ObserveVector3(); // 屏幕坐标轴的位置
   public structureVec3: ObserveVector3 = new ObserveVector3(); // 构建的相对位置
 
   public editStructure!: Structure; // 当前正在编辑的构建
   @observable
-  public editAxisNet: boolean = false;
+  public editAxisNet = false;
 
   constructor() {}
 
@@ -125,7 +125,7 @@ class Model2DActive {
   }
 
   @observable
-  showAxis: boolean = false;
+  showAxis = false;
 }
 
 export default new Model2DActive();

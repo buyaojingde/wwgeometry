@@ -1,6 +1,6 @@
-import { Box2, Vector2 } from 'three';
-import Polygon2D from './Polygon2D';
-import Vector2D from './Vector2D';
+import { Box2, Vector2 } from "three";
+import Polygon2D from "./Polygon2D";
+import Vector2D from "./Vector2D";
 
 export default class BoundingBox2D extends Box2 {
   // @ts-ignore
@@ -89,7 +89,12 @@ export default class BoundingBox2D extends Box2 {
   }
 
   public containsValue(vec: Vector2D): boolean {
-    return vec.x >= this.min.x && vec.x <= this.max.x && vec.y >= this.min.y && vec.y <= this.max.y;
+    return (
+      vec.x >= this.min.x &&
+      vec.x <= this.max.x &&
+      vec.y >= this.min.y &&
+      vec.y <= this.max.y
+    );
   }
 
   public contains(boundbox: BoundingBox2D): boolean {
@@ -109,7 +114,7 @@ export default class BoundingBox2D extends Box2 {
   public restrictInside(boundbox: BoundingBox2D): Vector2D {
     const vec: Vector2D = new Vector2D(
       boundbox.max.x - boundbox.min.x,
-      boundbox.max.y - boundbox.min.y,
+      boundbox.max.y - boundbox.min.y
     );
     if (boundbox.max.x > this.max.x) {
       boundbox.max.x = this.max.x;
@@ -161,7 +166,9 @@ export default class BoundingBox2D extends Box2 {
 
   // @ts-ignore
   public transform(vec1: Vector2D = null): BoundingBox2D {
-    ([this.min, this.max] as Vector2D[]).forEach(point => point.transformBy(vec1));
+    ([this.min, this.max] as Vector2D[]).forEach((point) =>
+      point.transformBy(vec1)
+    );
 
     return this;
   }

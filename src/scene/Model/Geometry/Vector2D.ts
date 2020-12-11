@@ -1,25 +1,34 @@
 // import Vector2 from 'THREE'
-import { Vector2, Vector3 } from 'three';
-import MathTool from '../Util/MathTool';
+import { Vector2, Vector3 } from "three";
+import MathTool from "../Util/MathTool";
 
 // extends Vector2 {
 export default class Vector2D extends Vector2 {
   public static X_AXIS: Vector2D = new Vector2D(1, 0);
   public static Y_AXIS: Vector2D = new Vector2D(0, 1);
   public static ORIGIN_V2D: Vector2D = new Vector2D(0, 0);
-  public static MAX_V2D: Vector2D = new Vector2D(Number.MAX_VALUE, Number.MAX_VALUE);
-  public static MIN_V2D: Vector2D = new Vector2D(-Number.MAX_VALUE, -Number.MAX_VALUE);
-  public static VAL_NULL: Vector2D = new Vector2D(-Number.MAX_VALUE, Number.MAX_VALUE);
-  public static GOLDEN_PROPORTION: number = 0.618;
+  public static MAX_V2D: Vector2D = new Vector2D(
+    Number.MAX_VALUE,
+    Number.MAX_VALUE
+  );
+  public static MIN_V2D: Vector2D = new Vector2D(
+    -Number.MAX_VALUE,
+    -Number.MAX_VALUE
+  );
+  public static VAL_NULL: Vector2D = new Vector2D(
+    -Number.MAX_VALUE,
+    Number.MAX_VALUE
+  );
+  public static GOLDEN_PROPORTION = 0.618;
 
-  constructor(x: number = 0, y: number = 0) {
+  constructor(x = 0, y = 0) {
     super(x, y);
     this._x = x;
     this._y = y;
   }
 
   public toString(): string {
-    return '(' + this._x + ',' + this._y + ')';
+    return "(" + this._x + "," + this._y + ")";
   }
 
   static get zero(): Vector2D {
@@ -35,7 +44,7 @@ export default class Vector2D extends Vector2 {
   protected _y: number;
 
   get debugCad(): string {
-    return 'Circle ' + this.x + ',' + this.y + ' 5 ';
+    return "Circle " + this.x + "," + this.y + " 5 ";
   }
 
   set debugCad(s: string) {
@@ -61,7 +70,7 @@ export default class Vector2D extends Vector2 {
   get getXYFlag(): Vector2D {
     return new Vector2D(
       this._x ? this._x / Math.abs(this._x) : 0,
-      this._y ? this._y / Math.abs(this._y) : 0,
+      this._y ? this._y / Math.abs(this._y) : 0
     );
   }
 
@@ -74,7 +83,12 @@ export default class Vector2D extends Vector2 {
   }
 
   get isZero(): boolean {
-    return this.x > -0.00001 && this.x < 0.00001 && this.y > -0.00001 && this.y < 0.00001;
+    return (
+      this.x > -0.00001 &&
+      this.x < 0.00001 &&
+      this.y > -0.00001 &&
+      this.y < 0.00001
+    );
   }
 
   // 长度和角度  求向量
@@ -122,28 +136,49 @@ export default class Vector2D extends Vector2 {
     return vec1.x * vec2.y - vec1.y * vec2.x;
   }
 
-  public static xmultiply(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): number {
-    return (vec3.x - vec1.x) * (vec2.y - vec1.y) - (vec2.x - vec1.x) * (vec3.y - vec1.y);
+  public static xmultiply(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    vec3: Vector2D
+  ): number {
+    return (
+      (vec3.x - vec1.x) * (vec2.y - vec1.y) -
+      (vec2.x - vec1.x) * (vec3.y - vec1.y)
+    );
   }
 
   public static multiply(vec1: Vector2D, num: number): Vector2D {
     return new Vector2D(vec1.x * num, vec1.y * num);
   }
 
-  public static interpolate(vec1: Vector2D, vec2: Vector2D, num: number = 0.5): Vector2D {
-    return new Vector2D(vec1.x + (vec2.x - vec1.x) * num, vec1.y + (vec2.y - vec1.y) * num);
+  public static interpolate(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    num = 0.5
+  ): Vector2D {
+    return new Vector2D(
+      vec1.x + (vec2.x - vec1.x) * num,
+      vec1.y + (vec2.y - vec1.y) * num
+    );
   }
 
   public static center(vec1: Vector2D, vec2: Vector2D): Vector2D {
     return new Vector2D((vec1.x + vec2.x) / 2, (vec1.y + vec2.y) / 2);
   }
 
-  public static isParallel(vec1: Vector2D, vec2: Vector2D, tol: number = 1e-3): boolean {
+  public static isParallel(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    tol = 1e-3
+  ): boolean {
     // var num:number = this.dotProduct(vec1, vec2) / vec1.length / vec2.length;
     // return num === 1 || num === -1;
 
     const angle: number = vec1.angleBetween(vec2);
-    return MathTool.numberEquals(angle, 0.0, tol) || MathTool.numberEquals(angle, Math.PI, tol);
+    return (
+      MathTool.numberEquals(angle, 0.0, tol) ||
+      MathTool.numberEquals(angle, Math.PI, tol)
+    );
   }
 
   public static isOpposite(vec1: Vector2D, vec2: Vector2D): boolean {
@@ -163,7 +198,11 @@ export default class Vector2D extends Vector2 {
   }
 
   // @ts-ignore
-  public static rotate(vec1: Vector2D, radian: number, vec2: Vector2D = null): Vector2D {
+  public static rotate(
+    vec1: Vector2D,
+    radian: number,
+    vec2: Vector2D = null
+  ): Vector2D {
     return vec1.rotateBy(radian, vec2);
   }
 
@@ -175,11 +214,19 @@ export default class Vector2D extends Vector2 {
     return new Vector2D(vec3d.x, vec3d.y);
   }
 
-  public static isConvex(vec1: Vector2D, vec2: Vector2D, vec3: Vector2D): boolean {
+  public static isConvex(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    vec3: Vector2D
+  ): boolean {
     return Vector2D.crossProduct(vec2.subtract(vec1), vec3.subtract(vec1)) > 0;
   }
 
-  public static getPosFromSegment(vStart: Vector2D, vEnd: Vector2D, len: number): Vector2D {
+  public static getPosFromSegment(
+    vStart: Vector2D,
+    vEnd: Vector2D,
+    len: number
+  ): Vector2D {
     const res: Vector2D = this.polar(len, this.angleTo(vStart, vEnd));
 
     if (MathTool.isZeroNumber(res.x)) {
@@ -198,19 +245,19 @@ export default class Vector2D extends Vector2 {
     power = Math.min(Math.max(0.0, power), 1.0);
     return new Vector2D(
       Start.x * (1 - power) + End.x * power,
-      Start.y * (1 - power) + End.y * power,
+      Start.y * (1 - power) + End.y * power
     );
   }
 
   public static divideBetweenPts(
     start: Vector2D,
     end: Vector2D,
-    SubsectionNum: number,
+    SubsectionNum: number
   ): Vector2D[] {
     const subsectionPts: Vector2D[] = [];
     const LinePartNum: number = SubsectionNum + 1;
     const SubsectionPercent: number = 0.0 / LinePartNum;
-    for (let i: number = 1; i < LinePartNum; i++) {
+    for (let i = 1; i < LinePartNum; i++) {
       subsectionPts[i - 1] = Vector2D.Lerp(start, end, i * SubsectionPercent);
     }
     return subsectionPts;
@@ -222,11 +269,19 @@ export default class Vector2D extends Vector2 {
    * @param angle  弧度
    * @param pos 中心点
    */
-  public static rotateAroundPoint(sourceVec: Vector2D, angle: number, pos: Vector2D): Vector2D {
+  public static rotateAroundPoint(
+    sourceVec: Vector2D,
+    angle: number,
+    pos: Vector2D
+  ): Vector2D {
     const x1 =
-      (sourceVec.x - pos.x) * Math.cos(angle) - (sourceVec.y - pos.y) * Math.sin(angle) + pos.x;
+      (sourceVec.x - pos.x) * Math.cos(angle) -
+      (sourceVec.y - pos.y) * Math.sin(angle) +
+      pos.x;
     const y1 =
-      (sourceVec.x - pos.x) * Math.sin(angle) + (sourceVec.y - pos.y) * Math.cos(angle) + pos.y;
+      (sourceVec.x - pos.x) * Math.sin(angle) +
+      (sourceVec.y - pos.y) * Math.cos(angle) +
+      pos.y;
 
     return new Vector2D(x1, y1);
   }
@@ -265,8 +320,8 @@ export default class Vector2D extends Vector2 {
    * @data 2019/12/25
    */
   public static minRect(points: Vector2D[]) {
-    const arrU: number[] = points.map(it => it.x);
-    const arrV: number[] = points.map(it => it.y);
+    const arrU: number[] = points.map((it) => it.x);
+    const arrV: number[] = points.map((it) => it.y);
     const minX = Math.min(...arrU);
     const maxX = Math.max(...arrU);
     const minY = Math.min(...arrV);
@@ -334,7 +389,7 @@ export default class Vector2D extends Vector2 {
 
   public divideBy(vec: Vector2D): Vector2D {
     if (!vec.x || !vec.y) {
-      throw new Error('cannot divide zero');
+      throw new Error("cannot divide zero");
     }
 
     this._x = this._x / vec.x;
@@ -422,7 +477,7 @@ export default class Vector2D extends Vector2 {
     return num2;
   }
 
-  public angleBetweenCCW(vec: Vector2D, tol: number = 1e-3): number {
+  public angleBetweenCCW(vec: Vector2D, tol = 1e-3): number {
     const ccw: number = this.crossProduct(vec);
     let ang: number = this.angleBetween(vec);
 
@@ -440,7 +495,9 @@ export default class Vector2D extends Vector2 {
    * @returns {number}
    */
   public distance(vec: Vector2D = Vector2D.zero): number {
-    return Math.sqrt(Math.pow(this._x - vec.x, 2) + Math.pow(this._y - vec.y, 2));
+    return Math.sqrt(
+      Math.pow(this._x - vec.x, 2) + Math.pow(this._y - vec.y, 2)
+    );
   }
 
   public distanceSquared(vec: Vector2D): number {
@@ -463,7 +520,7 @@ export default class Vector2D extends Vector2 {
     return new Vector2D(-this._y, this._x);
   }
 
-  public setTo(x: number = 0, y: number = 0): Vector2D {
+  public setTo(x = 0, y = 0): Vector2D {
     this._x = x;
     this._y = y;
     return this;
@@ -479,11 +536,11 @@ export default class Vector2D extends Vector2 {
     return this.dotProduct(vec) === 0;
   }
 
-  public equalsX(vec: any, numMin: number = 1e-3): boolean {
+  public equalsX(vec: any, numMin = 1e-3): boolean {
     return Math.abs(this._x - vec.x) < numMin;
   }
 
-  public equalsY(vec: any, numMin: number = 1e-3): boolean {
+  public equalsY(vec: any, numMin = 1e-3): boolean {
     return Math.abs(this._y - vec.y) < numMin;
   }
 
@@ -519,7 +576,7 @@ export default class Vector2D extends Vector2 {
   }
 
   public normalizeNo(): Vector2D {
-    let tmpnum: number = NaN;
+    let tmpnum = NaN;
     const v = Vector2D.zero;
     if (this.length()) {
       tmpnum = 1 / this.length();
@@ -529,17 +586,19 @@ export default class Vector2D extends Vector2 {
     return v;
   }
 
-  public toVector3D(num: number = 0): Vector3 {
+  public toVector3D(num = 0): Vector3 {
     return new Vector3(this._x, this._y, num);
   }
 
   public setAngle(num: number) {
-    let _loc2: number = 0;
+    let _loc2 = 0;
     if (!isNaN(num)) {
       _loc2 = num;
     }
 
-    const _loc3: number = Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2));
+    const _loc3: number = Math.sqrt(
+      Math.pow(this._x, 2) + Math.pow(this._y, 2)
+    );
     this._x = _loc3 * Math.cos(_loc2);
     this._y = _loc3 * Math.sin(_loc2);
   }
@@ -559,12 +618,12 @@ export default class Vector2D extends Vector2 {
 
   public divide(vec: any): any {
     if (!vec.x || !vec.y) {
-      throw new Error('cannot divide zero');
+      throw new Error("cannot divide zero");
     }
     return new Vector2D(this._x / vec.x, this._y / vec.y);
   }
 
-  public equals(vec: any, nummin: number = 1e-3): boolean {
+  public equals(vec: any, nummin = 1e-3): boolean {
     return this.equalsX(vec, nummin) && this.equalsY(vec, nummin);
   }
 
@@ -601,7 +660,9 @@ export default class Vector2D extends Vector2 {
       this._x = 0;
     }
 
-    const sqrtRoot: number = Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2));
+    const sqrtRoot: number = Math.sqrt(
+      Math.pow(this._x, 2) + Math.pow(this._y, 2)
+    );
     if (sqrtRoot > 0) {
       this.multiplyBy(num / sqrtRoot);
     } else {
@@ -649,7 +710,7 @@ export default class Vector2D extends Vector2 {
 
   public divideNumber(n: number): Vector2D {
     if (!n) {
-      throw new Error('cannot divide zero');
+      throw new Error("cannot divide zero");
     }
     return new Vector2D(this._x / n, this._y / n);
   }
@@ -671,7 +732,7 @@ export default class Vector2D extends Vector2 {
     return new Vector2(this._x, this._y);
   }
 
-  public transToVector3(hei: number = 0): Vector3 {
+  public transToVector3(hei = 0): Vector3 {
     return new Vector3(this._x, hei, this._y);
   }
 

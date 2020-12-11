@@ -1,10 +1,10 @@
-import BoundingBox2D from './BoundingBox2D';
-import Line2D from './Line2D';
-import Polygon2D from './Polygon2D';
-import Vector2D from './Vector2D';
+import BoundingBox2D from "./BoundingBox2D";
+import Line2D from "./Line2D";
+import Polygon2D from "./Polygon2D";
+import Vector2D from "./Vector2D";
 
 export default class Box2D {
-  private _boolean: boolean = true;
+  private _boolean = true;
   private _polygon2D: Polygon2D;
 
   // @ts-ignore
@@ -70,7 +70,7 @@ export default class Box2D {
     }
   }
 
-  private _rotation: number = 0;
+  private _rotation = 0;
 
   public get rotation(): number {
     return this._rotation;
@@ -169,7 +169,11 @@ export default class Box2D {
     return _loc2;
   }
 
-  public static buildWithoutScale(vec1: Vector2D, vec2: Vector2D, num: number = 0): Box2D {
+  public static buildWithoutScale(
+    vec1: Vector2D,
+    vec2: Vector2D,
+    num = 0
+  ): Box2D {
     return new Box2D(vec1).setTransform(vec2, new Vector2D(1, 1), num);
   }
 
@@ -198,7 +202,10 @@ export default class Box2D {
       return this;
     }
     this._position = Polygon2D.calculateCenter(vecs);
-    this._size = new Vector2D(vecs[0].distance(vecs[1]), vecs[1].distance(vecs[2]));
+    this._size = new Vector2D(
+      vecs[0].distance(vecs[1]),
+      vecs[1].distance(vecs[2])
+    );
     this._rotation = Vector2D.angleTo(vecs[0], vecs[1]);
     this.calculateVertices();
     this.calculateBoundingPoints();
@@ -206,7 +213,11 @@ export default class Box2D {
   }
 
   // @ts-ignore
-  public setTransform(vec1: Vector2D = null, vec2: Vector2D = null, num: number = 0): Box2D {
+  public setTransform(
+    vec1: Vector2D = null,
+    vec2: Vector2D = null,
+    num = 0
+  ): Box2D {
     if (!vec1) {
       vec1 = new Vector2D(0, 0);
     }
@@ -264,15 +275,15 @@ export default class Box2D {
     const vec4: any = this.globalToLocal(vec);
     const vec2: any = this._vertices[0];
     const vec3: any = this._vertices[2];
-    return vec4.x >= vec2.x && vec4.x <= vec3.x && vec4.y >= vec2.y && vec4.y <= vec3.y;
+    return (
+      vec4.x >= vec2.x &&
+      vec4.x <= vec3.x &&
+      vec4.y >= vec2.y &&
+      vec4.y <= vec3.y
+    );
   }
 
-  public translateEdges(
-    num1: number = 0,
-    num2: number = 0,
-    num3: number = 0,
-    num4: number = 0,
-  ): Box2D {
+  public translateEdges(num1 = 0, num2 = 0, num3 = 0, num4 = 0): Box2D {
     const box7: any = this._size.clone();
     const vec5: any = this._position.clone();
     box7.offsetBy(num4 + num2, num1 + num3);
@@ -290,7 +301,7 @@ export default class Box2D {
   }
 
   public getEdges(): Line2D[] {
-    let num: number = 0;
+    let num = 0;
     if (this._boolean) {
       this.composeTransforms();
     }
@@ -298,7 +309,10 @@ export default class Box2D {
     const lines = [];
     num = 0;
     while (num < 4) {
-      lines[num] = new Line2D(this.boundingPoints[num], this.boundingPoints[(num + 1) % 4]);
+      lines[num] = new Line2D(
+        this.boundingPoints[num],
+        this.boundingPoints[(num + 1) % 4]
+      );
       num++;
     }
     return lines;

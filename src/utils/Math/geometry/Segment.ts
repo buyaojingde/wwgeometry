@@ -227,7 +227,7 @@ export default class Segment {
    * @Description: 是否有相交
    * @param includeEnd 包括端点
    */
-  public isIntersect(other: Segment, includeEnd: boolean = false): boolean {
+  public isIntersect(other: Segment, includeEnd = false): boolean {
     if (includeEnd) {
       return (
         !GeometryTool.sameSide(this.start, this.end, other.start, other.end) &&
@@ -245,7 +245,7 @@ export default class Segment {
    * @date 2020-12-09 14:14:28
    * @Description: 线段与线段相交
    */
-  public intersect(other: Segment, includeEnd: boolean = false): Point | null {
+  public intersect(other: Segment, includeEnd = false): Point | null {
     // Note: this is almost the same as geom.intersectSegments()
     // The main difference is that we don't have a pre-computed
     // value for dx/dy on the segments.
@@ -582,7 +582,7 @@ export default class Segment {
       if (difference.length === 0) {
         break;
       }
-      let result: any[] = [];
+      const result: any[] = [];
       for (const seg of difference) {
         const dif = seg.subtract(other);
         if (dif.length > 0) {

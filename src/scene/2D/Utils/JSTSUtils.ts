@@ -87,7 +87,7 @@ export default class JSTSUtils {
   public static iDifference(
     plyg: Polygon,
     plyg1: Polygon,
-    offset: number = 0
+    offset = 0
   ): Polygon {
     const geo = this.offset(this.i2Polygon(plyg), offset);
     const geo1 = this.offset(this.i2Polygon(plyg1), offset);
@@ -136,7 +136,7 @@ export default class JSTSUtils {
     return this.polygon2i(geo.intersection(geo1));
   }
 
-  public static iIntersectionSeg(s0: any, s1: any, offset: number = 0) {
+  public static iIntersectionSeg(s0: any, s1: any, offset = 0) {
     const ls0 = this.i2Line(s0);
     const ls1 = this.i2Line(s1);
     const result = ls0.intersection(ls1);
@@ -185,7 +185,7 @@ export default class JSTSUtils {
     return remainSegs;
   }
 
-  public static iUnionSeg(s0: any, s1: any, offset: number = 0): any {
+  public static iUnionSeg(s0: any, s1: any, offset = 0): any {
     const ls0 = this.i2Line(s0);
     const ls1 = this.i2Line(s1);
     const result = ls0.union(ls1);

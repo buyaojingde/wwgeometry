@@ -1,15 +1,15 @@
-import { Matrix4, Vector3 } from 'three';
-import MathTool from '../Util/MathTool';
+import { Matrix4, Vector3 } from "three";
+import MathTool from "../Util/MathTool";
 
 export default class GeoSurface {
   points: Vector3[];
 
   constructor(points: Vector3[]) {
     if (points.length < 3) {
-      throw new Error('cant compose face');
+      throw new Error("cant compose face");
     }
     this.points = points;
-    let height = Number.NEGATIVE_INFINITY;
+    const height = Number.NEGATIVE_INFINITY;
     for (let i = 0; i < this.points.length; i++) {
       if (this.points[i].y > height) {
         this._height = this.points[i].y;
@@ -29,7 +29,10 @@ export default class GeoSurface {
    * @Description: 平面是否水平
    */
   public get isHorizontal(): boolean {
-    const v1 = new Vector3().subVectors(this.points[0], this.points[this.points.length - 1]);
+    const v1 = new Vector3().subVectors(
+      this.points[0],
+      this.points[this.points.length - 1]
+    );
     const v0 = new Vector3().subVectors(this.points[0], this.points[1]);
     const normal = new Vector3().crossVectors(v0, v1);
     return MathTool.isZeroNumber(normal.x) && MathTool.isZeroNumber(normal.z);
@@ -44,7 +47,10 @@ export default class GeoSurface {
     const v0: Vector3 = this.points[0];
     const v1: Vector3 = this.points[1];
     const v2: Vector3 = this.points[2];
-    const normal = new Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0));
+    const normal = new Vector3().crossVectors(
+      v1.clone().sub(v0),
+      v2.clone().sub(v0)
+    );
     return normal.normalize();
   }
 

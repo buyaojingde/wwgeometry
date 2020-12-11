@@ -18,7 +18,7 @@ export default class MathTool {
     return radian;
   }
 
-  public static number2String(num: number, radixPoint: number = 2): string {
+  public static number2String(num: number, radixPoint = 2): string {
     const pow: number = MathTool.pow(10, radixPoint);
     num = Number(num * pow) / pow;
     return num.toString();
@@ -71,23 +71,19 @@ export default class MathTool {
   public static numberEquals(
     num2: number,
     param2: number,
-    num3: number = 1e-3
+    num3 = 1e-3
   ): boolean {
     return Math.abs(num2 - param2) < num3;
   }
 
-  public static numberLess(
-    num1: number,
-    num2: number,
-    num3: number = 1e-3
-  ): boolean {
+  public static numberLess(num1: number, num2: number, num3 = 1e-3): boolean {
     return num1 < num2 - num3;
   }
 
   public static numberLessEqual(
     num1: number,
     num2: number,
-    num3: number = 1e-3
+    num3 = 1e-3
   ): boolean {
     return (
       this.numberLess(num1, num2, num3) || this.numberEquals(num1, num2, num3)
@@ -98,7 +94,7 @@ export default class MathTool {
     num1: number,
     num2: number,
     num3: number,
-    num4: number = 1e-3
+    num4 = 1e-3
   ): boolean {
     return (
       this.numberGreater(num1, Math.min(num2, num3), num4) &&
@@ -109,7 +105,7 @@ export default class MathTool {
   public static numberGreater(
     num1: number,
     num2: number,
-    num3: number = 1e-3
+    num3 = 1e-3
   ): boolean {
     return num1 > num2 + num3;
   }
@@ -117,7 +113,7 @@ export default class MathTool {
   public static numberGreaterEqual(
     num1: number,
     num2: number,
-    num3: number = 1e-3
+    num3 = 1e-3
   ): boolean {
     return (
       this.numberGreater(num1, num2, num3) ||
@@ -125,7 +121,7 @@ export default class MathTool {
     );
   }
 
-  public static isZeroNumber(num1: number, num2: number = 1e-3): boolean {
+  public static isZeroNumber(num1: number, num2 = 1e-3): boolean {
     return this.numberEquals(num1, 0, num2);
   }
 
@@ -188,7 +184,7 @@ export default class MathTool {
     param2: number,
     num3: number[] = []
   ): number {
-    let num5: number = 0;
+    let num5 = 0;
     let num4: number = Math.random() * (num2 - param2) + param2;
     if (num3) {
       num5 = 100000;
@@ -211,7 +207,7 @@ export default class MathTool {
     num2: number,
     num3: number[] = []
   ): number {
-    let num5: number = 0;
+    let num5 = 0;
     let num4: number = Math.floor(Math.random() * (num1 - num2) + num2);
     if (num3 && num3.length < num1 - num2) {
       num5 = 100000;
@@ -294,10 +290,7 @@ export default class MathTool {
    * @$rawnumber 原始number数值
    * @$numBit 要保留的精度位数, 默认留3位小数
    */
-  public static getFixednumber(
-    $rawnumber: number,
-    $numBit: number = 3
-  ): number {
+  public static getFixednumber($rawnumber: number, $numBit = 3): number {
     const ratio: number = Math.pow(10, $numBit);
     const finalnumber: number = Math.round($rawnumber * ratio) / ratio;
 
@@ -362,13 +355,13 @@ export default class MathTool {
    * @param points
    */
   public static CalcPolygonArea(points: any[]): number {
-    let total: number = 0;
-    let addX: number = 0;
-    let addY: number = 0;
-    let subX: number = 0;
-    let subY: number = 0;
+    let total = 0;
+    let addX = 0;
+    let addY = 0;
+    let subX = 0;
+    let subY = 0;
     const len: number = points.length;
-    let i: number = 0;
+    let i = 0;
     for (i = 0; i < len; i++) {
       addX = points[i].x;
       addY = points[i === len - 1 ? 0 : i + 1].y;
@@ -389,9 +382,9 @@ export default class MathTool {
     let prevPoint: Vector2 = null;
     // @ts-ignore
     let currentPoint: Vector2 = null;
-    let i: number = 1;
+    let i = 1;
     const iCount: number = points.length;
-    const founded: boolean = false;
+    const founded = false;
     if (iCount > 0) {
       for (i = 1; i < iCount; i++) {
         prevPoint = points[i - 1];
@@ -417,7 +410,7 @@ export default class MathTool {
     polygonPoints: any[],
     checkPoint: any
   ): boolean {
-    let inside: boolean = false;
+    let inside = false;
     const pointCount: number = polygonPoints.length;
     let i = 0;
     let j = 0;
@@ -463,16 +456,16 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    numberOfPoints: number = 18
+    numberOfPoints = 18
   ): number {
     const dt: number = 1.0 / (numberOfPoints - 1);
     // @ts-ignore
     let curP: Vector2D = null;
     // @ts-ignore
     let preP: Vector2D = null;
-    let len: number = 0;
+    let len = 0;
 
-    for (let i: number = 0; i < numberOfPoints; i++) {
+    for (let i = 0; i < numberOfPoints; i++) {
       curP = this.PointOnCubicBezier(
         control1,
         control2,
@@ -502,7 +495,7 @@ export default class MathTool {
     const curve: Vector2D[] = [];
     const dt: number = 1.0 / (numberOfPoints - 1);
 
-    for (let i: number = 0; i < numberOfPoints; i++) {
+    for (let i = 0; i < numberOfPoints; i++) {
       curve.push(
         MathTool.PointOnCubicBezier(
           control1,
@@ -529,8 +522,8 @@ export default class MathTool {
     // const num1: number = NaN;
     // const controlX: number = NaN;
     // const controlY: number = NaN;
-    let anchorX: number = NaN;
-    let anchorY: number = NaN;
+    let anchorX = NaN;
+    let anchorY = NaN;
     const px: number = origin.x;
     const py: number = origin.y;
     const num2: number = radius;
@@ -565,7 +558,7 @@ export default class MathTool {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    t: number = 0
+    t = 0
   ): number {
     const dr: Vector2D = new Vector2D();
 
@@ -703,4 +696,4 @@ export default class MathTool {
   }
 }
 
-export let ceilOfDecimal = MathTool.ceilOfDecimal;
+export const ceilOfDecimal = MathTool.ceilOfDecimal;

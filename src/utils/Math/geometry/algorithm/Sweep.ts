@@ -35,7 +35,7 @@ class EventPointStatus {
     return -1;
   }
 
-  add(seg: Segment, group: number = 0) {
+  add(seg: Segment, group = 0) {
     const eItem = new EventItem(seg.start, seg);
     eItem.index = group;
     const eItem1 = new EventItem(seg.end, seg);

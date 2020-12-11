@@ -42,7 +42,7 @@ export default class Room extends ObjectNamed {
   set rvtName(value: string) {
     this._rvtName = value;
   }
-  public destroyed: boolean = false;
+  public destroyed = false;
 
   constructor() {
     super();
@@ -50,10 +50,10 @@ export default class Room extends ObjectNamed {
   private _topFaceGeo: any;
 
   @observable
-  private _visible: boolean = true;
-  private _active: boolean = true;
+  private _visible = true;
+  private _active = true;
 
-  private _rvtName: string = "";
+  private _rvtName = "";
 
   get visible(): boolean {
     return this._visible;

@@ -9,7 +9,7 @@ import Scene2D from "../index";
 export default class SelectStructureAction extends BaseEvent {
   private _scene2D: Scene2D;
   private structure!: Structure;
-  private _throttle: boolean = true;
+  private _throttle = true;
 
   public constructor(scene2D: Scene2D) {
     super(scene2D.DOMEventListener);

@@ -1,7 +1,7 @@
-import MathTool from '../Util/MathTool';
-import Vector2DTool from '../Util/Vector2DTool';
-import Line2D from './Line2D';
-import Vector2D from './Vector2D';
+import MathTool from "../Util/MathTool";
+import Vector2DTool from "../Util/Vector2DTool";
+import Line2D from "./Line2D";
+import Vector2D from "./Vector2D";
 
 export default class Lineseg2D {
   constructor(ptStart: Vector2D, ptEnd: Vector2D) {
@@ -11,7 +11,15 @@ export default class Lineseg2D {
 
   get debugCad(): string {
     return (
-      'Line ' + this._start.x + ',' + this._start.y + ' ' + this._end.x + ',' + this._end.y + '  '
+      "Line " +
+      this._start.x +
+      "," +
+      this._start.y +
+      " " +
+      this._end.x +
+      "," +
+      this._end.y +
+      "  "
     );
   }
 
@@ -56,7 +64,7 @@ export default class Lineseg2D {
     x3: number,
     y3: number,
     x4: number,
-    y4: number,
+    y4: number
   ): number {
     const ux = x2 - x1;
     const uy = y2 - y1;
@@ -144,27 +152,36 @@ export default class Lineseg2D {
   public static isSuperposition(
     line1: Lineseg2D,
     line2: Lineseg2D,
-    tolPtEquals: number = 0.0001,
+    tolPtEquals = 0.0001
   ): boolean {
     return (
-      (line1.isPointOn(line2.end, tolPtEquals) && line1.isPointOn(line2.start, tolPtEquals)) ||
-      (line2.isPointOn(line1.start, tolPtEquals) && line2.isPointOn(line1.end, tolPtEquals))
+      (line1.isPointOn(line2.end, tolPtEquals) &&
+        line1.isPointOn(line2.start, tolPtEquals)) ||
+      (line2.isPointOn(line1.start, tolPtEquals) &&
+        line2.isPointOn(line1.end, tolPtEquals))
     );
   }
 
   public static getIntersection(
     seg1: Lineseg2D,
     seg2: Lineseg2D,
-    tolPointOn: number = 0.0001,
-    tolParallel: number = 1e-3,
+    tolPointOn = 0.0001,
+    tolParallel = 1e-3
   ): Vector2D {
     const line1: Line2D = seg1.toLine2D();
     const line2: Line2D = seg2.toLine2D();
-    const ptIntersect: Vector2D = Line2D.getIntersection(line1, line2, tolParallel);
+    const ptIntersect: Vector2D = Line2D.getIntersection(
+      line1,
+      line2,
+      tolParallel
+    );
     // var ptIntersect: Vector2D
 
     if (ptIntersect) {
-      if (seg1.isPointOn(ptIntersect, tolPointOn) && seg2.isPointOn(ptIntersect, tolPointOn)) {
+      if (
+        seg1.isPointOn(ptIntersect, tolPointOn) &&
+        seg2.isPointOn(ptIntersect, tolPointOn)
+      ) {
         return ptIntersect;
       }
     }
@@ -177,7 +194,7 @@ export default class Lineseg2D {
   public static getOverlapLinesegment(
     seg1: Lineseg2D,
     seg2: Lineseg2D,
-    tol: number = 0.0001,
+    tol = 0.0001
   ): Lineseg2D {
     const ptsOverlap: Vector2D[] = [];
 
@@ -199,7 +216,7 @@ export default class Lineseg2D {
     if (ptsOverlap.length === 2) {
       ret = new Lineseg2D(ptsOverlap[0], ptsOverlap[1]);
     } else if (ptsOverlap.length > 2) {
-      for (let i: number = 1; i < ptsOverlap.length; ++i) {
+      for (let i = 1; i < ptsOverlap.length; ++i) {
         if (!ptsOverlap[0].equals(ptsOverlap[i], tol)) {
           ret = new Lineseg2D(ptsOverlap[0], ptsOverlap[i]);
         }
@@ -215,7 +232,11 @@ export default class Lineseg2D {
    * @param line2 线段②
    * @param tol 阈值
    */
-  public static calcCollineation(line1: Lineseg2D, line2: Lineseg2D, tol: number = 0.01) {
+  public static calcCollineation(
+    line1: Lineseg2D,
+    line2: Lineseg2D,
+    tol = 0.01
+  ) {
     const line1Dir = line1.getDirection();
     const line2Dir = line2.getDirection();
     if (line1Dir.x * line2Dir.y - line1Dir.y * line2Dir.x <= tol) {
@@ -229,14 +250,17 @@ export default class Lineseg2D {
     return new Lineseg2D(this._start, this._end);
   }
 
-  public interpolate(num: number = 0.5): Vector2D {
+  public interpolate(num = 0.5): Vector2D {
     return Vector2D.interpolate(this._start, this._end, num);
   }
 
   // 把线段的开始变成射线
   public toRadialStart(): Lineseg2D {
     const valRet: Lineseg2D = this.clone();
-    const vecDir: Vector2D = Vector2D.subtract(valRet.start, valRet.end).normalize();
+    const vecDir: Vector2D = Vector2D.subtract(
+      valRet.start,
+      valRet.end
+    ).normalize();
 
     vecDir.multiplyBy(/*number.MAX_VALUE / maxAxis*/ 999999);
     valRet.start.transformBy(vecDir);
@@ -246,7 +270,10 @@ export default class Lineseg2D {
   // 把线段的结束变成射线
   public toRadialEnd(): Lineseg2D {
     const valRet: Lineseg2D = this.clone();
-    const vecDir: Vector2D = Vector2D.subtract(valRet.end, valRet.start).normalize();
+    const vecDir: Vector2D = Vector2D.subtract(
+      valRet.end,
+      valRet.start
+    ).normalize();
 
     vecDir.multiplyBy(/*number.MAX_VALUE / maxAxis*/ 999999);
     valRet.end.transformBy(vecDir);
@@ -263,7 +290,7 @@ export default class Lineseg2D {
     if (
       MathTool.numberEquals(
         ptFoot.distance(this._start) + ptFoot.distance(this._end),
-        this._start.distance(this._end),
+        this._start.distance(this._end)
       )
     ) {
       // 如果垂足在起点和终点之间则表示垂足到源点的距离为最小矩离
@@ -283,7 +310,7 @@ export default class Lineseg2D {
       this.minDistanceToPoint(lg.start),
       this.minDistanceToPoint(lg.end),
       lg.minDistanceToPoint(this._start),
-      lg.minDistanceToPoint(this._end),
+      lg.minDistanceToPoint(this._end)
     );
   }
 
@@ -293,7 +320,7 @@ export default class Lineseg2D {
     if (
       MathTool.numberEquals(
         ptFoot.distance(this._start) + ptFoot.distance(this._end),
-        this._start.distance(this._end),
+        this._start.distance(this._end)
       )
     ) {
       // 如果垂足在起点和终点之间则表示垂足到源点的距离为最小矩离
@@ -308,7 +335,7 @@ export default class Lineseg2D {
   }
 
   // 判断是否两线段有交点
-  public isIntersection(lineseg: Lineseg2D, tol: number = 0.0001): boolean {
+  public isIntersection(lineseg: Lineseg2D, tol = 0.0001): boolean {
     const dis: number = Lineseg2D.distanceToSegment(
       this._start.x,
       this._start.y,
@@ -317,7 +344,7 @@ export default class Lineseg2D {
       lineseg.start.x,
       lineseg.start.y,
       lineseg.end.x,
-      lineseg.end.y,
+      lineseg.end.y
     );
     return MathTool.numberEquals(dis, 0.0, tol);
   }
@@ -345,12 +372,15 @@ export default class Lineseg2D {
     return false;
   }
 
-  public isPointOn(pt: Vector2D, tol: number = 0.0001): boolean {
+  public isPointOn(pt: Vector2D, tol = 0.0001): boolean {
     return this.minDistanceToPoint(pt) < tol;
   }
 
   public translate(vec: Vector2D): Lineseg2D {
-    return new Lineseg2D(Vector2D.add(this._start, vec), Vector2D.add(this._end, vec));
+    return new Lineseg2D(
+      Vector2D.add(this._start, vec),
+      Vector2D.add(this._end, vec)
+    );
   }
 
   /**
@@ -379,14 +409,20 @@ export default class Lineseg2D {
    * 取左边垂直向量
    * */
   public getLeftNormal(): Vector2D {
-    return new Vector2D(this._end.y - this._start.y, this._start.x - this._end.x);
+    return new Vector2D(
+      this._end.y - this._start.y,
+      this._start.x - this._end.x
+    );
   }
 
   /**
    * 取右边垂直向量
    * */
   public getRightNormal(): Vector2D {
-    return new Vector2D(this._start.y - this._end.y, this._end.x - this._start.x);
+    return new Vector2D(
+      this._start.y - this._end.y,
+      this._end.x - this._start.x
+    );
   }
 
   public getDirection(): Vector2D {
@@ -395,7 +431,10 @@ export default class Lineseg2D {
 
   // 单位向量
   public getDirectionUnit(): Vector2D {
-    return new Vector2D(this.getDirection().x / length, this.getDirection().y / length);
+    return new Vector2D(
+      this.getDirection().x / length,
+      this.getDirection().y / length
+    );
   }
 
   /** 获得相对于targetSeg的投影线段
@@ -409,8 +448,14 @@ export default class Lineseg2D {
     const targetFootPoint2: Vector2D = tarLine.footPoint(tarLine, this._end);
 
     const thisLine: Line2D = this.toLine2D();
-    const thisFootPoint1: Vector2D = thisLine.footPoint(thisLine, targetSeg.start);
-    const thisFootPoint2: Vector2D = thisLine.footPoint(thisLine, targetSeg.end);
+    const thisFootPoint1: Vector2D = thisLine.footPoint(
+      thisLine,
+      targetSeg.start
+    );
+    const thisFootPoint2: Vector2D = thisLine.footPoint(
+      thisLine,
+      targetSeg.end
+    );
 
     const ptsNeed: Vector2D[] = [];
     if (targetSeg.isPointOn(targetFootPoint1)) {

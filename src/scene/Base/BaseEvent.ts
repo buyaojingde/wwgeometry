@@ -1,4 +1,4 @@
-import DOMEventManager from '../2D/Utils/DOMEventManager';
+import DOMEventManager from "../2D/Utils/DOMEventManager";
 
 export default class BaseEvent {
   public get enable() {
@@ -18,7 +18,7 @@ export default class BaseEvent {
   protected disposeArr: any[] = []; // 所有处理的事件
 
   protected levelArr: any[] = [];
-  private _enable: boolean = false;
+  private _enable = false;
 
   // @ts-ignore
   constructor(DOMEvent) {
@@ -39,7 +39,7 @@ export default class BaseEvent {
     while (this.disposeArr.length) {
       const dispose = this.disposeArr.pop();
 
-      if (typeof dispose === 'function') {
+      if (typeof dispose === "function") {
         dispose();
       } else {
         const { event, fn } = dispose;

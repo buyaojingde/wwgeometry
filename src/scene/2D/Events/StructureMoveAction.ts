@@ -23,7 +23,7 @@ export default class StructureMoveAction extends BaseEvent {
   private _stage: Container;
 
   /**墙体是否移动，用于区分单纯的墙体点击事件 */
-  private isMoved: boolean = false;
+  private isMoved = false;
 
   private startPos!: Vector2 | null;
 
@@ -99,7 +99,7 @@ export default class StructureMoveAction extends BaseEvent {
     );
     const enableAbsorb = !event.ctrlKey && !event.metaKey;
 
-    let v = new Vector2(position.x, position.y);
+    const v = new Vector2(position.x, position.y);
     if (!this.startPos) {
       this.startPos = v;
     }

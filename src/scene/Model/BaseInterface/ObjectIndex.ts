@@ -1,6 +1,6 @@
-import { utils } from 'pixi.js';
-import { IDataObject } from '../../Interface/IDataObject';
-import UniqueIndexGenerator from '../Util/UniqueIndexGenerator';
+import { utils } from "pixi.js";
+import { IDataObject } from "../../Interface/IDataObject";
+import UniqueIndexGenerator from "../Util/UniqueIndexGenerator";
 
 const { EventEmitter } = utils;
 export default class ObjectIndex extends EventEmitter implements IDataObject {

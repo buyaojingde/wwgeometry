@@ -40,9 +40,9 @@ export default class Quadtree {
    */
   constructor(
     bounds: { x: number; y: number; width: number; height: number },
-    maxObjects: number = 10,
-    maxLevels: number = 4,
-    level: number = 0,
+    maxObjects = 10,
+    maxLevels = 4,
+    level = 0
   ) {
     this.maxObjects = maxObjects || 10;
     this.maxLevels = maxLevels || 4;
@@ -74,7 +74,7 @@ export default class Quadtree {
       },
       this.maxObjects,
       this.maxLevels,
-      nextLevel,
+      nextLevel
     );
 
     //top left node
@@ -87,7 +87,7 @@ export default class Quadtree {
       },
       this.maxObjects,
       this.maxLevels,
-      nextLevel,
+      nextLevel
     );
 
     //bottom left node
@@ -100,7 +100,7 @@ export default class Quadtree {
       },
       this.maxObjects,
       this.maxLevels,
-      nextLevel,
+      nextLevel
     );
 
     //bottom right node
@@ -113,7 +113,7 @@ export default class Quadtree {
       },
       this.maxObjects,
       this.maxLevels,
-      nextLevel,
+      nextLevel
     );
   }
 
@@ -242,12 +242,14 @@ export default class Quadtree {
     //if we have subnodes, retrieve their objects
     if (this.nodes.length) {
       for (let i = 0; i < indexes.length; i++) {
-        returnObjects = returnObjects.concat(this.nodes[indexes[i]].retrieve(pRect));
+        returnObjects = returnObjects.concat(
+          this.nodes[indexes[i]].retrieve(pRect)
+        );
       }
     }
 
     //remove duplicates
-    returnObjects = returnObjects.filter(function(item, index) {
+    returnObjects = returnObjects.filter(function (item, index) {
       return returnObjects.indexOf(item) >= index;
     });
 

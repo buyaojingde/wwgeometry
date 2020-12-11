@@ -1,6 +1,6 @@
-import { reaction } from 'mobx';
-import { LayerOrder, layerOrderGroups } from '../Layer/LayerOrder';
-import BaseController from './BaseController';
+import { reaction } from "mobx";
+import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
+import BaseController from "./BaseController";
 import Container = PIXI.Container;
 
 /**
@@ -23,11 +23,11 @@ export default class CameraController extends BaseController {
         () => {
           return false;
         },
-        enable => {
+        (enable) => {
           this.enable = enable;
         },
-        { fireImmediately: true },
-      ),
+        { fireImmediately: true }
+      )
     );
   }
 

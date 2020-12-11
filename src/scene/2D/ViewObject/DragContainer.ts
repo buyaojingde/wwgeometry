@@ -1,7 +1,7 @@
 import Container = PIXI.Container;
-import { computed, observable } from 'mobx';
-import View2DData from '../../../store/View2DData';
-import { IScene2D } from '../../Interface/IScene';
+import { computed, observable } from "mobx";
+import View2DData from "../../../store/View2DData";
+import { IScene2D } from "../../Interface/IScene";
 
 const onDrag: any = {
   // @ts-ignore
@@ -10,15 +10,15 @@ const onDrag: any = {
     this.startPosition = this.data.getLocalPosition(onDrag.getParent(this));
     this.dragging = true;
     event.localPoint = this.startPosition;
-    this.emit('input.start', event);
+    this.emit("input.start", event);
   },
   // @ts-ignore
   end(event) {
     this.dragging = false;
     this.startPosition = null;
     this.data = null;
-    this.emit('drag.end', event);
-    this.emit('input.end');
+    this.emit("drag.end", event);
+    this.emit("input.end");
   },
   // @ts-ignore
   getParent(self) {
@@ -31,7 +31,7 @@ const onDrag: any = {
   // @ts-ignore
   move(callback) {
     // tslint:disable-next-line:space-before-function-paren
-    return function() {
+    return function () {
       // @ts-ignore
       if (this.dragging) {
         // @ts-ignore
@@ -43,7 +43,7 @@ const onDrag: any = {
         const startPosition = this.startPosition;
 
         // @ts-ignore
-        this.emit('input.move', newPosition);
+        this.emit("input.move", newPosition);
 
         callback(newPosition, startPosition);
       }
@@ -51,12 +51,12 @@ const onDrag: any = {
   },
 };
 export default class DragContainer extends Container {
-  public cursor = 'pointer';
+  public cursor = "pointer";
 
   // @ts-ignore
   public destroy(...args) {
     super.destroy(...args);
-    this._disposeArr.forEach(dispose => dispose());
+    this._disposeArr.forEach((dispose) => dispose());
     this._disposeArr = [];
     // @ts-ignore
     this._parentSelf = null;
@@ -68,57 +68,57 @@ export default class DragContainer extends Container {
   public _parentSelf: Container = null; // 用于事件响应的parent,不能与原有parent重叠，会出现问题
 
   @observable
-  public isHover: boolean = false;
+  public isHover = false;
   protected _disposeArr: Array<() => void> = [];
 
   public constructor() {
     super();
 
-    this.on('added', () => {
+    this.on("added", () => {
       setTimeout(() => {
         this._parentSelf = this.parent;
       });
     });
-    this.on('removed', () => {
+    this.on("removed", () => {
       setTimeout(() => {
         this._parentSelf = this.parent;
         !this.parent && this.destroy();
       });
     });
 
-    this.on('mouseover', () => {
+    this.on("mouseover", () => {
       this.isHover = true;
     })
-      .on('mouseout', () => (this.isHover = false))
-      .on('mousedown', onDrag.start)
-      .on('touchstart', onDrag.start)
-      .on('mouseup', onDrag.end)
-      .on('mouseupoutside', onDrag.end)
-      .on('touchend', onDrag.end)
-      .on('touchendoutside', onDrag.end)
+      .on("mouseout", () => (this.isHover = false))
+      .on("mousedown", onDrag.start)
+      .on("touchstart", onDrag.start)
+      .on("mouseup", onDrag.end)
+      .on("mouseupoutside", onDrag.end)
+      .on("touchend", onDrag.end)
+      .on("touchendoutside", onDrag.end)
       .on(
-        'mousemove',
+        "mousemove",
         // @ts-ignore
         onDrag.move((...args) => {
-          this.emit('drag', ...args);
-        }),
+          this.emit("drag", ...args);
+        })
       )
       .on(
-        'touchmove',
+        "touchmove",
         // @ts-ignore
         onDrag.move((...args) => {
-          this.emit('drag', ...args);
-        }),
+          this.emit("drag", ...args);
+        })
       );
   }
 
   public get scene2D(): IScene2D {
     // @ts-ignore
-    const getScene = instance => {
+    const getScene = (instance) => {
       if (!instance) {
         return null;
       }
-      return instance.name === 'scene2D'
+      return instance.name === "scene2D"
         ? instance
         : getScene(instance._parentSelf || instance.parent);
     };

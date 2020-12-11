@@ -39,7 +39,7 @@ export default class GeometryTool {
    * @date 2020-11-12 20:00:53
    * @Description: 两个点之间去插值
    */
-  public static interpolate(vec1: any, vec2: any, num: number = 0.5): any {
+  public static interpolate(vec1: any, vec2: any, num = 0.5): any {
     return {
       x: vec1.x + (vec2.x - vec1.x) * num,
       y: vec1.y + (vec2.y - vec1.y) * num,

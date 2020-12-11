@@ -1,9 +1,9 @@
-import Line2DIntersectionStatus from '../Constants/Line2DIntersectionStatus';
-import MathTool from '../Util/MathTool';
-import Line2D from './Line2D';
-import Line2DIntersection from './Line2DIntersection';
-import Lineseg2D from './Lineseg2D';
-import Vector2D from './Vector2D';
+import Line2DIntersectionStatus from "../Constants/Line2DIntersectionStatus";
+import MathTool from "../Util/MathTool";
+import Line2D from "./Line2D";
+import Line2DIntersection from "./Line2DIntersection";
+import Lineseg2D from "./Lineseg2D";
+import Vector2D from "./Vector2D";
 
 export default class Line2DTool {
   // extends Object
@@ -12,13 +12,13 @@ export default class Line2DTool {
   public static isSegmentOverlap(
     line2: Line2D,
     param2: Line2D,
-    beTRUE: boolean = false,
-    nummin: number = 1e-3,
+    beTRUE = false,
+    nummin = 1e-3
   ): boolean {
     const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
       line2,
       param2,
-      nummin,
+      nummin
     );
     if (intersection.status === Line2DIntersectionStatus.OVERLAP) {
       return (
@@ -41,15 +41,18 @@ export default class Line2DTool {
    */
   public static getIntersectionLineTwoPoint(
     targetLine: Line2D,
-    intersectionLines: Line2D[],
+    intersectionLines: Line2D[]
   ): Vector2D[] {
     const line = targetLine;
     // @ts-ignore
-    const getNearestIntersectPos = lineDirection => {
+    const getNearestIntersectPos = (lineDirection) => {
       let compareNum = Number.MAX_VALUE;
       let nearestPos = null;
-      intersectionLines.forEach(intersectionLine => {
-        const intersection = this.getIntersectionOfLines(lineDirection, intersectionLine);
+      intersectionLines.forEach((intersectionLine) => {
+        const intersection = this.getIntersectionOfLines(
+          lineDirection,
+          intersectionLine
+        );
         if (!intersection) {
           return;
         }
@@ -57,7 +60,9 @@ export default class Line2DTool {
           return;
         }
 
-        const distence = intersection.point.distanceSquared(lineDirection.start);
+        const distence = intersection.point.distanceSquared(
+          lineDirection.start
+        );
         if (distence < compareNum) {
           compareNum = distence;
           nearestPos = intersection.point;
@@ -66,17 +71,23 @@ export default class Line2DTool {
       return nearestPos;
     };
     const lineCenter = line.center;
-    const startDir = new Line2D(lineCenter, line.start).setLength(2000, lineCenter);
+    const startDir = new Line2D(lineCenter, line.start).setLength(
+      2000,
+      lineCenter
+    );
     const endDir = new Line2D(lineCenter, line.end).setLength(2000, lineCenter);
 
     // @ts-ignore
-    return [getNearestIntersectPos(startDir), getNearestIntersectPos(endDir)].filter(val => !!val);
+    return [
+      getNearestIntersectPos(startDir),
+      getNearestIntersectPos(endDir),
+    ].filter((val) => !!val);
   }
 
   public static getIntersectionOfLines(
     line1: Line2D,
     line2: Line2D,
-    num3: number = 1e-3,
+    num3 = 1e-3
   ): Line2DIntersection {
     let num16 = NaN;
     let num17 = NaN;
@@ -94,16 +105,34 @@ export default class Line2DTool {
     let num19 = 1;
     const num26 = Vector2D.crossProduct(vec22, vec21);
     const num11 = Vector2D.crossProduct(Vector2D.subtract(vec23, vec24), vec22);
-    const num12: number = Vector2D.crossProduct(Vector2D.subtract(vec23, vec24), vec21);
-    const num10: number = Vector2D.dotProduct(Vector2D.subtract(vec23, vec24), vec22);
-    const num13: number = Vector2D.dotProduct(Vector2D.subtract(vec9, vec24), vec22);
-    const num18: number = Vector2D.dotProduct(Vector2D.subtract(vec24, vec23), vec21);
-    const num4: number = Vector2D.dotProduct(Vector2D.subtract(vec8, vec23), vec21);
+    const num12: number = Vector2D.crossProduct(
+      Vector2D.subtract(vec23, vec24),
+      vec21
+    );
+    const num10: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec23, vec24),
+      vec22
+    );
+    const num13: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec9, vec24),
+      vec22
+    );
+    const num18: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec24, vec23),
+      vec21
+    );
+    const num4: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec8, vec23),
+      vec21
+    );
     const num25: number = Vector2D.dotProduct(vec22, vec22);
     const num15: number = Vector2D.dotProduct(vec21, vec21);
 
     if (Line2DTool.isZeroNumber(num26, num3)) {
-      if (Line2DTool.isZeroNumber(num12, num3) && Line2DTool.isZeroNumber(num11, num3)) {
+      if (
+        Line2DTool.isZeroNumber(num12, num3) &&
+        Line2DTool.isZeroNumber(num11, num3)
+      ) {
         num16 = num10 / num25;
         num17 = num13 / num25;
         num7 = num18 / num15;
@@ -144,8 +173,8 @@ export default class Line2DTool {
 
       intersec.point = line1.start.add(line1.direction.multiplyBy(num20));
 
-      const maxsection: number = 1.0;
-      const epsilon: number = 1e-3;
+      const maxsection = 1.0;
+      const epsilon = 1e-3;
       if (
         (Math.abs(num20) < epsilon || Math.abs(num20 - maxsection) < epsilon) &&
         (Math.abs(num19) < epsilon || Math.abs(num19 - maxsection) < epsilon)
@@ -171,7 +200,7 @@ export default class Line2DTool {
   public static getIntersectionOfLinesNEW(
     line1: Line2D,
     line2: Line2D,
-    num3: number = 1e-3,
+    num3 = 1e-3
   ): Line2DIntersection {
     let num16 = NaN;
     let num17 = NaN;
@@ -189,26 +218,48 @@ export default class Line2DTool {
     let num19 = 1;
     const num26 = Vector2D.crossProduct(vec22, vec21);
     const num11 = Vector2D.crossProduct(Vector2D.subtract(vec23, vec24), vec22);
-    const num12: number = Vector2D.crossProduct(Vector2D.subtract(vec23, vec24), vec21);
-    const num10: number = Vector2D.dotProduct(Vector2D.subtract(vec23, vec24), vec22);
-    const num13: number = Vector2D.dotProduct(Vector2D.subtract(vec9, vec24), vec22);
-    const num18: number = Vector2D.dotProduct(Vector2D.subtract(vec24, vec23), vec21);
-    const num4: number = Vector2D.dotProduct(Vector2D.subtract(vec8, vec23), vec21);
+    const num12: number = Vector2D.crossProduct(
+      Vector2D.subtract(vec23, vec24),
+      vec21
+    );
+    const num10: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec23, vec24),
+      vec22
+    );
+    const num13: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec9, vec24),
+      vec22
+    );
+    const num18: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec24, vec23),
+      vec21
+    );
+    const num4: number = Vector2D.dotProduct(
+      Vector2D.subtract(vec8, vec23),
+      vec21
+    );
     const num25: number = Vector2D.dotProduct(vec22, vec22);
     const num15: number = Vector2D.dotProduct(vec21, vec21);
 
     if (Line2DTool.isZeroNumber(num26, num3)) {
-      if (Line2DTool.isZeroNumber(num12, num3) && Line2DTool.isZeroNumber(num11, num3)) {
+      if (
+        Line2DTool.isZeroNumber(num12, num3) &&
+        Line2DTool.isZeroNumber(num11, num3)
+      ) {
         num16 = num10 / num25;
         num17 = num13 / num25;
         num7 = num18 / num15;
         num5 = num4 / num15;
 
         if (
-          (MathTool.numberGreaterEqual(num10, 0) && MathTool.numberLessEqual(num10, num25)) ||
-          (MathTool.numberGreaterEqual(num13, 0) && MathTool.numberLessEqual(num13, num25)) ||
-          (MathTool.numberGreaterEqual(num18, 0) && MathTool.numberLessEqual(num18, num15)) ||
-          (MathTool.numberGreaterEqual(num4, 0) && MathTool.numberLessEqual(num4, num15))
+          (MathTool.numberGreaterEqual(num10, 0) &&
+            MathTool.numberLessEqual(num10, num25)) ||
+          (MathTool.numberGreaterEqual(num13, 0) &&
+            MathTool.numberLessEqual(num13, num25)) ||
+          (MathTool.numberGreaterEqual(num18, 0) &&
+            MathTool.numberLessEqual(num18, num15)) ||
+          (MathTool.numberGreaterEqual(num4, 0) &&
+            MathTool.numberLessEqual(num4, num15))
         ) {
           num16 = Math.min(1, Math.max(0, num16));
           num17 = Math.min(1, Math.max(0, num17));
@@ -239,8 +290,8 @@ export default class Line2DTool {
 
       intersec.point = line1.start.add(line1.direction.multiplyBy(num20));
 
-      const maxsection: number = 1.0;
-      const epsilon: number = 1e-3;
+      const maxsection = 1.0;
+      const epsilon = 1e-3;
       if (
         (Math.abs(num20) < epsilon || Math.abs(num20 - maxsection) < epsilon) &&
         (Math.abs(num19) < epsilon || Math.abs(num19 - maxsection) < epsilon)
@@ -257,9 +308,15 @@ export default class Line2DTool {
         intersec.status = Line2DIntersectionStatus.B_HALVE_A;
       } else if (Math.abs(num19) < 1e-3 || Math.abs(num19 - 1.0) < 1e-3) {
         intersec.status = Line2DIntersectionStatus.A_HALVE_B;
-      } else if (MathTool.numberGreaterEqual(num19, 0) && MathTool.numberLessEqual(num19, 1)) {
+      } else if (
+        MathTool.numberGreaterEqual(num19, 0) &&
+        MathTool.numberLessEqual(num19, 1)
+      ) {
         intersec.status = Line2DIntersectionStatus.A_HALVE_B;
-      } else if (MathTool.numberGreaterEqual(num20, 0) && MathTool.numberLessEqual(num20, 1)) {
+      } else if (
+        MathTool.numberGreaterEqual(num20, 0) &&
+        MathTool.numberLessEqual(num20, 1)
+      ) {
         intersec.status = Line2DIntersectionStatus.B_HALVE_A;
       } else {
         intersec.status = Line2DIntersectionStatus.LINE_CROSS;
@@ -271,13 +328,13 @@ export default class Line2DTool {
   public static isSegmentIntersected(
     line1: Line2D,
     line2: Line2D,
-    beTRUE: boolean = false,
-    nummin: number = 1e-3,
+    beTRUE = false,
+    nummin = 1e-3
   ): boolean {
     const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
       line1,
       line2,
-      nummin,
+      nummin
     );
     if (intersection.status === Line2DIntersectionStatus.PART_CROSS) {
       return (
@@ -296,13 +353,13 @@ export default class Line2DTool {
   public static isSegmentCollided(
     line1: Line2D,
     line2: Line2D,
-    beTRUE: boolean = false,
-    nummin: number = 1e-3,
+    beTRUE = false,
+    nummin = 1e-3
   ): boolean {
     const intersection: Line2DIntersection = Line2DTool.getIntersectionOfLines(
       line1,
       line2,
-      nummin,
+      nummin
     );
     switch (intersection.status) {
       case Line2DIntersectionStatus.PART_CROSS: {
@@ -323,7 +380,10 @@ export default class Line2DTool {
    * @param line2
    * * by lianbo.guo
    */
-  public static getDistanceBetweenParalellLines(line1: Line2D, line2: Line2D): number {
+  public static getDistanceBetweenParalellLines(
+    line1: Line2D,
+    line2: Line2D
+  ): number {
     const { status } = Line2DTool.getIntersectionOfLines(line1, line2);
     if (status !== Line2DIntersectionStatus.PARALELL) {
       // @ts-ignore
@@ -369,7 +429,11 @@ export default class Line2DTool {
   }
 
   // 联合两条共线的线段
-  public static uniteLinesegs(seg1: Lineseg2D, seg2: Lineseg2D, tol: number = 1): Vector2D[] {
+  public static uniteLinesegs(
+    seg1: Lineseg2D,
+    seg2: Lineseg2D,
+    tol = 1
+  ): Vector2D[] {
     const ret: Vector2D[] = [];
 
     // 共线
@@ -398,7 +462,14 @@ export default class Line2DTool {
       const dise1s2: number = end1.distance(start2);
       const dise1e2: number = end1.distance(end2);
       const diss2e2: number = start2.distance(end2);
-      const disMax: number = Math.max(diss1e1, diss1s2, diss1e2, dise1s2, dise1e2, diss2e2);
+      const disMax: number = Math.max(
+        diss1e1,
+        diss1s2,
+        diss1e2,
+        dise1s2,
+        dise1e2,
+        diss2e2
+      );
       // @ts-ignore
       let ptMax1: Vector2D = null;
       // @ts-ignore
@@ -553,10 +624,16 @@ export default class Line2DTool {
   }
 
   // 是否重合或者说共线
-  public static isSuperposition(line1: Line2D, line2: Line2D, dis: number = 0.0001): boolean {
+  public static isSuperposition(
+    line1: Line2D,
+    line2: Line2D,
+    dis = 0.0001
+  ): boolean {
     return (
-      (line1.isPointOnLine(line2.start, dis) && line1.isPointOnLine(line2.end, dis)) ||
-      (line2.isPointOnLine(line1.start, dis) && line2.isPointOnLine(line1.end, dis))
+      (line1.isPointOnLine(line2.start, dis) &&
+        line1.isPointOnLine(line2.end, dis)) ||
+      (line2.isPointOnLine(line1.start, dis) &&
+        line2.isPointOnLine(line1.end, dis))
     );
   }
 
@@ -564,7 +641,7 @@ export default class Line2DTool {
     return line.end.subtract(line.start);
   }
 
-  private static isZeroNumber(num1: number, nummin: number = 1e-3): boolean {
+  private static isZeroNumber(num1: number, nummin = 1e-3): boolean {
     return Math.abs(num1) < nummin;
   }
 }

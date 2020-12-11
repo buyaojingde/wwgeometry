@@ -12,7 +12,7 @@ import Graphics = PIXI.Graphics;
 
 export default class SubjectAction extends BaseEvent {
   private _scene2D: Scene2D;
-  private _readSelect: boolean = false;
+  private _readSelect = false;
   private _vertices: any[];
   private _adsorbP!: Point | null;
   private _activeLayer: Container;

@@ -116,7 +116,7 @@ export default class RoomLayer extends LayerBase {
 
     layerObjects.forEach((object) => {
       const room = object.room;
-      if (!!room) {
+      if (room) {
         object.interactive = true;
         object.visible = room.visible;
       }

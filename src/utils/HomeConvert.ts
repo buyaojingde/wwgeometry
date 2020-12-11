@@ -147,8 +147,8 @@ class HomeConvert {
    * @Description: 找solid的在XY平面的投影面
    */
   findSolidProjection(faces: any[]): Polygon | null {
-    let maxHeight = Number.NEGATIVE_INFINITY;
-    let topFace = null;
+    const maxHeight = Number.NEGATIVE_INFINITY;
+    const topFace = null;
     const polys: Polygon[] = [];
     for (const face of faces) {
       for (const outLoop of face.outLoop) {

@@ -42,4 +42,3 @@ export enum ESegOverlapType {
   Nothing, // 不平行
   Split, // 共线相离
 }
-

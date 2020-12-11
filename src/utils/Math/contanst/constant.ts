@@ -29,7 +29,7 @@ export default class Constant {
    * @Description: 以#开头的字符串转16进制的数字
    */
   public static colorHexNumber(color: string) {
-    const reg: RegExp = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+    const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
     let result = 0x000000;
     if (reg.test(color)) {
       result = Number.parseInt(color.slice(1), 16);

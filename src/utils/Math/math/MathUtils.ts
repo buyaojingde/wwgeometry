@@ -1,7 +1,7 @@
 export default class MathUtils {
   public static readonly Deg2Rad: number = Math.PI / 180.0;
   public static readonly Rad2Deg: number = 180.0 / Math.PI;
-  public static Epsilon: number = 0.000001;
+  public static Epsilon = 0.000001;
 
   public static resetAccuracy() {
     this.Epsilon = 0.000001;

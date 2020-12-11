@@ -2,8 +2,8 @@
  * * by lianbo.guo
  **/
 
-import 'pixi-layers';
-import * as PIXI from 'pixi.js';
+import "pixi-layers";
+import * as PIXI from "pixi.js";
 
 // export class Group {
 //   private _index: number;
@@ -29,4 +29,4 @@ while (LayerOrder[i]) {
   i++;
 }
 
-export let layerOrderGroups = Groups;
+export const layerOrderGroups = Groups;

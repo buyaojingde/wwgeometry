@@ -1,10 +1,10 @@
-import Vector2D from './Vector2D';
+import Vector2D from "./Vector2D";
 
 export default class Line2DIntersection {
   private _U: number[];
   private _V: number[];
 
-  constructor(param1: number = 2) {
+  constructor(param1 = 2) {
     this._status = param1;
     this._U = [];
     this._V = [];

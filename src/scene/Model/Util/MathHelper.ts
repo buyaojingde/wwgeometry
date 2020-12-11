@@ -1,8 +1,8 @@
-import Bezier from 'bezier-js';
-import Line2D from '../Geometry/Line2D';
-import Polygon2D from '../Geometry/Polygon2D';
-import Vector2D from '../Geometry/Vector2D';
-import MathTool from './MathTool';
+import Bezier from "bezier-js";
+import Line2D from "../Geometry/Line2D";
+import Polygon2D from "../Geometry/Polygon2D";
+import Vector2D from "../Geometry/Vector2D";
+import MathTool from "./MathTool";
 
 /** 几何辅助类 */
 export default class MathHelper {
@@ -17,7 +17,7 @@ export default class MathHelper {
   public static removeUselessPoints(
     points: Vector2D[],
     isLoop: boolean,
-    disTol: number = 0.0001,
+    disTol = 0.0001
   ): Vector2D[] {
     try {
       const iCount = points.length;
@@ -27,7 +27,7 @@ export default class MathHelper {
         const p: Vector2D = points[i];
 
         // 当后面的地点太靠近了，说明这个点是无效的
-        let isTooClsoe: boolean = false;
+        let isTooClsoe = false;
         for (let j = i + 1; j < iCount; j++) {
           const nextP: Vector2D = points[j];
           if (p.distanceSquared(nextP) < disTol) {
@@ -51,7 +51,10 @@ export default class MathHelper {
         if (newPs[0].distanceSquared(points[0]) > disTol) {
           newPs.unshift(points[0]);
         }
-        if (newPs[newPs.length - 1].distanceSquared(points[points.length - 1]) > disTol) {
+        if (
+          newPs[newPs.length - 1].distanceSquared(points[points.length - 1]) >
+          disTol
+        ) {
           newPs.push(points[points.length - 1]);
         }
       }
@@ -71,13 +74,13 @@ export default class MathHelper {
   public static cutSegsByPoints(
     iniLinePs: Vector2D[],
     psCut: Vector2D[],
-    exLen: number = 50,
+    exLen = 50
   ): Vector2D[] {
     if (iniLinePs.length < 2) {
-      console.error('iniLinePs.length<2 ');
+      console.error("iniLinePs.length<2 ");
     }
     if (psCut.length < 2) {
-      console.error(' psCut.length < 2 ');
+      console.error(" psCut.length < 2 ");
     }
     // 如果出现共线头尾相接的情况，这时候就返回
     const endP: Vector2D = iniLinePs[iniLinePs.length - 1].clone();
@@ -111,7 +114,7 @@ export default class MathHelper {
     iniLinePs: Vector2D[],
     psStart: Vector2D[],
     psEnd: Vector2D[],
-    exLen: number = 50,
+    exLen = 50
   ): Vector2D[] {
     try {
       iniLinePs = iniLinePs.slice();
@@ -136,7 +139,10 @@ export default class MathHelper {
 
       // 结尾延长，裁剪,如果没有交叉，采用未延长的点
       let psToEnd = MathHelper.extendPoints(iniLinePs, exLen);
-      const { isCut: isCutEnd, points: pointsE } = MathHelper.cutPointsByPoints(psToEnd, psEnd);
+      const { isCut: isCutEnd, points: pointsE } = MathHelper.cutPointsByPoints(
+        psToEnd,
+        psEnd
+      );
       if (isCutEnd) {
         psToEnd = pointsE;
       } else {
@@ -146,10 +152,10 @@ export default class MathHelper {
       // 反向，延伸，裁剪，,如果没有交叉，采用未延长的点，在再反向
       psToEnd = psToEnd.reverse();
       let psToStart = MathHelper.extendPoints(psToEnd, exLen);
-      const { isCut: isCutStart, points: pointsS } = MathHelper.cutPointsByPoints(
-        psToStart,
-        psStart.reverse(),
-      );
+      const {
+        isCut: isCutStart,
+        points: pointsS,
+      } = MathHelper.cutPointsByPoints(psToStart, psStart.reverse());
       if (isCutStart) {
         psToStart = pointsS;
       } else {
@@ -177,8 +183,8 @@ export default class MathHelper {
     iniLinePs: Vector2D[],
     psStart: Vector2D[],
     psEnd: Vector2D[],
-    exLen: number = 50,
-    overExt: boolean = true,
+    exLen = 50,
+    overExt = true
   ): Vector2D[] {
     // 起始系列点头尾延长
     if (psStart.length > 0) {
@@ -250,8 +256,11 @@ export default class MathHelper {
    * @param checkPoint 检测点
    * @return 如果包含则返回true
    */
-  public static polygonContainsPointA(polygonPoints: Vector2D[], checkPoint: Vector2D): boolean {
-    let inside: boolean = false;
+  public static polygonContainsPointA(
+    polygonPoints: Vector2D[],
+    checkPoint: Vector2D
+  ): boolean {
+    let inside = false;
     const pointCount: number = polygonPoints.length;
     let p1: Vector2D;
     let p2: Vector2D;
@@ -265,7 +274,10 @@ export default class MathHelper {
         // p2在射线之上
         if (p1.y <= checkPoint.y) {
           // p1正好在射线中或者射线下方
-          if ((checkPoint.y - p1.y) * (p2.x - p1.x) > (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+          if (
+            (checkPoint.y - p1.y) * (p2.x - p1.x) >
+            (checkPoint.x - p1.x) * (p2.y - p1.y)
+          ) {
             // 斜率判断,在P1和P2之间且在P1P2右侧
             // 射线与多边形交点为奇数时则在多边形之内，若为偶数个交点时则在多边形之外。
             // 由于inside初始值为false，即交点数为零。所以当有第一个交点时，则必为奇数，则在内部，此时为inside=(!inside)
@@ -275,7 +287,10 @@ export default class MathHelper {
         }
       } else if (checkPoint.y < p1.y) {
         // p2正好在射线中或者在射线下方，p1在射线上
-        if ((checkPoint.y - p1.y) * (p2.x - p1.x) < (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+        if (
+          (checkPoint.y - p1.y) * (p2.x - p1.x) <
+          (checkPoint.x - p1.x) * (p2.y - p1.y)
+        ) {
           // 斜率判断,在P1和P2之间且在P1P2右侧
           inside = !inside;
         }
@@ -290,13 +305,16 @@ export default class MathHelper {
    * @param cutLinePs 截断的点，类似剪刀功能
    * @return 返回新的系列点,以及标识是否是原数据,即，是否存在交点
    */
-  public static cutPointsByPoints(iniLinePs: Vector2D[], cutLinePs: Vector2D[]): any {
+  public static cutPointsByPoints(
+    iniLinePs: Vector2D[],
+    cutLinePs: Vector2D[]
+  ): any {
     iniLinePs = iniLinePs.slice();
     cutLinePs = cutLinePs.slice();
 
-    let i: number = 0;
+    let i = 0;
     const iCount: number = iniLinePs.length;
-    let j: number = 0;
+    let j = 0;
     const jCount: number = cutLinePs.length;
 
     // @ts-ignore
@@ -352,13 +370,16 @@ export default class MathHelper {
     return { isCut: false, points: iniLinePs };
   }
 
-  public static cutPointsByPoints_bak(iniLinePs: Vector2D[], cutLinePs: Vector2D[]): Vector2D[] {
+  public static cutPointsByPoints_bak(
+    iniLinePs: Vector2D[],
+    cutLinePs: Vector2D[]
+  ): Vector2D[] {
     iniLinePs = iniLinePs.slice();
     cutLinePs = cutLinePs.slice();
 
-    let i: number = 0;
+    let i = 0;
     const iCount: number = iniLinePs.length;
-    let j: number = 0;
+    let j = 0;
     const jCount: number = cutLinePs.length;
 
     // @ts-ignore
@@ -420,8 +441,11 @@ export default class MathHelper {
    * @param checkPoint 检测点
    * @return 如果包含则返回true
    */
-  public static polygonContainsPoint(polygonPoints: Vector2D[], checkPoint: Vector2D): boolean {
-    let inside: boolean = false;
+  public static polygonContainsPoint(
+    polygonPoints: Vector2D[],
+    checkPoint: Vector2D
+  ): boolean {
+    let inside = false;
     const pointCount: number = polygonPoints.length;
     let p1: Vector2D;
     let p2: Vector2D;
@@ -435,7 +459,10 @@ export default class MathHelper {
         // p2在射线之上
         if (p1.y <= checkPoint.y) {
           // p1正好在射线中或者射线下方
-          if ((checkPoint.y - p1.y) * (p2.x - p1.x) > (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+          if (
+            (checkPoint.y - p1.y) * (p2.x - p1.x) >
+            (checkPoint.x - p1.x) * (p2.y - p1.y)
+          ) {
             // 斜率判断,在P1和P2之间且在P1P2右侧
             // 射线与多边形交点为奇数时则在多边形之内，若为偶数个交点时则在多边形之外。
             // 由于inside初始值为false，即交点数为零。所以当有第一个交点时，则必为奇数，则在内部，此时为inside=(!inside)
@@ -445,7 +472,10 @@ export default class MathHelper {
         }
       } else if (checkPoint.y < p1.y) {
         // p2正好在射线中或者在射线下方，p1在射线上
-        if ((checkPoint.y - p1.y) * (p2.x - p1.x) < (checkPoint.x - p1.x) * (p2.y - p1.y)) {
+        if (
+          (checkPoint.y - p1.y) * (p2.x - p1.x) <
+          (checkPoint.x - p1.x) * (p2.y - p1.y)
+        ) {
           // 斜率判断,在P1和P2之间且在P1P2右侧
           inside = !inside;
         }
@@ -460,7 +490,10 @@ export default class MathHelper {
    * @param cutLinePs 截断的点，类似剪刀功能
    * @return 返回新的系列点,以及标识是否是原数据,即，是否存在交点
    */
-  public static cutPointsByPointsA(iniLinePs: Vector2D[], cutLinePs: Vector2D[]): any[] {
+  public static cutPointsByPointsA(
+    iniLinePs: Vector2D[],
+    cutLinePs: Vector2D[]
+  ): any[] {
     if (!cutLinePs) {
       return [iniLinePs, false];
     }
@@ -468,9 +501,9 @@ export default class MathHelper {
     iniLinePs = iniLinePs.slice();
     cutLinePs = cutLinePs.slice();
 
-    let i: number = 0;
+    let i = 0;
     const iCount: number = iniLinePs.length;
-    let j: number = 0;
+    let j = 0;
     const jCount: number = cutLinePs.length;
 
     // @ts-ignore
@@ -547,8 +580,22 @@ export default class MathHelper {
    * @param p3 线段2的端点1
    * @param p4 线段2的端点2
    */
-  public static getIntersection(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): Vector2D {
-    return MathHelper.getIntersection1(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+  public static getIntersection(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D
+  ): Vector2D {
+    return MathHelper.getIntersection1(
+      p1.x,
+      p1.y,
+      p2.x,
+      p2.y,
+      p3.x,
+      p3.y,
+      p4.x,
+      p4.y
+    );
   }
 
   /**
@@ -570,7 +617,7 @@ export default class MathHelper {
     x3: number,
     y3: number,
     x4: number,
-    y4: number,
+    y4: number
   ): Vector2D {
     const denom: number = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
     if (denom === 0) {
@@ -590,7 +637,12 @@ export default class MathHelper {
    * @param p4 线段2端点2
    * @return 如果相交返回true
    */
-  public static isCorss(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): boolean {
+  public static isCorss(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D
+  ): boolean {
     return MathHelper.isCorss1(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
   }
 
@@ -602,7 +654,12 @@ export default class MathHelper {
    * @param p4 线段2端点2
    * @return 如果相交返回true
    */
-  public static isSegumentCorss(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): boolean {
+  public static isSegumentCorss(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D
+  ): boolean {
     if (MathHelper.isCorss(p1, p2, p3, p4)) {
       if (
         MathHelper.isParallel(p1, p2, p3, p4) &&
@@ -627,7 +684,7 @@ export default class MathHelper {
     p1: Vector2D,
     p2: Vector2D,
     p3: Vector2D,
-    p4: Vector2D,
+    p4: Vector2D
   ): boolean {
     if (MathHelper.isParallel(p1, p2, p3, p4)) {
       if (MathHelper.segmentContainsPoint(p1, p2, p3, false)) {
@@ -655,9 +712,17 @@ export default class MathHelper {
     p1: Vector2D,
     p2: Vector2D,
     p: Vector2D,
-    hasEndPoint: boolean = true,
+    hasEndPoint = true
   ): boolean {
-    return MathHelper.segmentContainsPoint1(p1.x, p1.y, p2.x, p2.y, p.x, p.y, hasEndPoint);
+    return MathHelper.segmentContainsPoint1(
+      p1.x,
+      p1.y,
+      p2.x,
+      p2.y,
+      p.x,
+      p.y,
+      hasEndPoint
+    );
   }
 
   /**
@@ -668,7 +733,12 @@ export default class MathHelper {
    * @param y2 点2的x坐标
    * @return 距离
    */
-  public static distancePointWithPoint1(x1: number, y1: number, x2: number, y2: number): number {
+  public static distancePointWithPoint1(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): number {
     return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   }
 
@@ -685,9 +755,12 @@ export default class MathHelper {
     p2: Vector2D,
     p3: Vector2D,
     p4: Vector2D,
-    deviation: number = 0.1,
+    deviation = 0.1
   ): boolean {
-    return Math.abs((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x)) < deviation;
+    return (
+      Math.abs((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x)) <
+      deviation
+    );
   }
 
   /**
@@ -704,7 +777,7 @@ export default class MathHelper {
    *
    */
   public static getAngle(pSrc: Vector2D, p1: Vector2D, p2: Vector2D): number {
-    let angle: number = 0.0; // 夹角
+    let angle = 0.0; // 夹角
     const vax: number = p1.x - pSrc.x;
     const vay: number = p1.y - pSrc.y;
 
@@ -751,12 +824,32 @@ export default class MathHelper {
     x3: number,
     y3: number,
     x4: number,
-    y4: number,
+    y4: number
   ): boolean {
-    const cm1: number = MathHelper.crossMul1(x1 - x3, y1 - y3, x4 - x3, y4 - y3);
-    const cm2: number = MathHelper.crossMul1(x2 - x3, y2 - y3, x4 - x3, y4 - y3);
-    const cm3: number = MathHelper.crossMul1(x3 - x1, y3 - y1, x2 - x1, y2 - y1);
-    const cm4: number = MathHelper.crossMul1(x4 - x1, y4 - y1, x2 - x1, y2 - y1);
+    const cm1: number = MathHelper.crossMul1(
+      x1 - x3,
+      y1 - y3,
+      x4 - x3,
+      y4 - y3
+    );
+    const cm2: number = MathHelper.crossMul1(
+      x2 - x3,
+      y2 - y3,
+      x4 - x3,
+      y4 - y3
+    );
+    const cm3: number = MathHelper.crossMul1(
+      x3 - x1,
+      y3 - y1,
+      x2 - x1,
+      y2 - y1
+    );
+    const cm4: number = MathHelper.crossMul1(
+      x4 - x1,
+      y4 - y1,
+      x2 - x1,
+      y2 - y1
+    );
     return cm1 * cm2 <= 0 && cm3 * cm4 <= 0;
   }
 
@@ -766,7 +859,11 @@ export default class MathHelper {
    * @param endPoint 端点2 （平移后实例会被修改，需提前clone）
    * @param offset 偏移距离(正数向右，负数向左)
    */
-  public static translateLine(startPoint: Vector2D, endPoint: Vector2D, offset: number): void {
+  public static translateLine(
+    startPoint: Vector2D,
+    endPoint: Vector2D,
+    offset: number
+  ): void {
     let dx: number = startPoint.y - endPoint.y;
     let dy: number = endPoint.x - startPoint.x;
     const len: number = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
@@ -795,9 +892,13 @@ export default class MathHelper {
     p1: Vector2D,
     p2: Vector2D,
     pCenter: Vector2D,
-    radius: number,
+    radius: number
   ) {
-    const disToCenter: number = MathHelper.distancePointWithLine(pCenter, p1, p2);
+    const disToCenter: number = MathHelper.distancePointWithLine(
+      pCenter,
+      p1,
+      p2
+    );
     const disToP1: number = pCenter.distance(p1);
     const disToP2: number = pCenter.distance(p2);
 
@@ -830,9 +931,13 @@ export default class MathHelper {
     p1: Vector2D,
     p2: Vector2D,
     pCenter: Vector2D,
-    radius: number,
+    radius: number
   ) {
-    const disToCenter: number = MathHelper.distancePointWithLine(pCenter, p1, p2);
+    const disToCenter: number = MathHelper.distancePointWithLine(
+      pCenter,
+      p1,
+      p2
+    );
     const disToP1: number = pCenter.distance(p1);
     const disToP2: number = pCenter.distance(p2);
 
@@ -859,8 +964,12 @@ export default class MathHelper {
    * @param radius
    * @param points
    */
-  public static IsContainsPointsForCircle(pCenter: Vector2D, radius: number, points: Vector2D[]) {
-    points.forEach(element => {
+  public static IsContainsPointsForCircle(
+    pCenter: Vector2D,
+    radius: number,
+    points: Vector2D[]
+  ) {
+    points.forEach((element) => {
       const dis: number = pCenter.distance(element);
       if (dis > radius) {
         return false;
@@ -882,7 +991,7 @@ export default class MathHelper {
     pEnd: Vector2D,
     ctrStart: Vector2D,
     ctrEnd: Vector2D,
-    offset: number,
+    offset: number
   ): Vector2D[] {
     const bLine: Bezier = new Bezier(
       pStart.x,
@@ -892,7 +1001,7 @@ export default class MathHelper {
       ctrEnd.x,
       ctrEnd.y,
       pEnd.x,
-      pEnd.y,
+      pEnd.y
     );
     let subBs = MathHelper.getBezierSubPoints(bLine);
     subBs = MathHelper.removeUselessPoints(subBs, false);
@@ -933,7 +1042,7 @@ export default class MathHelper {
     */
   }
 
-  public static getBezierSubPoints(b: Bezier, tol: number = 0.01) {
+  public static getBezierSubPoints(b: Bezier, tol = 0.01) {
     const points: Vector2D[] = [];
     let isOver = false;
     for (let t = 0; t <= 2.0; t += tol) {
@@ -955,7 +1064,7 @@ export default class MathHelper {
     pEnd: Vector2D,
     ctrStart: Vector2D,
     ctrEnd: Vector2D,
-    tol: number = 0.01,
+    tol = 0.01
   ) {
     const b: Bezier = new Bezier(
       pStart.x,
@@ -965,7 +1074,7 @@ export default class MathHelper {
       ctrEnd.x,
       ctrEnd.y,
       pEnd.x,
-      pEnd.y,
+      pEnd.y
     );
     return MathHelper.getBezierSubPoints(b, tol);
   }
@@ -974,13 +1083,13 @@ export default class MathHelper {
    * @param pAr
    * @param hHei
    * */
-  public static optimizePoints(pAr: any[], hHei: number = 0.4): any[] {
+  public static optimizePoints(pAr: any[], hHei = 0.4): any[] {
     if (pAr.length < 3) {
       return pAr;
     }
     let psTemp: Vector2D[] = pAr.slice();
     const newPs: Vector2D[] = [];
-    let i: number = 0;
+    let i = 0;
     let iLength: number = psTemp.length;
     // @ts-ignore
     let preP: Vector2D = null;
@@ -988,8 +1097,8 @@ export default class MathHelper {
     let curP: Vector2D = null;
     // @ts-ignore
     let nextP: Vector2D = null;
-    let orDis: number = 0;
-    let sampleOk: boolean = false;
+    let orDis = 0;
+    let sampleOk = false;
 
     while (!sampleOk) {
       newPs.push(psTemp[0]);
@@ -1043,7 +1152,15 @@ export default class MathHelper {
       }
 
       // @ts-ignore
-      const isOnLine = MathHelper.segmentContainsPoint1(p1.x, p1.y, p3.x, p3.y, p2.x, p2.y, false);
+      const isOnLine = MathHelper.segmentContainsPoint1(
+        p1.x,
+        p1.y,
+        p3.x,
+        p3.y,
+        p2.x,
+        p2.y,
+        false
+      );
       if (isOnLine) {
         pointsNeedRemove.push(p2);
       }
@@ -1078,7 +1195,11 @@ export default class MathHelper {
    * @param p2 线段端点2
    * @return 最近的距离
    */
-  public static distancePointWithLine(p: Vector2D, p1: Vector2D, p2: Vector2D): number {
+  public static distancePointWithLine(
+    p: Vector2D,
+    p1: Vector2D,
+    p2: Vector2D
+  ): number {
     const x: number = p.x;
     const y: number = p.y;
     const x1: number = p1.x;
@@ -1104,7 +1225,7 @@ export default class MathHelper {
     x1: number,
     y1: number,
     x2: number,
-    y2: number,
+    y2: number
   ): number {
     let cross: number;
     let d2: number;
@@ -1137,11 +1258,11 @@ export default class MathHelper {
 
   /** 求面积（有正负） **/
   public static _calcArea(points: Vector2D[]): number {
-    let total: number = 0;
-    let addX: number = 0;
-    let addY: number = 0;
-    let subX: number = 0;
-    let subY: number = 0;
+    let total = 0;
+    let addX = 0;
+    let addY = 0;
+    let subX = 0;
+    let subY = 0;
     const len: number = points.length;
     for (let i = 0; i < len; i++) {
       addX = points[i].x;
@@ -1167,7 +1288,7 @@ export default class MathHelper {
     let nextPoint: Vector2D = null;
     // @ts-ignore
     let currentPoint: Vector2D = null;
-    let i: number = 1;
+    let i = 1;
     const iCount: number = points.length;
     const poly = new Polygon2D(points);
     if (iCount > 2) {
@@ -1221,14 +1342,16 @@ export default class MathHelper {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    numberOfPoints: number,
+    numberOfPoints: number
   ): Vector2D[] {
     const curve: Vector2D[] = [];
 
     const dt: number = 1.0 / (numberOfPoints - 1);
 
     for (let i = 0; i < numberOfPoints; i++) {
-      curve.push(this.PointOnCubicBezier(control1, control2, anchor1, anchor2, i * dt));
+      curve.push(
+        this.PointOnCubicBezier(control1, control2, anchor1, anchor2, i * dt)
+      );
     }
 
     return curve;
@@ -1239,7 +1362,7 @@ export default class MathHelper {
     control2: Vector2D,
     anchor1: Vector2D,
     anchor2: Vector2D,
-    t: number,
+    t: number
   ): Vector2D {
     const result: Vector2D = new Vector2D();
 
@@ -1268,7 +1391,10 @@ export default class MathHelper {
    * @param {number} extendLength
    * @returns {Vector2D[]}
    */
-  public static extendPoints(points: Vector2D[], extendLength: number = 50): Vector2D[] {
+  public static extendPoints(
+    points: Vector2D[],
+    extendLength = 50
+  ): Vector2D[] {
     // @ts-ignore
     const _points = [].concat(points);
     // @ts-ignore
@@ -1294,7 +1420,11 @@ export default class MathHelper {
   }
 
   // @ts-ignore
-  public static reLength(startPoint: Vector2D, endPoint: Vector2D, length): Vector2D {
+  public static reLength(
+    startPoint: Vector2D,
+    endPoint: Vector2D,
+    length
+  ): Vector2D {
     const _startPoint = startPoint.clone();
     const _endPoint = endPoint.clone();
     const _vector = _startPoint
@@ -1359,7 +1489,7 @@ export default class MathHelper {
 
     return Line2D.getIntersection(
       triangleLine1.perpendicularLine(),
-      triangleLine2.perpendicularLine(),
+      triangleLine2.perpendicularLine()
     );
   }
 
@@ -1377,7 +1507,13 @@ export default class MathHelper {
     const diagonalLine2: Line2D = new Line2D(vers[1], vers[3]);
 
     // 对角线长度是否相等
-    if (!MathTool.numberEquals(diagonalLine1.lengthSquared, diagonalLine2.lengthSquared, 10)) {
+    if (
+      !MathTool.numberEquals(
+        diagonalLine1.lengthSquared,
+        diagonalLine2.lengthSquared,
+        10
+      )
+    ) {
       return false;
     }
 
@@ -1399,7 +1535,10 @@ export default class MathHelper {
    * @param basePs
    * @param width
    */
-  public static calcOffsetPath2P(basePs: Vector2D[], width: number): Vector2D[] {
+  public static calcOffsetPath2P(
+    basePs: Vector2D[],
+    width: number
+  ): Vector2D[] {
     const newPath: Vector2D[] = [];
     const iCount = basePs.length;
     // @ts-ignore
@@ -1425,7 +1564,10 @@ export default class MathHelper {
    * @param basePs
    * @param width
    */
-  public static calcOffsetPath3P(basePs: Vector2D[], width: number): Vector2D[] {
+  public static calcOffsetPath3P(
+    basePs: Vector2D[],
+    width: number
+  ): Vector2D[] {
     // basePs = MathHelper.removeUselessPointsOnPath(basePs);
     const newPath: Vector2D[] = [];
     const maxW: number = Math.abs(width * 100);
@@ -1456,7 +1598,10 @@ export default class MathHelper {
    * @param point
    * @param points
    */
-  public static adjustFirstPoints(point: Vector2D, points: Vector2D[]): Vector2D[] {
+  public static adjustFirstPoints(
+    point: Vector2D,
+    points: Vector2D[]
+  ): Vector2D[] {
     let idx = 0;
     let min: number = Number.MAX_VALUE;
     const count = points.length;
@@ -1492,8 +1637,8 @@ export default class MathHelper {
     y2: number,
     x: number,
     y: number,
-    hasEndPoint: boolean = true,
-    offset: number = 0.1,
+    hasEndPoint = true,
+    offset = 0.1
   ): boolean {
     if (MathHelper.distancePointWithLine1(x, y, x1, y1, x2, y2) < offset) {
       if (!hasEndPoint) {
@@ -1512,7 +1657,12 @@ export default class MathHelper {
   /**
    * 向量的叉乘
    */
-  private static crossMul1(x1: number, y1: number, x2: number, y2: number): number {
+  private static crossMul1(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): number {
     return x1 * y2 - x2 * y1;
   }
 }

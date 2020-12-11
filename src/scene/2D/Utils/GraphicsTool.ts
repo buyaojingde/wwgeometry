@@ -73,7 +73,7 @@ export default class GraphicsTool {
     let v2d1: Vector2D;
     let v2d2: Vector2D;
     const distance: number = point1.distanceToPoint(point2);
-    let temp: number = 0;
+    let temp = 0;
     while (temp < distance) {
       v2d1 = GeometryTool.interpolate(point2, point1, temp / distance);
       temp += gap;
@@ -122,11 +122,11 @@ export default class GraphicsTool {
     startAngle: number,
     angleValue: number
   ): void {
-    let num1: number = NaN;
-    let controlX: number = NaN;
-    let controlY: number = NaN;
-    let anchorX: number = NaN;
-    let anchorY: number = NaN;
+    let num1 = NaN;
+    let controlX = NaN;
+    let controlY = NaN;
+    let anchorX = NaN;
+    let anchorY = NaN;
     const px: number = param2.x;
     const py: number = param2.y;
     const num2: number = Math.ceil(Math.abs(angleValue) / (Math.PI / 4));
@@ -162,11 +162,7 @@ export default class GraphicsTool {
   //   graphics.endFill();
   // }
 
-  public static drawPolygon(
-    graphicsInst: Graphics,
-    points: any[],
-    len: number = 1
-  ) {
+  public static drawPolygon(graphicsInst: Graphics, points: any[], len = 1) {
     const vec = points;
 
     if (!vec.length) {
@@ -187,7 +183,7 @@ export default class GraphicsTool {
   public static drawPolygonDash(
     graphicsInst: Graphics,
     points: Vector2D[],
-    len: number = 1
+    len = 1
   ) {
     const vec = points;
 

@@ -145,7 +145,7 @@ export default class Polygon {
    */
   public pointInsidePoly(): Point {
     const r: Point = new Point();
-    let index: number = 0;
+    let index = 0;
     let v = this.vertices[0];
     for (
       let i = 1;
@@ -220,7 +220,7 @@ export default class Polygon {
       y0: number = p.y;
     let x1: number,
       y1: number,
-      inside: boolean = false;
+      inside = false;
 
     for (let i = 0; i < n; ++i) {
       (p = this.vertices[i]), (x1 = p.x), (y1 = p.y);
@@ -358,7 +358,7 @@ export default class Polygon {
   public containW(p: Point): boolean {
     if (!this.box.contain(p)) return false;
     // based on http://geomalgorithms.com/a03-_inclusion.html
-    let nWindingNumber: number = 0;
+    let nWindingNumber = 0;
 
     const N = this.vertices.length;
     let a: Point = this.vertices[0],
@@ -577,7 +577,7 @@ export default class Polygon {
     other.optimize();
     if (this.vertices.length !== other.vertices.length) return false;
 
-    let otherVes = [...other.vertices];
+    const otherVes = [...other.vertices];
     if (this.isClockwise() !== other.isClockwise()) {
       otherVes.reverse();
     }

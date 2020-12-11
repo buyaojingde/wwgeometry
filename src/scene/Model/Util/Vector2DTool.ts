@@ -1,19 +1,19 @@
-import { Point } from 'pixi.js';
-import Line2D from '../Geometry/Line2D';
-import Vector2D from '../Geometry/Vector2D';
+import { Point } from "pixi.js";
+import Line2D from "../Geometry/Line2D";
+import Vector2D from "../Geometry/Vector2D";
 
 export default class Vector2DTool {
-  public static DISTANCE_TOLERANCE: number = 20;
+  public static DISTANCE_TOLERANCE = 20;
 
   public static searchClosestPoint(
     vecs: Vector2D[],
     point: Vector2D,
-    param3: number = 20,
+    param3 = 20
   ): Vector2D {
     // @ts-ignore
     let tmpPoint: Vector2D = null;
-    let len: number = NaN;
-    let lenMax: number = 17976931348745161000000000000;
+    let len = NaN;
+    let lenMax = 17976931348745161000000000000;
 
     for (const tVec of vecs) {
       len = Vector2D.distance(tVec, point);
@@ -32,12 +32,12 @@ export default class Vector2DTool {
   public static searchClosestXPoint(
     Vecs: Vector2D[],
     point: Vector2D,
-    param3: number = 20,
+    param3 = 20
   ): Vector2D {
     // @ts-ignore
     let tmpPoint: Vector2D = null;
-    let len: number = NaN;
-    let lenMax: number = 17976931348623161000000000000;
+    let len = NaN;
+    let lenMax = 17976931348623161000000000000;
 
     for (const tVec of Vecs) {
       len = Math.abs(tVec.x - point.x);
@@ -57,12 +57,12 @@ export default class Vector2DTool {
   public static searchClosestYPoint(
     vecs: Vector2D[],
     point: Vector2D,
-    param3: number = 20,
+    param3 = 20
   ): Vector2D {
     // @ts-ignore
     let tmpPoint: Vector2D = null;
-    let len: number = NaN;
-    let lenMax: number = 17976931348623161000000000000;
+    let len = NaN;
+    let lenMax = 17976931348623161000000000000;
 
     for (const tVec of vecs) {
       len = Math.abs(tVec.y - point.y);
@@ -78,8 +78,12 @@ export default class Vector2DTool {
     return tmpPoint;
   }
 
-  public static indexOfPoints(pts: Vector2D[], pt: Vector2D, tol: number = 0.0001): number {
-    for (let i: number = 0; i < pts.length; ++i) {
+  public static indexOfPoints(
+    pts: Vector2D[],
+    pt: Vector2D,
+    tol = 0.0001
+  ): number {
+    for (let i = 0; i < pts.length; ++i) {
       if (pts[i].equals(pt, tol)) {
         return i;
       }
@@ -92,8 +96,8 @@ export default class Vector2DTool {
     const maxIdxs: number[] = [-1, -1];
     const nPts: number = pts.length;
 
-    for (let i: number = 0; i < nPts; ++i) {
-      for (let j: number = 0; j < nPts; ++j) {
+    for (let i = 0; i < nPts; ++i) {
+      for (let j = 0; j < nPts; ++j) {
         if (i === j) {
           continue;
         }
@@ -116,24 +120,24 @@ export default class Vector2DTool {
 
   public static getCadDebugString(
     pts: any[], // Vector2D[],
-    xField: string = 'x',
-    yField: string = 'y',
+    xField = "x",
+    yField = "y"
   ): string {
     // [Vector2D OR Point]
     // if (!GlobalProxy.isDebug()) return ''
 
-    let ret: string = '';
-    for (let i: number = 0; i < pts.length; ++i) {
+    let ret = "";
+    for (let i = 0; i < pts.length; ++i) {
       ret +=
-        'Line ' +
+        "Line " +
         pts[i][xField] +
-        ',' +
+        "," +
         -pts[i][yField] +
-        ' ' +
+        " " +
         pts[(i + 1) % pts.length][xField] +
-        ',' +
+        "," +
         -pts[(i + 1) % pts.length][yField] +
-        ' \n';
+        " \n";
 
       if (pts.length === 2) {
         break;
@@ -144,18 +148,18 @@ export default class Vector2DTool {
 
   public static getCadLinestring(
     pts: Vector2D[],
-    xField: string = 'x',
-    yField: string = 'y',
+    xField = "x",
+    yField = "y"
   ): string {
     // [Vector2D OR Point]
     // if (!GlobalProxy.isDebug())
     // return "";
 
     if (pts.length === 0) {
-      return '';
+      return "";
     }
 
-    let ret: string = '';
+    let ret = "";
 
     if (pts.length === 0) {
       return ret;
@@ -164,33 +168,41 @@ export default class Vector2DTool {
     const closedPoly: Vector2D[] = pts.concat();
     closedPoly.push(pts[0]);
 
-    for (let i: number = 0; i < closedPoly.length - 1; ++i) {
+    for (let i = 0; i < closedPoly.length - 1; ++i) {
       ret +=
-        'Line ' +
+        "Line " +
         // @ts-ignore
         closedPoly[i][xField] +
-        ',' +
+        "," +
         // @ts-ignore
         closedPoly[i][yField] * -1 +
-        ' ' +
+        " " +
         // @ts-ignore
         closedPoly[(i + 1) % closedPoly.length][xField] +
-        ',' +
+        "," +
         // @ts-ignore
         closedPoly[(i + 1) % closedPoly.length][yField] * -1 +
-        ' \n';
+        " \n";
     }
     return ret;
   }
 
   public static traceCadLinestringFromLine2D(line: Line2D) {
-    let resultStr: string = '';
+    let resultStr = "";
     const startPt: Vector2D = line.start;
     const endPt: Vector2D = line.end;
 
     if (startPt && endPt) {
       resultStr +=
-        'Line ' + startPt.x + ',' + startPt.y * -1 + ' ' + endPt.x + ',' + endPt.y * -1 + ' \n';
+        "Line " +
+        startPt.x +
+        "," +
+        startPt.y * -1 +
+        " " +
+        endPt.x +
+        "," +
+        endPt.y * -1 +
+        " \n";
     }
 
     // trace(resultStr);
@@ -206,7 +218,12 @@ export default class Vector2DTool {
    * @param p3
    * @param p4
    */
-  public static segmentsIntersect(p1: Vector2D, p2: Vector2D, p3: Vector2D, p4: Vector2D): boolean {
+  public static segmentsIntersect(
+    p1: Vector2D,
+    p2: Vector2D,
+    p3: Vector2D,
+    p4: Vector2D
+  ): boolean {
     const d1: number = this.direction(p1, p2, p3);
     const d2: number = this.direction(p1, p2, p4);
     const d3: number = this.direction(p3, p4, p1);
@@ -249,7 +266,7 @@ export default class Vector2DTool {
   }
 
   public static indexOfPixiPoints(pts: Point[], pt: Point): number {
-    for (let i: number = 0; i < pts.length; ++i) {
+    for (let i = 0; i < pts.length; ++i) {
       if (pts[i].equals(pt)) {
         return i;
       }
@@ -257,7 +274,11 @@ export default class Vector2DTool {
     return -1;
   }
 
-  public static detectionDis(pt1: Vector2D, pt2: Vector2D, dis: number): boolean {
+  public static detectionDis(
+    pt1: Vector2D,
+    pt2: Vector2D,
+    dis: number
+  ): boolean {
     return Math.abs(pt1.x - pt2.x) < dis || Math.abs(pt1.y - pt2.y) < dis;
   }
 
@@ -267,7 +288,11 @@ export default class Vector2DTool {
    * @param wid
    * @param hei
    */
-  public static sectionScale(section: Vector2D[], wid: number, hei: number): Vector2D[] {
+  public static sectionScale(
+    section: Vector2D[],
+    wid: number,
+    hei: number
+  ): Vector2D[] {
     const MAX: number = Number.MAX_VALUE;
     let maxX: number = -MAX;
     let maxY: number = -MAX;
@@ -327,7 +352,10 @@ export default class Vector2DTool {
    * @param section
    * @param type 是以哪个角点平移到原点，
    */
-  public static sectionMoveToZero(section: Vector2D[], type: number): Vector2D[] {
+  public static sectionMoveToZero(
+    section: Vector2D[],
+    type: number
+  ): Vector2D[] {
     const MAX: number = Number.MAX_VALUE;
     let maxX: number = -MAX;
     let maxY: number = -MAX;
@@ -402,8 +430,14 @@ export default class Vector2DTool {
     // 2个四分点
     const ratio1 = 0.25;
     const ratio2 = 0.75;
-    const quartile1 = new Vector2D(v1.x + ratio1 * deltaX, v1.y + ratio1 * deltaY);
-    const quartile2 = new Vector2D(v1.x + ratio2 * deltaX, v1.y + ratio2 * deltaY);
+    const quartile1 = new Vector2D(
+      v1.x + ratio1 * deltaX,
+      v1.y + ratio1 * deltaY
+    );
+    const quartile2 = new Vector2D(
+      v1.x + ratio2 * deltaX,
+      v1.y + ratio2 * deltaY
+    );
 
     return [quartile1, quartile2];
   }
@@ -411,7 +445,7 @@ export default class Vector2DTool {
   public static extendInDirectionByLength(
     point1: Vector2D,
     point2: Vector2D,
-    len: number = 0,
+    len = 0
   ): Vector2D {
     const tol = 1e-3;
     const newPoint = point1.clone();
@@ -455,8 +489,8 @@ export default class Vector2DTool {
     point1: Vector2D,
     point2: Vector2D,
     pivot: Vector2D,
-    extendBy: number = 20,
-    tol: number = 1e-3,
+    extendBy = 20,
+    tol = 1e-3
   ) {
     const perpendicularPoints = [];
 
@@ -467,7 +501,10 @@ export default class Vector2DTool {
       perpendicularPoints.push(new Vector2D(pivot.x, point1.y - extendBy));
       perpendicularPoints.push(new Vector2D(pivot.x, point1.y + extendBy));
     } else {
-      const midPoint = new Vector2D((point1.x + point2.x) / 2, (point1.y + point2.y) / 2);
+      const midPoint = new Vector2D(
+        (point1.x + point2.x) / 2,
+        (point1.y + point2.y) / 2
+      );
       const p1Vector2 = point1.rotateAround(pivot, Math.PI / 2);
       const p2Vector2 = point1.rotateAround(pivot, -Math.PI / 2);
       let p1 = new Vector2D(p1Vector2.x, p1Vector2.y);

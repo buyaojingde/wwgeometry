@@ -224,9 +224,9 @@ class LianBoTest {
 
   // @ts-ignore
   getIntersectionXPoint(segment, xPos, yPos) {
-    var dy1 = segment.from.y - yPos;
-    var dy2 = yPos - segment.to.y;
-    var dy = segment.to.y - segment.from.y;
+    const dy1 = segment.from.y - yPos;
+    const dy2 = yPos - segment.to.y;
+    const dy = segment.to.y - segment.from.y;
     if (Math.abs(dy1) < MathUtils.Epsilon) {
       // The segment starts on the sweep line
       if (Math.abs(dy) < MathUtils.Epsilon) {
@@ -238,8 +238,8 @@ class LianBoTest {
       return segment.from.x;
     }
 
-    var dx = segment.to.x - segment.from.x;
-    var xOffset;
+    const dx = segment.to.x - segment.from.x;
+    let xOffset;
     if (dy1 >= dy2) {
       xOffset = dy1 * (dx / dy);
       return segment.from.x - xOffset;
@@ -579,7 +579,7 @@ class LianBoTest {
     console.log(r2);
   }
 
-  public drawTest(str: string, pos: any, color: string = "") {
+  public drawTest(str: string, pos: any, color = "") {
     const style = {
       fontSize: this.lineWidth() * 15,
       fill: color ? color : "#ff0000",

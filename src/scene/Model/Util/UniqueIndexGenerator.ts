@@ -1,6 +1,6 @@
 export default class UniqueIndexGenerator {
   // extends Object
-  private static mId: number = 0;
+  private static mId = 0;
 
   public static resetIndex(): void {
     this.mId = 0;

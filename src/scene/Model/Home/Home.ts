@@ -1,5 +1,5 @@
-import ObjectNamed from '../BaseInterface/ObjectNamed';
-import Level from './Level';
+import ObjectNamed from "../BaseInterface/ObjectNamed";
+import Level from "./Level";
 
 export default class Home extends ObjectNamed {
   private _levelIdx: number;

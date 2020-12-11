@@ -45,8 +45,8 @@ export default class Structure
   }
   isMoving!: boolean;
   @observable
-  public isEdit: boolean = false;
-  public destroyed: boolean = false;
+  public isEdit = false;
+  public destroyed = false;
 
   constructor() {
     super();
@@ -109,7 +109,7 @@ export default class Structure
   }
 
   @observable
-  private _visible: boolean = true;
+  private _visible = true;
 
   get visible(): boolean {
     return this._visible;
@@ -377,7 +377,7 @@ export default class Structure
         if (difference.length === 0) {
           break;
         }
-        let result: any[] = [];
+        const result: any[] = [];
         for (const seg of difference) {
           const dif = seg.subtract(other);
           if (dif.length > 0) {

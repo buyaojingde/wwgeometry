@@ -1,22 +1,22 @@
 import EventEmitter = PIXI.utils.EventEmitter;
-import AH from '../2D/Utils/AH';
-import { IDataObject } from '../Interface/IDataObject';
-import { IViewObject } from '../Interface/IViewObject';
+import AH from "../2D/Utils/AH";
+import { IDataObject } from "../Interface/IDataObject";
+import { IViewObject } from "../Interface/IViewObject";
 
 const layerEventEmit = new EventEmitter();
 
 export const LayerEvent = layerEventEmit;
 
 export enum LayerName {
-  Structure = 'column',
-  Room = 'room',
+  Structure = "column",
+  Room = "room",
 }
 
 export default abstract class LayerBase extends EventEmitter {
   protected _disposeArr: Array<() => void> = [];
   protected container: any;
   protected dataViewMap: Map<IDataObject, IViewObject>;
-  protected _loadComplete: boolean = false;
+  protected _loadComplete = false;
   // @ts-ignore
   private disposeFn: () => void;
 
@@ -92,7 +92,7 @@ export default abstract class LayerBase extends EventEmitter {
   }
 
   public disposeArr() {
-    this._disposeArr.forEach(dispose => dispose());
+    this._disposeArr.forEach((dispose) => dispose());
     this._disposeArr = [];
   }
 
@@ -119,7 +119,7 @@ export default abstract class LayerBase extends EventEmitter {
    */
   protected initSyncEvent() {
     // @ts-ignore
-    const syncFn = args => {
+    const syncFn = (args) => {
       const { type, model } = args;
       // @ts-ignore
       this[type](...model);

@@ -33,7 +33,7 @@ export default class Room2D extends ViewObject {
   }
   private _grp!: PIXI.Graphics;
   private _roomText!: PIXI.Text;
-  private _active: boolean = false;
+  private _active = false;
 
   public customRender() {
     this.visible = this.isVis;

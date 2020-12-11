@@ -1,8 +1,8 @@
 /**
  * * by lianbo.guo
  **/
-import BaseEvent from '../../2D/Events/Base';
-import { LayerOrder, layerOrderGroups } from '../Layer/LayerOrder';
+import BaseEvent from "../../2D/Events/Base";
+import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
 
 export default abstract class BaseController extends BaseEvent {
   protected controllerGroup: PIXI.display.Group;

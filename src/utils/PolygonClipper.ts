@@ -65,7 +65,7 @@ export default class PolygonClipper {
     return this.ShapeToV2s(resizeShape);
   }
 
-  private static scaleInit: number = 10000;
+  private static scaleInit = 10000;
   private static unionPath(childPoints: any[][]): Shape {
     const firstPath: any[] = childPoints[0];
     const paths: any[][] = childPoints.slice();

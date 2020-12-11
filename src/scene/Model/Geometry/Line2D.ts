@@ -1,13 +1,22 @@
-import minBy from 'lodash/minBy';
-import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
-import { EPointLineRelation, ESegOverlapType } from '../../../global/Enum/EnumData';
-import MathHelper from '../Util/MathHelper';
-import MathTool from '../Util/MathTool';
-import Vector2D from './Vector2D';
+import minBy from "lodash/minBy";
+import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+import {
+  EPointLineRelation,
+  ESegOverlapType,
+} from "../../../global/Enum/EnumData";
+import MathHelper from "../Util/MathHelper";
+import MathTool from "../Util/MathTool";
+import Vector2D from "./Vector2D";
 
 export default class Line2D {
-  public static horizontalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.X_AXIS);
-  public static verticalLine: Line2D = new Line2D(Vector2D.ORIGIN_V2D, Vector2D.Y_AXIS);
+  public static horizontalLine: Line2D = new Line2D(
+    Vector2D.ORIGIN_V2D,
+    Vector2D.X_AXIS
+  );
+  public static verticalLine: Line2D = new Line2D(
+    Vector2D.ORIGIN_V2D,
+    Vector2D.Y_AXIS
+  );
   protected _dirty: boolean;
   private _syncStatus: number; // 参考SharedConstants.SYNC_DELETE
 
@@ -58,15 +67,15 @@ export default class Line2D {
 
   get debugCad(): string {
     const str: string =
-      'Line ' +
+      "Line " +
       this._start.x +
-      ',' +
+      "," +
       -this._start.y +
-      ' ' +
+      " " +
       this._end.x +
-      ',' +
+      "," +
       -this._end.y +
-      ' \n';
+      " \n";
     return str;
   }
 
@@ -88,12 +97,18 @@ export default class Line2D {
   }
 
   get leftNormal(): Vector2D {
-    return new Vector2D(this._end.y - this._start.y, this._start.x - this._end.x);
+    return new Vector2D(
+      this._end.y - this._start.y,
+      this._start.x - this._end.x
+    );
   }
 
   // 取垂直向量
   get rightNormal(): Vector2D {
-    return new Vector2D(this._start.y - this._end.y, this._end.x - this._start.x);
+    return new Vector2D(
+      this._start.y - this._end.y,
+      this._end.x - this._start.x
+    );
   }
 
   get distance(): number {
@@ -131,11 +146,15 @@ export default class Line2D {
     return new Line2D(start, end);
   }
 
-  public static isZeroNumber(num1: number, num2: number = 1e-3): boolean {
+  public static isZeroNumber(num1: number, num2 = 1e-3): boolean {
     return Math.abs(num1) < num2;
   }
 
-  public static isParallel(line1: Line2D, line2: Line2D, tolDegrees: number = 1): boolean {
+  public static isParallel(
+    line1: Line2D,
+    line2: Line2D,
+    tolDegrees = 1
+  ): boolean {
     if (!line1 || !line2) {
       return false;
     }
@@ -162,18 +181,24 @@ export default class Line2D {
     const lineBEndPt: Vector2D = lineB.end;
 
     if (
-      (lineAStartPt.equals(lineBStartPt, 0.8) && lineAEndPt.equals(lineBEndPt, 0.8)) ||
-      (lineAStartPt.equals(lineBEndPt, 0.8) && lineAEndPt.equals(lineBStartPt, 0.8))
+      (lineAStartPt.equals(lineBStartPt, 0.8) &&
+        lineAEndPt.equals(lineBEndPt, 0.8)) ||
+      (lineAStartPt.equals(lineBEndPt, 0.8) &&
+        lineAEndPt.equals(lineBStartPt, 0.8))
     ) {
       return false;
     }
 
     if (
       Line2D.isParallel(lineA, lineB) &&
-      ((lineAStartPt.equals(lineBStartPt) && !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
-        (lineAStartPt.equals(lineBEndPt) && !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
-        (lineAEndPt.equals(lineBStartPt) && !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
-        (lineAEndPt.equals(lineBEndPt) && !Line2D.isLineAPartOverlapLineB(lineA, lineB)))
+      ((lineAStartPt.equals(lineBStartPt) &&
+        !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
+        (lineAStartPt.equals(lineBEndPt) &&
+          !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
+        (lineAEndPt.equals(lineBStartPt) &&
+          !Line2D.isLineAPartOverlapLineB(lineA, lineB)) ||
+        (lineAEndPt.equals(lineBEndPt) &&
+          !Line2D.isLineAPartOverlapLineB(lineA, lineB)))
     ) {
       return true;
     }
@@ -184,10 +209,10 @@ export default class Line2D {
   public static isLineAPartOverlapLineB(
     lineA: Line2D,
     lineB: Line2D,
-    tolParallel: number = 1,
-    tolPtEquals: number = 0.1,
+    tolParallel = 1,
+    tolPtEquals = 0.1
   ): boolean {
-    let bRes: boolean = false;
+    let bRes = false;
 
     if (!Line2D.isParallel(lineA, lineB, tolParallel)) {
       return false;
@@ -234,9 +259,9 @@ export default class Line2D {
     return bRes;
   }
 
-  public static getLineAngle(line1: Line2D, line2: Line2D, num: number = 1): number {
+  public static getLineAngle(line1: Line2D, line2: Line2D, num = 1): number {
     if (!line1 || !line2) {
-      throw new Error('buggggggg');
+      throw new Error("buggggggg");
     }
     const vec5: Vector2D = line1.direction;
     const vec4: Vector2D = line2.direction;
@@ -251,7 +276,7 @@ export default class Line2D {
   public static getIntersection(
     line1: Line2D,
     line2: Line2D,
-    tolParallel: number = 1e-3,
+    tolParallel = 1e-3
   ): Vector2D {
     if (this.isParallel(line1, line2, tolParallel)) {
       // @ts-ignore
@@ -263,9 +288,11 @@ export default class Line2D {
     const vec7: Vector2D = line2.end;
     const vec3: Vector2D = vec8.clone();
     const temp1: number =
-      (vec8.x - vec4.x) * (vec4.y - vec7.y) - (vec8.y - vec4.y) * (vec4.x - vec7.x);
+      (vec8.x - vec4.x) * (vec4.y - vec7.y) -
+      (vec8.y - vec4.y) * (vec4.x - vec7.x);
     const temp2: number =
-      (vec8.x - vec5.x) * (vec4.y - vec7.y) - (vec8.y - vec5.y) * (vec4.x - vec7.x);
+      (vec8.x - vec5.x) * (vec4.y - vec7.y) -
+      (vec8.y - vec5.y) * (vec4.x - vec7.x);
     let num6: number;
     if (temp2 === 0) {
       num6 = 0;
@@ -286,10 +313,14 @@ export default class Line2D {
   public static getIntersectionSegment(
     line1: Line2D,
     line2: Line2D,
-    tolParallel: number = 1e-3,
+    tolParallel = 1e-3
   ): Vector2D {
     const v = Line2D.getIntersection(line1, line2, tolParallel);
-    if (v && line1.isInsideLine(v, tolParallel) && line2.isInsideLine(v, tolParallel)) {
+    if (
+      v &&
+      line1.isInsideLine(v, tolParallel) &&
+      line2.isInsideLine(v, tolParallel)
+    ) {
       return v;
     }
     // @ts-ignore
@@ -327,7 +358,7 @@ export default class Line2D {
     x3: number,
     y3: number,
     x4: number,
-    y4: number,
+    y4: number
   ): number {
     const ux = x2 - x1;
     const uy = y2 - y1;
@@ -418,7 +449,7 @@ export default class Line2D {
   public static getIntersectionSegmentContainEndPoint(
     line1: Line2D,
     line2: Line2D,
-    tolParallel: number = 1e-3,
+    tolParallel = 1e-3
   ): Vector2D {
     if (Line2D.isParallel(line1, line2)) {
       // @ts-ignore
@@ -438,16 +469,21 @@ export default class Line2D {
     vec1: Vector2D,
     vec2: Vector2D,
     vec3: Vector2D,
-    beTRUE: boolean = false,
+    beTRUE = false
   ): number {
     if (Line2D.isZeroNumber(1)) {
       return Vector2D.distance(vec3, vec1);
     }
     const num5: number =
-      Vector2D.dotProduct(Vector2D.subtract(vec3, vec1), Vector2D.subtract(vec2, vec1)) /
-      Vector2D.distanceSquared(vec1, vec2);
+      Vector2D.dotProduct(
+        Vector2D.subtract(vec3, vec1),
+        Vector2D.subtract(vec2, vec1)
+      ) / Vector2D.distanceSquared(vec1, vec2);
     if (
-      Vector2D.dotProduct(Vector2D.subtract(vec3, vec1), Vector2D.subtract(vec2, vec1)) /
+      Vector2D.dotProduct(
+        Vector2D.subtract(vec3, vec1),
+        Vector2D.subtract(vec2, vec1)
+      ) /
         Vector2D.distanceSquared(vec1, vec2) <
         0 &&
       beTRUE
@@ -463,7 +499,11 @@ export default class Line2D {
     return vec3.distance(_loc6);
   }
 
-  public static getLineDirection(line1: Line2D, line2: Line2D, num: number = 1): number {
+  public static getLineDirection(
+    line1: Line2D,
+    line2: Line2D,
+    num = 1
+  ): number {
     const vec5: Vector2D = line1.direction;
     const vec4: Vector2D = line2.direction;
     const vec6: number = vec5.crossProduct(vec4);
@@ -471,13 +511,15 @@ export default class Line2D {
     return vec6;
   }
 
-  public static isVertical(lineA: Line2D, lineB: Line2D, tol: number = 1): boolean {
+  public static isVertical(lineA: Line2D, lineB: Line2D, tol = 1): boolean {
     const dirA: Vector2D = lineA.direction;
     const dirB: Vector2D = lineB.direction;
     const angleInRad: number = dirB.angleBetween(dirA);
     return MathTool.numberLessEqual(
-      Math.abs(MathTool.toDegrees(angleInRad) - MathTool.toDegrees(Math.PI / 2)),
-      tol,
+      Math.abs(
+        MathTool.toDegrees(angleInRad) - MathTool.toDegrees(Math.PI / 2)
+      ),
+      tol
     );
   }
 
@@ -514,10 +556,10 @@ export default class Line2D {
   public static isLineAParallelLineBWithCross(
     lineA: Line2D,
     lineB: Line2D,
-    tolDist: number = 60,
-    tolLen: number = 5,
+    tolDist = 60,
+    tolLen = 5
   ): boolean {
-    let bResult: boolean = false;
+    let bResult = false;
 
     // exclude __________    __________
     const startA: Vector2D = lineA.start;
@@ -544,7 +586,10 @@ export default class Line2D {
     const startAProjLineB: Vector2D = lineB.getProjection(startA);
 
     if (MathTool.numberEquals(lengthA, lengthB, 0.8)) {
-      if (startB.equals(startAProjLineB, 0.8) || endB.equals(startAProjLineB, 0.8)) {
+      if (
+        startB.equals(startAProjLineB, 0.8) ||
+        endB.equals(startAProjLineB, 0.8)
+      ) {
         return bResult;
       }
     }
@@ -556,7 +601,10 @@ export default class Line2D {
     }
 
     // check cross.
-    const startAProjToStartB: number = Vector2D.distance(startAProjLineB, startB);
+    const startAProjToStartB: number = Vector2D.distance(
+      startAProjLineB,
+      startB
+    );
     const startAProjToEndB: number = Vector2D.distance(startAProjLineB, endB);
 
     const endAProjLineB: Vector2D = lineB.getProjection(endA);
@@ -564,7 +612,10 @@ export default class Line2D {
     const endAProjToEndB: number = Vector2D.distance(endAProjLineB, endB);
 
     const startBProjLineA: Vector2D = lineA.getProjection(startB);
-    const startBProjToStartA: number = Vector2D.distance(startBProjLineA, startA);
+    const startBProjToStartA: number = Vector2D.distance(
+      startBProjLineA,
+      startA
+    );
     const startBProjToEndA: number = Vector2D.distance(startBProjLineA, endA);
 
     const endBProjLineA: Vector2D = lineA.getProjection(endB);
@@ -608,12 +659,12 @@ export default class Line2D {
   public static isLineAParallelLineBWithNoCross(
     lineA: Line2D,
     lineB: Line2D,
-    tolDist: number = 100,
-    tolLen: number = 5,
-    maxInterval: number = 30,
-    minInterval: number = 0.5,
+    tolDist = 100,
+    tolLen = 5,
+    maxInterval = 30,
+    minInterval = 0.5
   ): boolean {
-    let bResult: boolean = false;
+    let bResult = false;
 
     // exclude __________    __________
     const startA: Vector2D = lineA.start;
@@ -640,7 +691,10 @@ export default class Line2D {
     const startAProjLineB: Vector2D = lineB.getProjection(startA);
 
     if (MathTool.numberEquals(lengthA, lengthB, 0.8)) {
-      if (startB.equals(startAProjLineB, 0.8) || endB.equals(startAProjLineB, 0.8)) {
+      if (
+        startB.equals(startAProjLineB, 0.8) ||
+        endB.equals(startAProjLineB, 0.8)
+      ) {
         return bResult;
       }
     }
@@ -670,7 +724,7 @@ export default class Line2D {
       Vector2D.distance(startBProjLineA, startA),
       Vector2D.distance(startBProjLineA, endA),
       Vector2D.distance(endBProjLineA, startA),
-      Vector2D.distance(endBProjLineA, endA),
+      Vector2D.distance(endBProjLineA, endA)
     );
 
     if (lineInterval < minInterval || lineInterval > maxInterval) {
@@ -683,10 +737,10 @@ export default class Line2D {
   public static isLineAParallelLineBWithCrossOverlap(
     lineA: Line2D,
     lineB: Line2D,
-    tolDist: number = 60,
-    tolLen: number = 5,
+    tolDist = 60,
+    tolLen = 5
   ): boolean {
-    let bResult: boolean = false;
+    let bResult = false;
 
     // exclude __________    __________
     const startA: Vector2D = lineA.start;
@@ -717,7 +771,10 @@ export default class Line2D {
     }
 
     // check cross.
-    const startAProjToStartB: number = Vector2D.distance(startAProjLineB, startB);
+    const startAProjToStartB: number = Vector2D.distance(
+      startAProjLineB,
+      startB
+    );
     const startAProjToEndB: number = Vector2D.distance(startAProjLineB, endB);
 
     const endAProjLineB: Vector2D = lineB.getProjection(endA);
@@ -725,7 +782,10 @@ export default class Line2D {
     const endAProjToEndB: number = Vector2D.distance(endAProjLineB, endB);
 
     const startBProjLineA: Vector2D = lineA.getProjection(startB);
-    const startBProjToStartA: number = Vector2D.distance(startBProjLineA, startA);
+    const startBProjToStartA: number = Vector2D.distance(
+      startBProjLineA,
+      startA
+    );
     const startBProjToEndA: number = Vector2D.distance(startBProjLineA, endA);
 
     const endBProjLineA: Vector2D = lineA.getProjection(endB);
@@ -743,7 +803,8 @@ export default class Line2D {
         (MathTool.numberGreater(startBProjToStartA, 5) ||
           MathTool.numberGreater(startBProjToEndA, 5))) ||
       (lineA.isPointOnSegment(endBProjLineA) &&
-        (MathTool.numberGreater(endBProjToStartA, 5) || MathTool.numberGreater(endBProjToEndA, 5)))
+        (MathTool.numberGreater(endBProjToStartA, 5) ||
+          MathTool.numberGreater(endBProjToEndA, 5)))
     ) {
       bResult = true;
     }
@@ -751,7 +812,11 @@ export default class Line2D {
     return bResult;
   }
 
-  public static isLineACrossLineB(lineA: Line2D, lineB: Line2D, tol: number = 0): any[] {
+  public static isLineACrossLineB(
+    lineA: Line2D,
+    lineB: Line2D,
+    tol = 0
+  ): any[] {
     let bCross = false;
     let crossCenterPt: Vector2D;
 
@@ -799,7 +864,7 @@ export default class Line2D {
       // @ts-ignore
       crossCenterPt = new Vector2D(
         (ptOnlineA.x + ptOnLineB.x) * 0.5,
-        (ptOnlineA.y + ptOnLineB.y) * 0.5,
+        (ptOnlineA.y + ptOnLineB.y) * 0.5
       );
     }
 
@@ -813,7 +878,7 @@ export default class Line2D {
    * @param line2 线段②
    * @param tol 阈值
    */
-  public static calcCollineation(line1: Line2D, line2: Line2D, tol: number = 0.01) {
+  public static calcCollineation(line1: Line2D, line2: Line2D, tol = 0.01) {
     const line1Dir = line1.getDirection();
     const line2Dir = line2.getDirection();
     if (line1Dir.x * line2Dir.y - line1Dir.y * line2Dir.x <= tol) {
@@ -840,7 +905,7 @@ export default class Line2D {
     ptLine1: Vector2D,
     ptLine2: Vector2D,
     ptTest: Vector2D,
-    tol: number = 0.00001,
+    tol = 0.00001
   ): boolean {
     // return MathTool.numberEquals(ptTest.distanceToLine(new Line2D(ptLine1, ptLine2)), 0.0, tol);
 
@@ -857,7 +922,10 @@ export default class Line2D {
     return ptFoot.distance(ptTest) <= tol;
   }
 
-  public static Compute_Golden_Proportion(startPt: Vector2D, endPt: Vector2D): Vector2D[] {
+  public static Compute_Golden_Proportion(
+    startPt: Vector2D,
+    endPt: Vector2D
+  ): Vector2D[] {
     const newline2d: Line2D = new Line2D(startPt, endPt);
     // var Golden_Proportion: number = 0.618;
     const TargetLength: number = Vector2D.GOLDEN_PROPORTION * newline2d.length;
@@ -872,40 +940,48 @@ export default class Line2D {
       Results.push(new Vector2D(LinelCenter.x, LinelCenter.y - TargetLength));
       Results.push(new Vector2D(LinelCenter.x, LinelCenter.y + TargetLength));
     } else {
-      const verticalwallslope: number = -(startPt.x - endPt.x) / (startPt.y - endPt.y);
-      const XStep: number = TargetLength / Math.sqrt(verticalwallslope * verticalwallslope + 1);
-      Results[0] = new Vector2D(LinelCenter.x - XStep, LinelCenter.y - XStep * verticalwallslope);
-      Results[1] = new Vector2D(LinelCenter.x + XStep, LinelCenter.y + XStep * verticalwallslope);
+      const verticalwallslope: number =
+        -(startPt.x - endPt.x) / (startPt.y - endPt.y);
+      const XStep: number =
+        TargetLength / Math.sqrt(verticalwallslope * verticalwallslope + 1);
+      Results[0] = new Vector2D(
+        LinelCenter.x - XStep,
+        LinelCenter.y - XStep * verticalwallslope
+      );
+      Results[1] = new Vector2D(
+        LinelCenter.x + XStep,
+        LinelCenter.y + XStep * verticalwallslope
+      );
     }
     return Results;
   }
 
   public getLeftLine(halfWidth: number): Line2D {
     if (this.distance === 0) {
-      throw new Error('why?');
+      throw new Error("why?");
     } // 这个墙的起点和终点在一起
     const normalize: Vector2D = this.leftNormal.divideNumber(this.distance);
     return new Line2D(
       this._start.add(normalize.multiply(halfWidth)),
-      this._end.add(normalize.multiply(halfWidth)),
+      this._end.add(normalize.multiply(halfWidth))
     );
   }
 
   public getRightLine(halfWidth: number): Line2D {
     if (this.distance === 0) {
-      throw new Error('why?');
+      throw new Error("why?");
     } // 这个墙的起点和终点在一起
     const normalize: Vector2D = this.rightNormal.divideNumber(this.distance);
     return new Line2D(
       this._start.add(normalize.multiply(halfWidth)),
-      this._end.add(normalize.multiply(halfWidth)),
+      this._end.add(normalize.multiply(halfWidth))
     );
   }
 
   // endregion
 
   // 是否竖直
-  public isVertical(tolDegrees: number = 1): boolean {
+  public isVertical(tolDegrees = 1): boolean {
     if (!this.normalize) {
       return false;
     }
@@ -917,7 +993,7 @@ export default class Line2D {
   }
 
   // 		是否水平
-  public isHorizontal(tolDegrees: number = 1): boolean {
+  public isHorizontal(tolDegrees = 1): boolean {
     if (!this.normalize) {
       return false;
     }
@@ -935,7 +1011,7 @@ export default class Line2D {
   /**
    * 点在直线上
    */
-  public isPointOnLine(vec: Vector2D, tol: number = 1e-3): boolean {
+  public isPointOnLine(vec: Vector2D, tol = 1e-3): boolean {
     const vec3: Vector2D = this.start.subtract(vec);
     const _loc3: Vector2D = this.end.subtract(vec);
     return Line2D.isZeroNumber(vec3.crossProduct(_loc3), tol);
@@ -950,7 +1026,8 @@ export default class Line2D {
       return true;
     }
     const len2: number =
-      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
+      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) /
+      this.lengthSquared;
     if (len2 < 0 || len2 > 1) {
       return true;
     }
@@ -971,15 +1048,17 @@ export default class Line2D {
   /* the new one support when beTrueOnEndpoints is fasle, the old one can not.  */
   public isPointOnSegmentNew(
     vec: Vector2D,
-    beTrueOnEndpoints: boolean = true,
-    nummin: number = 1e-3,
+    beTrueOnEndpoints = true,
+    nummin = 1e-3
   ): boolean {
-    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
+    const len: number =
+      Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
 
     if (Math.abs(len - this.length) <= nummin) {
       return (
         beTrueOnEndpoints ||
-        (Vector2D.distance(vec, this.start) > nummin && Vector2D.distance(vec, this.end) > nummin)
+        (Vector2D.distance(vec, this.start) > nummin &&
+          Vector2D.distance(vec, this.end) > nummin)
       );
     }
     return false;
@@ -987,10 +1066,11 @@ export default class Line2D {
 
   public isPointOnSegment(
     vec: Vector2D,
-    beTrueOnEndpoints: boolean = true,
-    nummin: number = 1e-3,
+    beTrueOnEndpoints = true,
+    nummin = 1e-3
   ): boolean {
-    const len: number = Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
+    const len: number =
+      Vector2D.distance(vec, this.start) + Vector2D.distance(vec, this.end);
 
     if (Math.abs(len - this.length) <= nummin) {
       return (
@@ -1016,14 +1096,15 @@ export default class Line2D {
     return 0;
   }
 
-  public getProjection(vec: Vector2D, beTRUE: boolean = false): Vector2D {
+  public getProjection(vec: Vector2D, beTRUE = false): Vector2D {
     if (MathTool.isZeroNumber(this.length)) {
       // @ts-ignore
       return null;
     }
 
     const len3: number =
-      vec.subtract(this._start).dotProduct(this._end.subtract(this._start)) / this.lengthSquared;
+      vec.subtract(this._start).dotProduct(this._end.subtract(this._start)) /
+      this.lengthSquared;
     if (beTRUE && (len3 < 0 || len3 > 1)) {
       // @ts-ignore
       return null;
@@ -1042,26 +1123,34 @@ export default class Line2D {
     return this;
   }
 
-  public contains(line: Line2D, num: number = 1e-3): boolean {
+  public contains(line: Line2D, num = 1e-3): boolean {
     if (line.lengthSquared > this.lengthSquared) {
       return false;
     }
     return (
-      this.isPointOnSegment(line.start, true, num) && this.isPointOnSegment(line.end, true, num)
+      this.isPointOnSegment(line.start, true, num) &&
+      this.isPointOnSegment(line.end, true, num)
     );
   }
 
-  public contains_new(line: Line2D, num: number = 0.1): boolean {
-    if (line.lengthSquared > this.lengthSquared || !Line2D.isParallel(this, line)) {
+  public contains_new(line: Line2D, num = 0.1): boolean {
+    if (
+      line.lengthSquared > this.lengthSquared ||
+      !Line2D.isParallel(this, line)
+    ) {
       return false;
     }
     return (
-      this.isPointOnSegment(line.start, false, num) && this.isPointOnSegment(line.end, false, num)
+      this.isPointOnSegment(line.start, false, num) &&
+      this.isPointOnSegment(line.end, false, num)
     );
   }
 
   public translate(vec: Vector2D): Line2D {
-    return new Line2D(Vector2D.add(this._start, vec), Vector2D.add(this._end, vec));
+    return new Line2D(
+      Vector2D.add(this._start, vec),
+      Vector2D.add(this._end, vec)
+    );
   }
 
   public translateBy(vec: Vector2D): Line2D {
@@ -1081,9 +1170,7 @@ export default class Line2D {
   // 新加的Line2D方法，from flash;
   public translatePrepToPoint(vec: Vector2D): Line2D {
     return this.translate(
-      this.getRightNormal()
-        .normalize()
-        .multiplyBy(this.getSignedDistance(vec)),
+      this.getRightNormal().normalize().multiplyBy(this.getSignedDistance(vec))
     );
   }
 
@@ -1093,7 +1180,9 @@ export default class Line2D {
    * @data 2019/12/25
    */
   public getSignedDistance(vec: Vector2D): number {
-    return vec.subtract(this._start).dotProduct(this.getRightNormal().normalize());
+    return vec
+      .subtract(this._start)
+      .dotProduct(this.getRightNormal().normalize());
   }
 
   public getY(num: number): number {
@@ -1101,7 +1190,9 @@ export default class Line2D {
       return (this.start.y - this.end.y) / 2;
     }
     return (
-      ((num - this.end.x) / (this.start.x - this.end.x)) * (this.start.y - this.end.y) + this.end.y
+      ((num - this.end.x) / (this.start.x - this.end.x)) *
+        (this.start.y - this.end.y) +
+      this.end.y
     );
   }
 
@@ -1110,7 +1201,9 @@ export default class Line2D {
       return (this.start.x - this.end.x) / 2;
     }
     return (
-      ((num - this.end.y) / (this.start.y - this.end.y)) * (this.start.x - this.end.x) + this.end.x
+      ((num - this.end.y) / (this.start.y - this.end.y)) *
+        (this.start.x - this.end.x) +
+      this.end.x
     );
   }
 
@@ -1121,7 +1214,7 @@ export default class Line2D {
    * @param tolParallel
    */
   // 判断是否两线段有交点
-  public isIntersection(line1: Line2D, tol: number = 0.0001): boolean {
+  public isIntersection(line1: Line2D, tol = 0.0001): boolean {
     const dis: number = Line2D.distanceToSegment(
       this._start.x,
       this._start.y,
@@ -1130,14 +1223,17 @@ export default class Line2D {
       line1.start.x,
       line1.start.y,
       line1.end.x,
-      line1.end.y,
+      line1.end.y
     );
     return MathTool.numberEquals(dis, 0.0, tol);
   }
 
   // 单位向量
   public getDirectionUnit(): Vector2D {
-    return new Vector2D(this.direction.x / this.length, this.direction.y / this.length);
+    return new Vector2D(
+      this.direction.x / this.length,
+      this.direction.y / this.length
+    );
   }
 
   /**
@@ -1153,13 +1249,13 @@ export default class Line2D {
       this.start
         .subtract(center)
         .normalize()
-        .setLength((this.start.distance(fixedPoint) * length) / this.length),
+        .setLength((this.start.distance(fixedPoint) * length) / this.length)
     );
     const end = center.add(
       this.end
         .subtract(center)
         .normalize()
-        .setLength((this.end.distance(fixedPoint) * length) / this.length),
+        .setLength((this.end.distance(fixedPoint) * length) / this.length)
     );
 
     this.start.copy(start);
@@ -1179,7 +1275,8 @@ export default class Line2D {
     }
 
     const len2: number =
-      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) / this.lengthSquared;
+      vec.subtract(this.start).dotProduct(this.end.subtract(this.start)) /
+      this.lengthSquared;
     if (len2 < 0) {
       return this.start.clone();
     }
@@ -1209,7 +1306,7 @@ export default class Line2D {
     return dir1.dotProduct(dir2) * len;
   }
 
-  public getDistance(vec: Vector2D, beTRUE: boolean = false): number {
+  public getDistance(vec: Vector2D, beTRUE = false): number {
     if (Line2D.isZeroNumber(this.length)) {
       return Vector2D.distance(vec, this.start);
     }
@@ -1217,7 +1314,7 @@ export default class Line2D {
     const _loc3: number =
       Vector2D.dotProduct(
         Vector2D.subtract(vec, this.start),
-        Vector2D.subtract(this.end, this.start),
+        Vector2D.subtract(this.end, this.start)
       ) / this.lengthSquared;
     if (_loc3 < 0 && beTRUE) {
       return Vector2D.distance(vec, this.start);
@@ -1233,7 +1330,7 @@ export default class Line2D {
     return vec.distance(_loc4);
   }
 
-  public interpolate(num: number = 0.5): Vector2D {
+  public interpolate(num = 0.5): Vector2D {
     return Vector2D.interpolate(this.start, this.end, num);
   }
 
@@ -1262,14 +1359,14 @@ export default class Line2D {
     return Vector2D.subtract(ptRef, ptFoot);
   }
 
-  public equalsWithoutDirection(line: Line2D, tol: number = 1e-3): boolean {
+  public equalsWithoutDirection(line: Line2D, tol = 1e-3): boolean {
     return (
       (this.start.equals(line.start, tol) && this.end.equals(line.end, tol)) ||
       (this.start.equals(line.end, tol) && this.end.equals(line.start, tol))
     );
   }
 
-  public equalsDirection(line: Line2D, tol: number = 1e-3): boolean {
+  public equalsDirection(line: Line2D, tol = 1e-3): boolean {
     const dir1: Vector2D = this.getDirectionUnit();
     const dir2: Vector2D = line.getDirectionUnit();
     return dir1.equals(dir2, tol);
@@ -1297,7 +1394,7 @@ export default class Line2D {
   }
 
   // 以start为起点的的延长线与另一条线的交点，如果平行就取end点
-  public intersectionLineAndLine(line: Line2D, extendRate: number = 5): Vector2D {
+  public intersectionLineAndLine(line: Line2D, extendRate = 5): Vector2D {
     if (Line2D.isParallel(this, line)) {
       return this.start;
     }
@@ -1316,18 +1413,22 @@ export default class Line2D {
   public distanceToLine(line: Line2D, returnNumber = true): Vector2D | number {
     const getMinVector = (selfLine: Line2D, targetLine: Line2D): Vector2D => {
       const points = [targetLine.start, targetLine.end];
-      const inPoints = points.filter(linePoint => !selfLine.isOutLine(linePoint));
+      const inPoints = points.filter(
+        (linePoint) => !selfLine.isOutLine(linePoint)
+      );
       if (inPoints.length) {
-        const minPoint = minBy(inPoints, point => selfLine.getDistance(point));
+        const minPoint = minBy(inPoints, (point) =>
+          selfLine.getDistance(point)
+        );
 
         // @ts-ignore
         return this.footPoint(selfLine, minPoint).subtract(minPoint);
       } else {
         // 两个端点的最小距离
         const center = selfLine.center;
-        const minPoint = minBy(points, point => center.distance(point));
-        const thisMinPoint = minBy([selfLine.start, selfLine.end], _point =>
-          _point.distance(minPoint),
+        const minPoint = minBy(points, (point) => center.distance(point));
+        const thisMinPoint = minBy([selfLine.start, selfLine.end], (_point) =>
+          _point.distance(minPoint)
         );
 
         // @ts-ignore
@@ -1338,7 +1439,9 @@ export default class Line2D {
     const thisMinVector = getMinVector(this, line);
     const targetMinVector = getMinVector(line, this).getReverse();
 
-    const resultVector = minBy([thisMinVector, targetMinVector], vector => vector.length());
+    const resultVector = minBy([thisMinVector, targetMinVector], (vector) =>
+      vector.length()
+    );
 
     // @ts-ignore
     return returnNumber ? resultVector.length() : resultVector;
@@ -1351,13 +1454,15 @@ export default class Line2D {
    * @param l1
    * @return {any}
    */
-  public isCollinearForDistance(l1: Line2D, distance: number = 10) {
+  public isCollinearForDistance(l1: Line2D, distance = 10) {
     if (!Line2D.isParallel(this, l1)) {
       // console.error('线段未平行');
       return null;
     }
     const newL = new Line2D(Vector2D.zero, this.start.subtract(l1.start));
-    const lineDistance = Math.abs(newL.direction.dotProduct(this.getRightNormal().normalizeNo()));
+    const lineDistance = Math.abs(
+      newL.direction.dotProduct(this.getRightNormal().normalizeNo())
+    );
     if (lineDistance < distance) {
       return true;
     }
@@ -1371,7 +1476,7 @@ export default class Line2D {
    */
   public lineToLineDistance(l1: Line2D): number {
     if (!Line2D.isParallel(this, l1)) {
-      throw new Error('why');
+      throw new Error("why");
     }
     const newV = l1.start.subtract(this.start);
     return Math.abs(newV.dotProduct(this.getRightNormal().normalizeNo()));
@@ -1385,7 +1490,10 @@ export default class Line2D {
   public isInLine(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
     const pV = this.direction.normalizeNo().dotProduct(newL);
-    if (MathTool.numberGreaterEqual(pV, 0) && MathTool.numberLessEqual(pV, this.distance)) {
+    if (
+      MathTool.numberGreaterEqual(pV, 0) &&
+      MathTool.numberLessEqual(pV, this.distance)
+    ) {
       return true;
     }
     return false;
@@ -1401,7 +1509,10 @@ export default class Line2D {
   public isInLineNotEndPoint(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
     const pV = this.direction.normalizeNo().dotProduct(newL);
-    if (MathTool.numberGreater(pV, 0) && MathTool.numberLess(pV, this.distance)) {
+    if (
+      MathTool.numberGreater(pV, 0) &&
+      MathTool.numberLess(pV, this.distance)
+    ) {
       return true;
     }
     return false;
@@ -1411,7 +1522,10 @@ export default class Line2D {
   public isInLineEndPoint(v: Vector2D): boolean {
     const newL = v.subtract(this.start);
     const pV = this.direction.normalizeNo().dotProduct(newL);
-    if (MathTool.numberEquals(pV, 0) || MathTool.numberEquals(pV, this.distance)) {
+    if (
+      MathTool.numberEquals(pV, 0) ||
+      MathTool.numberEquals(pV, this.distance)
+    ) {
       return true;
     }
     return false;
@@ -1422,11 +1536,14 @@ export default class Line2D {
    * @param
    * @data 2019/12/25
    */
-  public isInsideLine(v: Vector2D, accuracy: number = 1e-3): boolean {
+  public isInsideLine(v: Vector2D, accuracy = 1e-3): boolean {
     const newL = v.subtract(this.start);
     const pV = this.direction.normalizeNo().dotProduct(newL.normalizeNo());
-    const startToDropPoint = this.direction.dotProduct(newL) / this.lengthSquared;
-    const dropPoint = this.direction.multiplyByNo(startToDropPoint).addV(this.start);
+    const startToDropPoint =
+      this.direction.dotProduct(newL) / this.lengthSquared;
+    const dropPoint = this.direction
+      .multiplyByNo(startToDropPoint)
+      .addV(this.start);
     const pointDistanceLine = v.distanceSquared(dropPoint);
     const d1 = newL.getDistanceSquareVector2D;
     const d2 = this.direction.getDistanceSquareVector2D;
@@ -1453,7 +1570,10 @@ export default class Line2D {
     }
     const pV = this.direction.normalizeNo().dotProduct(newL.normalizeNo());
     const d2 = this.direction.getDistanceSquareVector2D;
-    if (MathTool.numberEquals(pV, 1, 0.01) && MathTool.numberLessEqual(d1, d2)) {
+    if (
+      MathTool.numberEquals(pV, 1, 0.01) &&
+      MathTool.numberLessEqual(d1, d2)
+    ) {
       return true;
     }
     return false;
@@ -1482,10 +1602,16 @@ export default class Line2D {
    * @data 2019/12/25
    */
   public lineIntersectLine(l1: Line2D): boolean {
-    if (this.isInLineNotEndPoint(l1.start) || this.isInLineNotEndPoint(l1.end)) {
+    if (
+      this.isInLineNotEndPoint(l1.start) ||
+      this.isInLineNotEndPoint(l1.end)
+    ) {
       return true;
     }
-    if (l1.isInLineNotEndPoint(this.start) || l1.isInLineNotEndPoint(this.end)) {
+    if (
+      l1.isInLineNotEndPoint(this.start) ||
+      l1.isInLineNotEndPoint(this.end)
+    ) {
       return true;
     }
     const midP = this.start.addV(this.end).multiplyByNo(0.5);
@@ -1502,7 +1628,11 @@ export default class Line2D {
    * @data 2019/12/25
    */
   public lineInLine(l1: Line2D): boolean {
-    if (l1 && l1.isInsideLinePoint(this.start) && l1.isInsideLinePoint(this.end)) {
+    if (
+      l1 &&
+      l1.isInsideLinePoint(this.start) &&
+      l1.isInsideLinePoint(this.end)
+    ) {
       return true;
     }
     return false;
@@ -1515,12 +1645,14 @@ export default class Line2D {
    */
   public lineToLine(l1: Line2D): Line2D {
     if (!Line2D.isParallel(this, l1)) {
-      console.error('线段未平行');
+      console.error("线段未平行");
       // @ts-ignore
       return null;
     }
     const lineN = this.getRightNormal().normalizeNo();
-    const offset = lineN.multiplyByNo(lineN.dotProduct(l1.start.subtract(this.start)));
+    const offset = lineN.multiplyByNo(
+      lineN.dotProduct(l1.start.subtract(this.start))
+    );
     return Line2D.translationLine(this, offset);
   }
 
@@ -1541,7 +1673,9 @@ export default class Line2D {
   }
 
   public getNewLineForDistance(dis: number): Line2D {
-    const newdes = this.start.addV(this.direction.normalizeNo().multiplyByNo(dis));
+    const newdes = this.start.addV(
+      this.direction.normalizeNo().multiplyByNo(dis)
+    );
     return new Line2D(this.start, newdes);
   }
 
@@ -1580,7 +1714,12 @@ export default class Line2D {
    * * by lianbo.guo
    */
   public getRegistration(compareLine: Line2D): Line2D {
-    if (!(this.isCollinearForDistance(compareLine) && this.lineIntersectLine(compareLine))) {
+    if (
+      !(
+        this.isCollinearForDistance(compareLine) &&
+        this.lineIntersectLine(compareLine)
+      )
+    ) {
       // @ts-ignore
       return null;
     }
@@ -1589,7 +1728,7 @@ export default class Line2D {
 
     return new Line2D(
       lines[0].isInsideLine(lines[1].start) ? lines[1].start : lines[0].start,
-      lines[1].isInsideLine(lines[0].end) ? lines[0].end : lines[1].end,
+      lines[1].isInsideLine(lines[0].end) ? lines[0].end : lines[1].end
     );
   }
 
@@ -1599,7 +1738,10 @@ export default class Line2D {
    * @param numMin
    * @return {any}
    */
-  public getDifference(compareLine: Line2D | Line2D[], numMin: number = 1e-3): Line2D[] {
+  public getDifference(
+    compareLine: Line2D | Line2D[],
+    numMin = 1e-3
+  ): Line2D[] {
     if (compareLine instanceof Line2D) {
       compareLine = [compareLine];
     }
@@ -1618,14 +1760,14 @@ export default class Line2D {
 
         return prev.concat(points);
       },
-      [this.start],
+      [this.start]
     ) as Vector2D[];
 
     allPoints.push(this.end);
     const angleVect = this.end.subtract(this.start).angle();
     allPoints.sort((prev, next) => {
       // @ts-ignore
-      const getNormal = point => {
+      const getNormal = (point) => {
         const vect = point.subtract(this.start);
         const isPlus = MathTool.numberEquals(angleVect, vect.angle()) ? 1 : -1;
 
@@ -1647,7 +1789,7 @@ export default class Line2D {
     }
 
     // 过滤超小的线段
-    result = result.filter(line => {
+    result = result.filter((line) => {
       return line.length > numMin && this.lineIntersectLine(line);
     });
 
@@ -1672,10 +1814,12 @@ export default class Line2D {
    * @param dis
    * @return {boolean}
    */
-  public isCollinear(tarLine: Line2D, dis: number = 1e-3): boolean {
+  public isCollinear(tarLine: Line2D, dis = 1e-3): boolean {
     return (
-      (this.isPointOnLine(tarLine.start, dis) && this.isPointOnLine(tarLine.end, dis)) ||
-      (tarLine.isPointOnLine(this.start, dis) && tarLine.isPointOnLine(this.end, dis))
+      (this.isPointOnLine(tarLine.start, dis) &&
+        this.isPointOnLine(tarLine.end, dis)) ||
+      (tarLine.isPointOnLine(this.start, dis) &&
+        tarLine.isPointOnLine(this.end, dis))
     );
   }
 
@@ -1709,7 +1853,10 @@ export default class Line2D {
     if (!Line2D.isParallel(this, line)) {
       return false;
     }
-    if (this.isPointOnSegmentNew(line.start, false) || this.isPointOnSegmentNew(line.end, false)) {
+    if (
+      this.isPointOnSegmentNew(line.start, false) ||
+      this.isPointOnSegmentNew(line.end, false)
+    ) {
       return true;
     }
     if (this.start.equals(line.start) && this.end.equals(line.end)) {
@@ -1718,7 +1865,10 @@ export default class Line2D {
     if (this.start.equals(line.end) && this.end.equals(line.start)) {
       return true;
     }
-    if (line.isPointOnSegmentNew(this.start, false) || line.isPointOnSegmentNew(this.end, false)) {
+    if (
+      line.isPointOnSegmentNew(this.start, false) ||
+      line.isPointOnSegmentNew(this.end, false)
+    ) {
       return true;
     }
     return false;
@@ -1790,7 +1940,10 @@ export default class Line2D {
 
     const thisE2start = Vector2D.distance(this.end, line.start);
     const thisE2end = Vector2D.distance(this.end, line.end);
-    const max = Math.max(Math.max(thisS2start, thisS2end), Math.max(thisE2start, thisE2end));
+    const max = Math.max(
+      Math.max(thisS2start, thisS2end),
+      Math.max(thisE2start, thisE2end)
+    );
     if (Math.abs(max - lenTotal) < 0.001) {
       return ESegOverlapType.Connect;
     }
@@ -1802,7 +1955,7 @@ export default class Line2D {
    * 返回射线
    * @param length
    */
-  public toRay(length: number = 2000): Line2D {
+  public toRay(length = 2000): Line2D {
     return this.clone().setLength(length);
   }
 
@@ -1863,24 +2016,29 @@ export default class Line2D {
    */
   public isInLineDistance(
     point: Vector2D,
-    isSegment: boolean = true,
+    isSegment = true
   ): { distanceSquare: number; dropPoint: Vector2D } {
     if (MathTool.isZeroNumber(this.lengthSquared)) {
       // @ts-ignore
       return null;
     }
     const startToPoint = point.subtract(this.start);
-    const dotProductResult = this.direction.dotProduct(startToPoint) / this.lengthSquared;
+    const dotProductResult =
+      this.direction.dotProduct(startToPoint) / this.lengthSquared;
     if (isSegment) {
       if (
         MathTool.numberGreaterEqual(dotProductResult, 0) &&
         MathTool.numberLessEqual(dotProductResult, 1)
       ) {
-        const dropPoint = this.direction.multiplyByNo(dotProductResult).addV(this.start);
+        const dropPoint = this.direction
+          .multiplyByNo(dotProductResult)
+          .addV(this.start);
         return { distanceSquare: dropPoint.distanceSquared(point), dropPoint };
       }
     } else {
-      const dropPoint = this.direction.multiplyByNo(dotProductResult).addV(this.start);
+      const dropPoint = this.direction
+        .multiplyByNo(dotProductResult)
+        .addV(this.start);
       return { distanceSquare: dropPoint.distanceSquared(point), dropPoint };
     }
 
@@ -1895,7 +2053,10 @@ export default class Line2D {
    *        Right
    * @param point
    */
-  public checkPointWitchLineSide(point: Vector2D, precision: number = 1e-3): EPointLineRelation {
+  public checkPointWitchLineSide(
+    point: Vector2D,
+    precision = 1e-3
+  ): EPointLineRelation {
     const area = MathHelper._calcArea([this.start, this.end, point]);
     if (Math.abs(area) < precision) {
       return EPointLineRelation.On;
@@ -1910,7 +2071,10 @@ export default class Line2D {
    * 获取中点
    */
   public getMidPoint(): Vector2D {
-    return new Vector2D(0.5 * (this.start.x + this.end.x), 0.5 * (this.start.y + this.end.y));
+    return new Vector2D(
+      0.5 * (this.start.x + this.end.x),
+      0.5 * (this.start.y + this.end.y)
+    );
   }
 
   public toArray(): number[][] {
@@ -1950,7 +2114,10 @@ export default class Line2D {
     const dirS2 = this.end.subtract(this.start);
     const dirE1 = point.subtract(this.end);
     const dirE2 = this.start.subtract(this.end);
-    return Vector2D.dotProduct(dirS1, dirS2) > 0 && Vector2D.dotProduct(dirE1, dirE2) > 0;
+    return (
+      Vector2D.dotProduct(dirS1, dirS2) > 0 &&
+      Vector2D.dotProduct(dirE1, dirE2) > 0
+    );
   }
 
   /**
@@ -1966,7 +2133,7 @@ export default class Line2D {
   public scale(num: number): Line2D {
     return new Line2D(
       this.start.addV(this.reverseDirection.multiplyByNo(num)),
-      this.end.addV(this.direction.multiplyByNo(num)),
+      this.end.addV(this.direction.multiplyByNo(num))
     );
   }
 

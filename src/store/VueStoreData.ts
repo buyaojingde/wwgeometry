@@ -1,25 +1,25 @@
 /**
  * * by lianbo.guo
  **/
-import { computed, observable } from 'mobx';
+import { computed, observable } from "mobx";
 
 class VueStoreData {
   @observable
   public unitScale = 10; // 全局单位 相对于cm 的放大倍数
-  public enableStage2D: boolean = false; // 开启2D场景
+  public enableStage2D = false; // 开启2D场景
 
   @computed
   public get unit() {
     switch (this.unitScale) {
       case 10:
-        return 'mm';
+        return "mm";
       case 1:
-        return 'cm';
+        return "cm";
       case 0.01:
-        return 'm';
+        return "m";
 
       default:
-        return '';
+        return "";
     }
   }
 

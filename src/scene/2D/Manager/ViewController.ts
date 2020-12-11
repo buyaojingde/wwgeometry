@@ -1,9 +1,9 @@
-import { reaction } from 'mobx';
-import Model2DActive from '../../../store/Model2DActive';
-import View2DData from '../../../store/View2DData';
-import Vector2D from '../../Model/Geometry/Vector2D';
-import { pointToVector } from '../Utils';
-import BaseController from './BaseController';
+import { reaction } from "mobx";
+import Model2DActive from "../../../store/Model2DActive";
+import View2DData from "../../../store/View2DData";
+import Vector2D from "../../Model/Geometry/Vector2D";
+import { pointToVector } from "../Utils";
+import BaseController from "./BaseController";
 import Point = PIXI.Point;
 
 const SCENE_2D_MAX_SCALE = 5;
@@ -26,10 +26,10 @@ export default class ViewController extends BaseController {
       () => {
         return !Model2DActive.cameraMove;
       },
-      enable => {
+      (enable) => {
         this.enable = enable;
       },
-      { fireImmediately: true },
+      { fireImmediately: true }
     );
   }
 
@@ -38,7 +38,7 @@ export default class ViewController extends BaseController {
     let startPoint: any;
 
     // @ts-ignore
-    const moveEvent = event => {
+    const moveEvent = (event) => {
       if (!startPosition) {
         return;
       }
@@ -53,11 +53,11 @@ export default class ViewController extends BaseController {
       const { x: startX, y: startY } = startPosition;
 
       View2DData.setPosition(
-        new Vector2D(startX + nowX - startPointX, startY + nowY - startPointY),
+        new Vector2D(startX + nowX - startPointX, startY + nowY - startPointY)
       );
     };
     // @ts-ignore
-    const endEvent = event => {
+    const endEvent = (event) => {
       if (!startPosition) {
         return;
       }
@@ -65,10 +65,10 @@ export default class ViewController extends BaseController {
       startPoint = null;
     };
 
-    this.on('win.input.end.right', endEvent);
-    this.on('win.input.end', endEvent);
+    this.on("win.input.end.right", endEvent);
+    this.on("win.input.end", endEvent);
     // @ts-ignore
-    this.on('input.start', event => {
+    this.on("input.start", (event) => {
       if (/mouse/.test(event.type)) {
         if (event.button !== 2 && event.button !== 1) {
           return;
@@ -82,20 +82,26 @@ export default class ViewController extends BaseController {
     });
     // this.on('win.input.move', moveEvent);
     // @ts-ignore
-    this.on('win.input.move', event => {
+    this.on("win.input.move", (event) => {
       moveEvent(event);
     });
     // @ts-ignore
-    this.on('contextmenu', event => event.preventDefault());
+    this.on("contextmenu", (event) => event.preventDefault());
 
     // @ts-ignore
-    this.on('scale+', event => {
-      const scaleResult = Math.min(this.scene.scale.x + this.makeScaleStep(), SCENE_2D_MAX_SCALE);
+    this.on("scale+", (event) => {
+      const scaleResult = Math.min(
+        this.scene.scale.x + this.makeScaleStep(),
+        SCENE_2D_MAX_SCALE
+      );
       this.calculateScaleOffset(event, scaleResult);
     });
     // @ts-ignore
-    this.on('scale-', event => {
-      const scaleResult = Math.max(this.scene.scale.x - this.makeScaleStep(), SCENE_2D_MIN_SCALE);
+    this.on("scale-", (event) => {
+      const scaleResult = Math.max(
+        this.scene.scale.x - this.makeScaleStep(),
+        SCENE_2D_MIN_SCALE
+      );
       this.calculateScaleOffset(event, scaleResult);
     });
   }

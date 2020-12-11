@@ -111,7 +111,9 @@ export default class AH<T> {
    */
   public static flatArray<T>(a: any[]): any[] {
     return a.reduce((begin, current) => {
-      Array.isArray(current) ? begin.push(...AH.flatArray(current)) : begin.push(current);
+      Array.isArray(current)
+        ? begin.push(...AH.flatArray(current))
+        : begin.push(current);
       return begin;
     }, []);
   }
@@ -172,11 +174,11 @@ export default class AH<T> {
   }
 
   public static convertLevelID(levelid: string, str: string): string {
-    const i = str.indexOf('#');
+    const i = str.indexOf("#");
     if (i !== -1) {
       return levelid + str.slice(i);
     }
-    return levelid + '#' + str;
+    return levelid + "#" + str;
   }
 
   /**
@@ -190,7 +192,7 @@ export default class AH<T> {
     if (result) {
       return result.clone();
     } else {
-      console.error('贴图丢失...');
+      console.error("贴图丢失...");
       return null;
     }
   }

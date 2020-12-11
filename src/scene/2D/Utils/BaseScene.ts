@@ -1,13 +1,13 @@
 /**
  * * by lianbo.guo
  **/
-import { autorun, observable } from 'mobx';
-import Scene2D from '..';
-import HookManager from '../../../utils/HookManager';
+import { autorun, observable } from "mobx";
+import Scene2D from "..";
+import HookManager from "../../../utils/HookManager";
 
-import { Renderer2D } from '../../Base/Renderer';
-import BaseEvent2D from '../Events/Base';
-import { layerOrderGroups } from '../Layer/LayerOrder';
+import { Renderer2D } from "../../Base/Renderer";
+import BaseEvent2D from "../Events/Base";
+import { layerOrderGroups } from "../Layer/LayerOrder";
 import Application = PIXI.Application;
 import Stage = PIXI.Container;
 import WebGLRenderer = PIXI.Renderer;
@@ -15,8 +15,8 @@ import WebGLRenderer = PIXI.Renderer;
 export default class BaseScene extends HookManager {
   public static apps: Set<Application> = new Set(); // 所有2D场景集合
   @observable
-  protected size: number = 750; // canvas的尺寸
-  protected name: string = 'none';
+  protected size = 750; // canvas的尺寸
+  protected name = "none";
   protected app: Application;
   protected Vue: any;
   // @ts-ignore
@@ -46,7 +46,7 @@ export default class BaseScene extends HookManager {
     this.app.stage = new Stage();
     BaseScene.apps.add(this.app);
     setTimeout(() => {
-      this.app.view.setAttribute('id', this.name);
+      this.app.view.setAttribute("id", this.name);
       this.bindElement(this.Scene2D.rendererDom);
       this.init();
       this.resize();
@@ -76,13 +76,13 @@ export default class BaseScene extends HookManager {
   }
 
   public bindElement(bindNode: HTMLElement) {
-    if (!bindNode.querySelector('#' + this.app.view.getAttribute('id'))) {
+    if (!bindNode.querySelector("#" + this.app.view.getAttribute("id"))) {
       bindNode.appendChild(this.app.view);
       this.bindNode = bindNode;
     }
   }
 
-  public resize(width: number = 0, height: number = 0) {
+  public resize(width = 0, height = 0) {
     if (!width && !height) {
       if (!this.bindNode) {
         return;
@@ -117,14 +117,14 @@ export default class BaseScene extends HookManager {
 
     this.app.renderer.plugins.interaction.setTargetElement(
       this.Scene2D.rendererDom,
-      this.app.renderer.resolution,
+      this.app.renderer.resolution
     );
     this.app.renderer.plugins.interaction.resolution = 1;
 
     this.initLayers();
 
     const fn = this.resize.bind(this);
-    this.Scene2D.on('resize', fn);
+    this.Scene2D.on("resize", fn);
 
     this.disposeArr.push(
       autorun(() => {
@@ -138,7 +138,7 @@ export default class BaseScene extends HookManager {
         const { x, y } = this.Scene2D.position;
         this.app.stage.position.set(x, y);
       }),
-      () => this.Scene2D.off('resize', fn),
+      () => this.Scene2D.off("resize", fn)
     );
   }
 

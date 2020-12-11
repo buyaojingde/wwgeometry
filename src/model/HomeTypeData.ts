@@ -2,11 +2,11 @@
  * * by lianbo.guo
  **/
 // import { saveAs } from 'file-saver';
-import {computed, observable} from 'mobx';
-import Home from '../scene/Model/Home/Home';
-import HomeConvert from '../utils/HomeConvert';
+import { computed, observable } from "mobx";
+import Home from "../scene/Model/Home/Home";
+import HomeConvert from "../utils/HomeConvert";
 
-const scene2D = require('../scene/2D').default;
+const scene2D = require("../scene/2D").default;
 
 class HomeTypeData {
   @observable.ref
@@ -16,15 +16,15 @@ class HomeTypeData {
   protected hasRequest = null;
 
   constructor() {
-    window.addEventListener('beforeunload', e => {
+    window.addEventListener("beforeunload", (e) => {
       if (scene2D.getInstance().home.curLevel.rooms.length === 0) {
         e = e || window.event;
         // 兼容IE8和Firefox 4之前的版本
         if (e) {
-          e.returnValue = '关闭提示';
+          e.returnValue = "关闭提示";
         }
         // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
-        return '关闭提示';
+        return "关闭提示";
       }
     });
   }
@@ -40,7 +40,7 @@ class HomeTypeData {
 
   public get() {
     if (!this.gottenHome) {
-      throw new Error('还未获取到Home');
+      throw new Error("还未获取到Home");
     }
     return this.gottenHome;
   }
@@ -68,7 +68,9 @@ class HomeTypeData {
     const home = scene2D.getInstance().home;
     const homeData = null;
     const str = JSON.stringify(homeData);
-    const file = new File([str], 'pave.json', {type: 'text/plain;charset=utf-8'});
+    const file = new File([str], "pave.json", {
+      type: "text/plain;charset=utf-8",
+    });
     // saveAs(file);
     // axioss.post(devLuo, str, {headers: {
     //     'Content-Type': 'application/json'}}) .then(response => {
@@ -81,7 +83,7 @@ class HomeTypeData {
   }
 
   private async _getHome(from?: string, path?: any) {
-    if (from == 'local') {
+    if (from == "local") {
       this.gottenHome = HomeConvert.convert();
       return this.gottenHome;
     }
