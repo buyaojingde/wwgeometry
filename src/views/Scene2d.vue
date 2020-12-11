@@ -100,7 +100,7 @@ export default observer({
   beforeDestroy() {
     VueStoreData.setEnableStage2D(false);
     Model2DActive.reset();
-    this.$_scene2d.stop();
+    this.scene2d.stop();
   },
   methods: {
     initTreeData(data) {
@@ -139,20 +139,20 @@ export default observer({
       // console.log(data);
       // console.log(this.$refs.mapTree.getCheckedKeys());
       Model2DActive.selection = data.buildData;
-      this.$_scene2d.resetViewForStructure(data.buildData);
+      this.scene2d.resetViewForStructure(data.buildData);
       // this.$refs.mapTree.child
     },
     changeV() {
-      this.$_scene2d.syncVertex();
+      this.scene2d.syncVertex();
     },
     reRender() {
-      this.$_scene2d.syncRender();
+      this.scene2d.syncRender();
     },
     resize(...size) {
-      this.$_scene2d.resize(...size);
+      this.scene2d.resize(...size);
     },
     resetView() {
-      this.$_scene2d.resetView();
+      this.scene2d.resetView();
     },
     initScene2D() {
       this.scene2d = Scene2D.getInstance();
@@ -164,7 +164,7 @@ export default observer({
       });
     },
     checkIsEmpty() {
-      return this.$_scene2d.homePlan.checkIsEmpty();
+      return this.scene2d.homePlan.checkIsEmpty();
     },
     startEdit() {
       Model2DActive.setEditEdgeState(true);
@@ -190,15 +190,15 @@ export default observer({
       }
     },
     rotateSubject() {
-      this.$_scene2d.updateCoordinate();
+      this.scene2d.updateCoordinate();
     },
     searchStructure() {
-      const st = this.$_scene2d.home.curLevel.findByRvtId(
+      const st = this.scene2d.home.curLevel.findByRvtId(
         this.searchRvtId.toString()
       );
       if (st) {
         Model2DActive.selection = st;
-        this.$_scene2d.resetViewForStructure(st);
+        this.scene2d.resetViewForStructure(st);
       }
     },
   },
