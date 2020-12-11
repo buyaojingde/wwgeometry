@@ -1,5 +1,7 @@
 import MathUtils from "../math/MathUtils";
+import GeometryTool from "../tool/GeometryTool";
 import Box from "./Box";
+import Matrix3x3 from "./Matrix3x3";
 import Point from "./Point";
 import Segment from "./Segment";
 
@@ -48,6 +50,10 @@ export default class Polygon {
   public constructor(vcs: any[]) {
     this.vertices = [];
     vcs.forEach((item) => this.vertices.push(new Point(item.x, item.y)));
+    if (this.isClockwise()) {
+      // 按逆时针排序
+      this.reverseVertex();
+    }
     this.updateEdges();
   }
 
@@ -309,26 +315,25 @@ export default class Polygon {
       const b1 = fn(angle1, 0);
       const b2 = fn(angle2, 0);
       if (!(b1 && b2)) return false;
-      let i = 2;
+      let i = 1;
       let j = self.vertices.length - 1;
-      let line = -1;
-      while (i < j) {
-        const mid = (i + j) / 2;
+      while (i < j + 1) {
+        const mid = Math.floor((i + j) * 0.5);
         const v1 = self.vertices[mid].subtract(p0);
         const angleMid = vP.cross(v1);
         if (fn(angleMid, 0)) {
-          line = mid;
           j = mid - 1;
         } else {
-          i = mid + 1;
+          i = mid;
         }
       }
-      const fAngle = self.vertices[line]
-        .subtract(self.vertices[line - 1])
+      const line = i;
+      const fAngle = self.vertices[line + 1]
+        .subtract(self.vertices[line])
         .cross(p.subtract(self.vertices[line - 1]));
       return fn(fAngle, 0);
     };
-    if (this.isClockWise()) {
+    if (this.isHullConvexAntiClockwise()) {
       return determine(this, MathUtils.greater);
     }
     return determine(this, MathUtils.less);
@@ -337,9 +342,9 @@ export default class Polygon {
   /**
    * @author lianbo
    * @date 2020-11-20 11:51:01
-   * @Description: 凸多边形顺时针
+   * @Description: 凸多边形逆时针
    */
-  public isClockWise(): boolean {
+  public isHullConvexAntiClockwise(): boolean {
     const p0 = this.vertices[0];
     const p1 = this.vertices[1];
     const pEnd = this.vertices[this.vertices.length - 1];
@@ -347,18 +352,6 @@ export default class Polygon {
     return MathUtils.greater(angle0, 0);
   }
 
-  /**
-   * @author lianbo
-   * @date 2020-11-20 11:51:01
-   * @Description: 凸多边形逆时针排序
-   */
-  public isAntiClockWise(): boolean {
-    const p0 = this.vertices[0];
-    const p1 = this.vertices[1];
-    const pEnd = this.vertices[this.vertices.length - 1];
-    const angle0 = p1.subtract(p0).cross(pEnd.subtract(p0));
-    return MathUtils.less(angle0, 0);
-  }
   /// <summary>
   /// Returns true if point inside polygon, using fast winding-number computation绕线法
   /// </summary>
@@ -377,7 +370,7 @@ export default class Polygon {
         // y <= P.y (below)
         if (b.y > p.y) {
           // an upward crossing
-          if (Point.IsLeft(a, b, p) > 0)
+          if (GeometryTool.isLeftSign(a, b, p) > 0)
             // P left of edge
             ++nWindingNumber; // have a valid up intersect
         }
@@ -385,7 +378,7 @@ export default class Polygon {
         // y > P.y  (above)
         if (b.y <= p.y) {
           // a downward crossing
-          if (Point.IsLeft(a, b, p) < 0)
+          if (GeometryTool.isLeftSign(a, b, p) < 0)
             // P right of edge
             --nWindingNumber; // have a valid down intersect
         }
@@ -585,7 +578,7 @@ export default class Polygon {
     if (this.vertices.length !== other.vertices.length) return false;
 
     let otherVes = [...other.vertices];
-    if (this.isClockWise() !== other.isClockWise()) {
+    if (this.isClockwise() !== other.isClockwise()) {
       otherVes.reverse();
     }
     const thisStart = this.vertices[0];
@@ -635,9 +628,35 @@ export default class Polygon {
   /**
    * @author lianbo
    * @date 2020-11-26 16:45:18
-   * @Description: 线段在多边形内，当且仅当线段中点在多边形内，且不包括边的时候，return true
+   * @Description: 线段在多边形内，当且仅当线段中点在多边形内，且不与边相交的时候，return true
    */
   public insideSeg(seg: Segment): boolean {
-    return this.inside(seg.center);
+    return this.inside(seg.center) && !this.intersectionSeg(seg);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 17:31:29
+   * @Description: 与线段相交，不包括端点
+   */
+  public intersectionSeg(seg: Segment): boolean {
+    return this.edges.some((item) => item.intersect(seg));
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 14:52:16
+   * @Description: 绕多边形的一点旋转多边形，一定角度
+   */
+  public rotate(): Polygon {
+    const firstP = this.vertices[0];
+    const firstEdgeArc = GeometryTool.arc(this.vertices[0], this.vertices[0]);
+    const polygonMat = new Matrix3x3(); // 多边形的坐标变换矩阵
+    polygonMat.translate(firstP.x, firstP.y);
+    polygonMat.rotate(firstEdgeArc);
+    const rotateVs = [...this.vertices].map((item) =>
+      polygonMat.applyInverse(item)
+    );
+    return new Polygon(rotateVs);
   }
 }

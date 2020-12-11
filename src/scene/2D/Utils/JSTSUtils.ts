@@ -7,7 +7,6 @@ import BufferParameters = jsts.operation.buffer.BufferParameters;
 import BufferOp = jsts.operation.buffer.BufferOp;
 import Coordinate = jsts.geom.Coordinate;
 
-//@Slf4j
 export default class JSTSUtils {
   public static factory: GeometryFactory = new GeometryFactory();
 

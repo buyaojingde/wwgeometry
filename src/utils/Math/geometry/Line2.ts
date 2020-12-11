@@ -112,4 +112,34 @@ export default class Line2 {
     const translateLength = n.dot(startV);
     return this.p.translate(n.multiply(translateLength));
   }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-10 14:02:23
+   * @Description: 根据直线方程，从Y得到X
+   *  y = mx + b; b = y0 - mx0; m = dir.y / dir.x;
+   */
+  public getXFromY(y: number): number {
+    if (MathUtils.equalZero(this.dir.y)) return this.p.x; //  平行
+    if (MathUtils.equalZero(this.dir.x)) return this.p.x; // 垂直
+    const m = this.dir.y / this.dir.x;
+    const b = this.p.y - this.p.x * m;
+    const x = (y - b) / m;
+    return x;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-10 14:02:23
+   * @Description: 根据直线方程，从Y得到X
+   *  y = mx + b; b = y0 - mx0; m = dir.y / dir.x;
+   */
+  public getYFromX(x: number): number {
+    if (MathUtils.equalZero(this.dir.y)) return this.p.y; //  水平
+    if (MathUtils.equalZero(this.dir.x)) return this.p.y; // 垂直
+    const m = this.dir.y / this.dir.x;
+    const b = this.p.y - this.p.x * m;
+    const y = m * x + b;
+    return y;
+  }
 }

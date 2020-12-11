@@ -1,16 +1,38 @@
 import MathUtils from "../math/MathUtils";
+import GeometryTool from "../tool/GeometryTool";
 import Box from "./Box";
 import Line2 from "./Line2";
+import Matrix3x3 from "./Matrix3x3";
 import Point from "./Point";
 import Vector2 from "./Vector2";
 
 export default class Segment {
   public start: Point;
   public end: Point;
+  public dy: number;
+  public dx: number;
 
   public constructor(start: Point, end: Point) {
     this.start = start;
     this.end = end;
+    this.dy = this.end.y - this.start.y;
+    this.dx = this.end.x - this.start.x;
+  }
+
+  public get from(): Point {
+    return this.start;
+  }
+
+  public get to(): Point {
+    return this.end;
+  }
+
+  public set from(val) {
+    this.start = val;
+  }
+
+  public set to(val) {
+    this.end = val;
   }
 
   public get center(): Point {
@@ -26,7 +48,7 @@ export default class Segment {
    * @Description: 方向
    */
   public get dir(): Vector2 {
-    return this.end.subtract(this.start);
+    return new Vector2(this.dy, this.dx);
   }
 
   public get negativeDir(): Vector2 {
@@ -34,6 +56,25 @@ export default class Segment {
       return this.end.subtract(this.start);
     }
     return this.start.subtract(this.end);
+  }
+
+  get maxY(): number {
+    return this.start.y > this.end.y ? this.start.y : this.end.y;
+  }
+  get minY(): number {
+    return this.start.y < this.end.y ? this.start.y : this.end.y;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-10 21:03:24
+   * @Description: 线段的角度单调递增，可以对线段角度排序
+   */
+  get rad() {
+    const p = this.dx / (Math.abs(this.dx) + Math.abs(this.dy)); // -1 .. 1 increasing with x
+
+    if (this.dy < 0) return p - 1; // -2 .. 0 increasing with x
+    return 1 - p;
   }
 
   get box(): Box {
@@ -149,22 +190,95 @@ export default class Segment {
 
   /**
    * @author lianbo
-   * @date 2020-10-10 19:06:01
-   * @Description: 线段与线段相交，不包括端点，端点是另一种touch的情况，平行的情况是不会的
+   * @date 2020-12-09 15:32:59
+   * @Description: 一种基于仿射变换的相交算法
    */
-  public intersect(other: Segment): Point[] {
-    const ip: Point[] = [];
-    if (this.box.noIntersect(other.box)) {
-      return ip;
+  public intersectBaseShear(other: Segment): Point | null {
+    const mat = new Matrix3x3();
+    mat.shearTfX(-this.slope);
+    const invertMat = mat.clone().invert();
+    const shearSeg = new Segment(mat.apply(this.start), mat.apply(this.end));
+    const y = shearSeg.start.y;
+    const xMin =
+      shearSeg.start.x < shearSeg.end.x ? shearSeg.start.x : shearSeg.end.x;
+    const xMax =
+      shearSeg.start.x >= shearSeg.end.x ? shearSeg.start.x : shearSeg.end.x;
+    const start = mat.apply(other.start);
+    const end = mat.apply(other.end);
+    if ((y <= start.y && y >= end.y) || (y <= end.y && y >= start.y)) {
+      if (end.y == start.y) {
+        return null;
+      }
+      const iX =
+        start.x + ((end.x - start.x) * (y - start.y)) / (end.y - start.y);
+      if (iX <= xMax && iX >= xMin) {
+        const iP = new Point(iX, y);
+        const origin = invertMat.apply(iP);
+        return origin;
+      }
+      return null;
     }
+    return null;
+  }
 
-    const newP = new Line2(this.start, this.end).intersectLine(
-      new Line2(other.start, other.end)
-    );
-    if (newP && !this.onEnd(newP) && !other.onEnd(newP)) {
-      ip.push(newP);
+  /**
+   * @author lianbo
+   * @date 2020-12-11 08:51:36
+   * @Description: 是否有相交
+   * @param includeEnd 包括端点
+   */
+  public isIntersect(other: Segment, includeEnd: boolean = false): boolean {
+    if (includeEnd) {
+      return (
+        !GeometryTool.sameSide(this.start, this.end, other.start, other.end) &&
+        !GeometryTool.sameSide(other.start, other.end, this.start, this.end)
+      );
     }
-    return ip;
+    return (
+      !GeometryTool.sameSideSim(this.start, this.end, other.start, other.end) &&
+      !GeometryTool.sameSideSim(other.start, other.end, this.start, this.end)
+    );
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-09 14:14:28
+   * @Description: 线段与线段相交
+   */
+  public intersect(other: Segment, includeEnd: boolean = false): Point | null {
+    // Note: this is almost the same as geom.intersectSegments()
+    // The main difference is that we don't have a pre-computed
+    // value for dx/dy on the segments.
+    //  https://stackoverflow.com/a/1968345/125351
+    const aStart = this.start,
+      bStart = other.start;
+    const p0_x = aStart.x,
+      p0_y = aStart.y,
+      p2_x = bStart.x,
+      p2_y = bStart.y;
+
+    const s1_x = this.start.x - this.end.x,
+      s1_y = this.start.y - this.end.y,
+      s2_x = other.start.x - other.end.x,
+      s2_y = other.start.y - other.end.y;
+    const div = s1_x * s2_y - s2_x * s1_y;
+    if (MathUtils.equalZero(div)) return null;
+
+    const s = (s1_y * (p0_x - p2_x) - s1_x * (p0_y - p2_y)) / div;
+    if (MathUtils.less(s, 0) || MathUtils.greater(s, 1)) return null;
+
+    const t = (s2_x * (p2_y - p0_y) + s2_y * (p0_x - p2_x)) / div;
+    if (MathUtils.less(t, 0) || MathUtils.greater(t, 1)) return null;
+
+    if (includeEnd) {
+      return new Point(p0_x - t * s1_x, p0_y - t * s1_y);
+    } else {
+      const p = new Point(p0_x - t * s1_x, p0_y - t * s1_y);
+      if (this.onEnd(p) || other.onEnd(p)) {
+        return null;
+      }
+      return p;
+    }
   }
 
   /**
@@ -174,7 +288,10 @@ export default class Segment {
    */
   public intersectSegs(segs: Segment[]): Point[] {
     const ips: Point[] = [];
-    segs.forEach((item) => ips.push(...this.intersect(item)));
+    segs.forEach((item) => {
+      const ip = this.intersect(item);
+      ip && ips.push(ip);
+    });
     return ips;
   }
 
@@ -184,7 +301,7 @@ export default class Segment {
    * @Description: 线段和线段的相接触的关系，但是没有相交
    */
   public touch(other: Segment): any {
-    if (this.intersect(other).length > 0) {
+    if (this.intersect(other)) {
       // 相交判断
       return null;
     }
@@ -319,6 +436,14 @@ export default class Segment {
     return new Segment(this.start.clone(), this.end.clone());
   }
 
+  /**
+   * @author lianbo
+   * @date 2020-12-09 09:25:36
+   * @Description: 线段斜率
+   */
+  public get slope(): number {
+    return (this.end.y - this.start.y) / (this.end.x - this.start.x);
+  }
   /**
    * @author lianbo
    * @date 2020-11-19 17:31:36
@@ -471,5 +596,39 @@ export default class Segment {
       difference = result;
     }
     return difference;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-10 11:39:39
+   * @Description: 点的水平线与线段及线段延长线的交点
+   */
+  public intersectionX(p: Point): number | null {
+    if (this.isHorizontal()) {
+      if (!MathUtils.equal(p.y, this.start.y)) return null;
+      const minX = this.start.x > this.end.x ? this.end.x : this.start.x;
+      const maxX = this.start.x < this.end.x ? this.end.x : this.start.x;
+      if (p.x < minX) return minX;
+      if (p.x > maxX) return maxX;
+      return p.x;
+    }
+    return new Line2(this.start, this.end).getXFromY(p.y);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-10 11:39:39
+   * @Description: 点的垂直射线与线段及线段延长线的交点
+   */
+  public intersectionY(p: Point): number | null {
+    if (this.isVertical()) {
+      if (!MathUtils.equal(p.x, this.start.x)) return null;
+      const minY = this.start.y > this.end.y ? this.end.y : this.start.y;
+      const maxY = this.start.y < this.end.y ? this.end.y : this.start.y;
+      if (p.y < minY) return minY;
+      if (p.y > maxY) return maxY;
+      return p.y;
+    }
+    return new Line2(this.start, this.end).getYFromX(p.x);
   }
 }

@@ -159,7 +159,7 @@ export default class Matrix3x3 {
    * @date 2020-11-09 15:52:35
    * @Description: 通过逆矩阵从局部坐标转世界坐标
    */
-  public applyInverse(pos: Point) {
+  public applyInverse(pos: Point): Point {
     const newPos = new Point();
 
     const id = 1 / (this.m00 * this.m11 + this.m01 * -this.m10);
@@ -177,5 +177,53 @@ export default class Matrix3x3 {
       (-this.m12 * this.m00 + this.m02 * this.m10) * id;
 
     return newPos;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 20:34:30
+   * @Description: 逆矩阵
+   */
+  public invert() {
+    const a1 = this.m00;
+    const b1 = this.m10;
+    const c1 = this.m01;
+    const d1 = this.m11;
+    const tx1 = this.m02;
+    const n = a1 * d1 - b1 * c1;
+    this.m00 = d1 / n;
+    this.m10 = -b1 / n;
+    this.m01 = -c1 / n;
+    this.m11 = a1 / n;
+    this.m02 = (c1 * this.m12 - d1 * tx1) / n;
+    this.m12 = -(a1 * this.m12 - b1 * tx1) / n;
+    return this;
+  }
+
+  public clone(): Matrix3x3 {
+    const mat = new Matrix3x3();
+    mat.m00 = this.m00;
+    mat.m01 = this.m01;
+    mat.m02 = this.m02;
+
+    mat.m10 = this.m10;
+    mat.m11 = this.m11;
+    mat.m12 = this.m12;
+    return mat;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 20:07:50
+   * @Description: 水平方向上的错切变换（平行于X轴的变换）
+   */
+  public shearTfX(dt: number): Matrix3x3 {
+    this.m10 = dt;
+    return this;
+  }
+
+  public shearTfY(dt: number): Matrix3x3 {
+    this.m01 = dt;
+    return this;
   }
 }

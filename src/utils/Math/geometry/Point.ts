@@ -15,13 +15,6 @@ export default class Point {
     this.x = x;
     this.y = y;
   }
-
-  public static IsLeft(P0: Point, P1: Point, P2: Point): number {
-    return MathUtils.Sign(
-      (P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y)
-    );
-  }
-
   public subtract(p: Point) {
     return new Vector2(this.x - p.x, this.y - p.y);
   }
@@ -100,5 +93,17 @@ export default class Point {
 
   public toArray(): number[] {
     return [this.x, this.y];
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-09 21:05:08
+   * @Description: 点和点之间大小比较
+   */
+  public less(p: Point): boolean {
+    if (this.x === p.x) {
+      return this.y < p.y;
+    }
+    return this.x < p.x;
   }
 }

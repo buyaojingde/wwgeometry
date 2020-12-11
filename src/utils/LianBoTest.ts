@@ -1,3 +1,4 @@
+import * as isect from "isect";
 import maxBy from "lodash/maxBy";
 import {
   Color,
@@ -20,8 +21,10 @@ import Structure, { StType } from "../scene/Model/Home/Structure";
 import ObserveVector3 from "../scene/Model/ObserveMath/ObserveVector3";
 import ConfigStructure from "./ConfigStructure";
 import Constant from "./Math/contanst/constant";
+import Matrix3x3 from "./Math/geometry/Matrix3x3";
 import Point from "./Math/geometry/Point";
 import Polygon from "./Math/geometry/Polygon";
+// import PolygonOp from "./Math/geometry/PolygonOp";
 import Segment from "./Math/geometry/Segment";
 import Vector2 from "./Math/geometry/Vector2";
 import MathUtils from "./Math/math/MathUtils";
@@ -30,6 +33,7 @@ import PolygonClipper from "./PolygonClipper";
 import GeometryFactory = jsts.geom.GeometryFactory;
 import Geometry = jsts.geom.Geometry;
 import Coordinate = jsts.geom.Coordinate;
+import Matrix = PIXI.Matrix;
 
 class LianBoTest {
   public vv!: ObserveVector3;
@@ -145,11 +149,103 @@ class LianBoTest {
   testMain() {
     // this.testJSTS();
     // this.drawRemainder();
-    const fr = new FileReader();
-    fr.onabort = (event) => {
-      console.log("abort");
-    };
-    console.log("result");
+    this.testIsect();
+  }
+
+  testSegIntersection() {
+    const seg = new Segment(new Point(0, 0), new Point(1, 1));
+    const seg1 = new Segment(new Point(0.4, 0.5), new Point(0, 2));
+    const result = seg.intersect(seg1);
+    if (result) {
+      console.log(seg.contain(result));
+      console.log(seg1.contain(result));
+    }
+  }
+
+  testShearTF() {
+    const p = new Point(1, 1);
+    const p1 = new Point(3, 2);
+    const p2 = new Point(3, 3);
+    const p3 = new Point(1, 2);
+    const poly = new Polygon([p, p1, p2, p3]);
+    const seg = new Segment(new Point(0, 0), new Point(2, 2.5));
+    // this.drawPolygon(poly.vertices);
+    // this.drawSegs([seg]);
+    // return;
+    const mat = new Matrix3x3();
+    mat.shearTfX(-seg.slope);
+    const invertMat = mat.clone().invert();
+    const shearSeg = new Segment(mat.apply(seg.start), mat.apply(seg.end));
+    const y = shearSeg.start.y;
+    const xMin =
+      shearSeg.start.x < shearSeg.end.x ? shearSeg.start.x : shearSeg.end.x;
+    const xMax =
+      shearSeg.start.x >= shearSeg.end.x ? shearSeg.start.x : shearSeg.end.x;
+    for (const edge of poly.edges) {
+      const start = mat.apply(edge.start);
+      const end = mat.apply(edge.end);
+      if ((y <= start.y && y >= end.y) || (y <= end.y && y >= start.y)) {
+        if (end.y == start.y) {
+          break;
+        }
+        const iX =
+          start.x + ((end.x - start.x) * (y - start.y)) / (end.y - start.y);
+        if (iX <= xMax && iX >= xMin) {
+          const iP = new Point(iX, y);
+          console.log(invertMat.apply(iP));
+        }
+      }
+    }
+    for (const edge of poly.edges) {
+      const ps = seg.intersect(edge, true);
+      if (ps) {
+        console.log(ps);
+      }
+    }
+  }
+
+  testIsect() {
+    const a = this.lvl.findByRvtId("2087366").polygon;
+    const b = this.lvl.findByRvtId("2040197").polygon;
+    const seg = new Segment(new Point(0, 0), new Point(1, 1));
+    const seg1 = new Segment(new Point(0, 1), new Point(1, 0));
+    // @ts-ignore
+    const inter = isect.sweep([seg, seg1], []);
+    const inters = inter.run();
+    console.log(inters);
+    const segT = new Segment(new Point(1, 1), new Point(10, 1));
+    // @ts-ignore
+
+    // const i = this.getIntersectionXPoint(segT, 0, 0);
+    // Number.NEGATIVE_INFINITY;
+    // console.log(typeof i);
+    // op.intersection();
+  }
+
+  // @ts-ignore
+  getIntersectionXPoint(segment, xPos, yPos) {
+    var dy1 = segment.from.y - yPos;
+    var dy2 = yPos - segment.to.y;
+    var dy = segment.to.y - segment.from.y;
+    if (Math.abs(dy1) < MathUtils.Epsilon) {
+      // The segment starts on the sweep line
+      if (Math.abs(dy) < MathUtils.Epsilon) {
+        // the segment is horizontal. Intersection is at the point
+        if (xPos <= segment.from.x) return segment.from.x;
+        if (xPos > segment.to.x) return segment.to.x;
+        return xPos;
+      }
+      return segment.from.x;
+    }
+
+    var dx = segment.to.x - segment.from.x;
+    var xOffset;
+    if (dy1 >= dy2) {
+      xOffset = dy1 * (dx / dy);
+      return segment.from.x - xOffset;
+    }
+    xOffset = dy2 * (dx / dy);
+    return segment.to.x + xOffset;
   }
 
   testJSTS() {
@@ -427,7 +523,7 @@ class LianBoTest {
 
   testSegmentIntercation() {
     const s = new Segment(new Point(0, 0), new Point(1, 0));
-    const s1 = new Segment(new Point(0.5, 0), new Point(1.5, 0));
+    const s1 = new Segment(new Point(0.5, 1), new Point(0.5, 3));
     const result = s.intersect(s1);
     console.log(result);
   }

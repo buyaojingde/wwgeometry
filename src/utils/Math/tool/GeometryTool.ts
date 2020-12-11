@@ -1,3 +1,5 @@
+import MathUtils from "../math/MathUtils";
+
 /**
  * @author lianbo
  * @date 2020-10-13 14:41:15
@@ -91,5 +93,63 @@ export default class GeometryTool {
   public static normalized(v: any): any {
     const length = 1 / Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     return { x: v.x * length, y: v.y * length, z: v.z * length };
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 11:19:34
+   * @Description: p2 在以p0为起点，p1为方向的左边
+   */
+  public static isLeft(P0: any, P1: any, P2: any): boolean {
+    return (P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y) > 0;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-10-09 14:36:36
+   * @Description:二维旋转
+   */
+  public static rotationTransform(from: any, alpha: number): any {
+    const newX = from.x * Math.cos(alpha) - from.y * Math.sin(alpha);
+
+    const newY = from.x * Math.sin(alpha) + from.y * Math.cos(alpha);
+    return { x: newX, y: newY };
+  }
+
+  public static arc(p: any, p1: any): number {
+    return Math.atan2(p1.y - p.y, p1.x - p.x);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-08 11:19:34
+   * @Description: p2 在以p0为起点，p1为方向的左边
+   */
+  public static isLeftSign(P0: any, P1: any, P2: any): number {
+    return MathUtils.Sign(
+      (P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y)
+    );
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-11 09:02:39
+   * @Description: p2 p3在以p0,p1为分割线的同侧(严格的，不包括在分割线上）
+   */
+  public static sameSide(p0: any, p1: any, p2: any, p3: any): boolean {
+    const b2 = GeometryTool.isLeftSign(p1, p1, p2);
+    const b3 = GeometryTool.isLeftSign(p1, p1, p3);
+    return b2 * b3 > 0;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-11 09:02:39
+   * @Description: p2 p3在以p0,p1为分割线的同侧(不严格的，包括在分割线上）
+   */
+  public static sameSideSim(p0: any, p1: any, p2: any, p3: any): boolean {
+    const b2 = GeometryTool.isLeftSign(p1, p1, p2);
+    const b3 = GeometryTool.isLeftSign(p1, p1, p3);
+    return b2 * b3 >= 0;
   }
 }
