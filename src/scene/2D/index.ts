@@ -6,6 +6,7 @@ import Structure, { StType } from "../../scene/Model/Home/Structure";
 import ConfigStructure from "../../utils/ConfigStructure";
 import { EventEnum, EventMgr } from "../../utils/EventManager";
 import Constant from "../../utils/Math/contanst/constant";
+import Box from "../../utils/Math/geometry/Box";
 import Point from "../../utils/Math/geometry/Point";
 import MathUtils from "../../utils/Math/math/MathUtils";
 import Quadtree from "../../utils/Math/math/Quadtree";
@@ -300,25 +301,11 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     if (!levelBoundingBox) {
       // 若levelBoundingBox为空，返回默认BoundingBox
-      levelBoundingBox = new BoundingBox2D().setFromCenterAndSize(
-        new Vector2(),
-        new Vector2(1000, 800)
-      );
+      levelBoundingBox = new Box(new Point(-500, -400), new Point(500, 400));
     }
     // const levelBoundingBox = this.home.curLevel.getBondingBox();
     const rect: any = (this.rendererDom as HTMLElement).getBoundingClientRect();
     if (!levelBoundingBox || !rect || !(rect.width * rect.height)) {
-      return;
-    }
-    this.setResetScale(levelBoundingBox, rect);
-    this.setResetPosition(levelBoundingBox, rect);
-  }
-
-  public resetViewBox(levelBoundingBox: BoundingBox2D, rect: IDOMRect) {
-    if (!rect) {
-      rect = (this.rendererDom as HTMLElement).getBoundingClientRect() as any;
-    }
-    if (!levelBoundingBox || !rect) {
       return;
     }
     this.setResetScale(levelBoundingBox, rect);
@@ -615,12 +602,10 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   // @ts-ignore
-  private setResetScale(
-    levelBoundingBox: BoundingBox2D,
-    rect: IDOMRect | null = null
-  ) {
+  private setResetScale(levelBoundingBox: Box, rect: IDOMRect | null = null) {
     // calculate the house size
-    const sizeVec = levelBoundingBox.getSize(new Vector2());
+    const sizeVecW = levelBoundingBox.width;
+    const sizeVecH = levelBoundingBox.height;
 
     // calculate the screen size
     // @ts-ignore
@@ -630,18 +615,19 @@ export default class Scene2D extends SceneBase implements IScene2D {
     screenSize.multiplyScalar(0.7);
 
     // select the minimum side
-    const scale = Math.min(screenSize.x / sizeVec.x, screenSize.y / sizeVec.y);
-
+    // const scale = Math.min(screenSize.x / sizeVecW, screenSize.y / sizeVecH);
+    // @ts-ignore
+    const scale = Math.min(rect.width / 1000, rect.height / 800);
     this.scale.set(scale);
   }
 
   // @ts-ignore
   private setResetPosition(
-    levelBoundingBox: BoundingBox2D,
+    levelBoundingBox: Box,
     rect: IDOMRect | null = null
   ) {
     // calculate the house center position
-    const point = vectorToPoint(levelBoundingBox.getCenter());
+    const point = new Point();
     const stage = this.getStage();
     const pointG = stage.toGlobal(point);
 

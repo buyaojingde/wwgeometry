@@ -20,6 +20,10 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "@typescript-eslint/ban-ts-ignore":"warn",
+    "@typescript-eslint/interface-name-prefix":"warn",
+    "no-prototype-builtins": "warn",
+    "@typescript-eslint/no-use-before-define": "warn",
     quotes: [0, "single", { avoidEscape: true }],
   },
 
