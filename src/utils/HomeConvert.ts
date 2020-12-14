@@ -17,8 +17,7 @@ class HomeConvert {
   eleGeo!: any[];
   eles!: any[];
   spaces!: any[];
-  convert(): Home {
-    const obj = require("../../devTools/博智林机器人创研中心6号楼土建6F.json");
+  convert(obj: any): Home {
     const home = new Home();
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;

@@ -201,6 +201,10 @@ export default observer({
         this.scene2d.resetViewForStructure(st);
       }
     },
+    async loadBuild(buildData) {
+      await this.$_scene2d.loadHomeData(buildData);
+      // console.log(buildData);
+    },
   },
 });
 </script>

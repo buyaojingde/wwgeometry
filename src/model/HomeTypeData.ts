@@ -84,7 +84,8 @@ class HomeTypeData {
 
   private async _getHome(from?: string, path?: any) {
     if (from == "local") {
-      this.gottenHome = HomeConvert.convert();
+      const obj = require("../devTools/博智林机器人创研中心4号楼土建模型20200619增加施工电梯3-4数据.json");
+      this.gottenHome = HomeConvert.convert(obj);
       return this.gottenHome;
     }
   }

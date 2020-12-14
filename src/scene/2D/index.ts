@@ -166,10 +166,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     this.initController();
 
-    // 当前从本地加载数据
-    this.loadHomeData("local").then((res) => {
-      this.afterLoadHome(res);
-    });
+    // 从本地加载数据
+    this.selfLoad("local").then((r) => console.log(r));
 
     this.initSyncEvent();
 
@@ -559,7 +557,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
    * @date 2020-11-13 17:39:09
    * @Description: 加载建筑数据后续操作
    */
-  private afterLoadHome(res: any) {
+  private afterLoadHome() {
     this.resetView();
     const homeTree = this.homeToTreeData();
     EventMgr.emit(EventEnum.initHome, homeTree);
@@ -652,7 +650,22 @@ export default class Scene2D extends SceneBase implements IScene2D {
   /**
    * 加载户型数据
    */
-  private async loadHomeData(from?: string, path?: any) {
+  public async loadHomeData(buildData: any) {
+    try {
+      // @ts-ignore
+      this.home = await HomeConvert.convert(buildData);
+      // 计算墙的中线
+      this.home.curLevel.preprocess();
+      this.home.curLevel.preprocessRoom();
+      this.homePlan.render();
+      this.resetView();
+      this.afterLoadHome();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  private async selfLoad(from?: string, path?: any) {
     try {
       // @ts-ignore
       this.home = await HomeTypeData.getHome(from, path);
@@ -661,6 +674,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
       this.home.curLevel.preprocessRoom();
       this.homePlan.render();
       this.resetView();
+      this.afterLoadHome();
     } catch (e) {
       console.log(e);
     }
