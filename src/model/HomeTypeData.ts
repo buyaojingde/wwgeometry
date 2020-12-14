@@ -15,19 +15,7 @@ class HomeTypeData {
 
   protected hasRequest = null;
 
-  constructor() {
-    window.addEventListener("beforeunload", (e) => {
-      if (scene2D.getInstance().home.curLevel.rooms.length === 0) {
-        e = e || window.event;
-        // 兼容IE8和Firefox 4之前的版本
-        if (e) {
-          e.returnValue = "关闭提示";
-        }
-        // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
-        return "关闭提示";
-      }
-    });
-  }
+  constructor() {}
 
   /**
    * 户型是否已经加载

@@ -509,7 +509,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
     dataRoom.children = [];
     for (const room of rooms) {
       const roomTree: any = {};
-      roomTree.label = room.rvtName;
+      // roomTree.label = room.rvtName + " " + room.rvtId;
+      roomTree.label = room.rvtId;
       roomTree.id = room.rvtId;
       roomTree.buildData = room;
       dataRoom.children.push(roomTree);
