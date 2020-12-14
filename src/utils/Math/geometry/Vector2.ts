@@ -66,15 +66,16 @@ export default class Vector2 {
     return new Vector2(this.y, -this.x);
   }
 
-  public copy(vec: Vector2): Vector2 {
+  public copy(vec: Vector2): this {
     this.x = vec.x;
     this.y = vec.y;
     return this;
   }
 
-  public set(x: number, y: number): void {
+  public set(x: number, y: number): this {
     this.x = x;
     this.y = y;
+    return this;
   }
 
   public setX(n: number): void {

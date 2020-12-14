@@ -65,43 +65,6 @@ export function drawDoubleDirectionArrow(
 }
 
 /**
- *  根据内、外半径生成完整圆环或圆环弧
- * @outerRadius:  外半径
- * @innerRadius:  内半径
- * @angleInRadian:  生成圆环的角度
- * @mat: 圆环对应的材质
- *
- **/
-
-// @ts-ignore
-export function createRingByAngle(
-  outerRadius,
-  innerRadius,
-  angleInRadian,
-  mat?: Material
-) {
-  const shapeGeometry = new RingBufferGeometry(
-    innerRadius,
-    outerRadius,
-    32 * 8,
-    1,
-    0,
-    angleInRadian
-  );
-  mat = mat
-    ? mat
-    : new MeshBasicMaterial({
-        color: 0x0eaf7f,
-        opacity: 0.3,
-        transparent: false,
-      });
-
-  const ringMesh: Mesh = new Mesh(shapeGeometry, mat);
-  ringMesh.rotateX((Math.PI / 2) * -1);
-  return ringMesh;
-}
-
-/**
  * 绘制PIXI(2D场景)下的扇形
  * @param graphics
  * @param point

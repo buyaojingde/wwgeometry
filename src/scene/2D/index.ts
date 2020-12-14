@@ -613,7 +613,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     // const scale = Math.min(screenSize.x / sizeVecW, screenSize.y / sizeVecH);
     // @ts-ignore
     const scale = Math.min(rect.width / 1000, rect.height / 800);
-    this.scale.set(scale);
+    this.scale.set(scale, scale);
   }
 
   // @ts-ignore

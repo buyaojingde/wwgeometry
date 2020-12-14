@@ -1,5 +1,5 @@
 import { Matrix4, Vector3 } from "three";
-import MathTool from "../Util/MathTool";
+import MathUtils from "../../../utils/Math/math/MathUtils";
 
 export default class GeoSurface {
   points: Vector3[];
@@ -35,7 +35,7 @@ export default class GeoSurface {
     );
     const v0 = new Vector3().subVectors(this.points[0], this.points[1]);
     const normal = new Vector3().crossVectors(v0, v1);
-    return MathTool.isZeroNumber(normal.x) && MathTool.isZeroNumber(normal.z);
+    return MathUtils.equalZero(normal.x) && MathUtils.equalZero(normal.z);
   }
 
   /**

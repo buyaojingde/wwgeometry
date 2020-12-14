@@ -1,12 +1,11 @@
 import Stage = PIXI.Container;
 import DisplayObject = PIXI.DisplayObject;
 import Point = PIXI.Point;
-import { Vector2 } from "three";
-import Vector2D from "../../Model/Geometry/Vector2D";
+import Vector2 from "../../../utils/Math/geometry/Vector2";
 
-export function pointToVector(point: Point): Vector2D {
+export function pointToVector(point: Point): Vector2 {
   const { x, y } = point;
-  return new Vector2D(x, y);
+  return new Vector2(x, y);
 }
 
 export function vectorToPoint(point: Vector2): Point {

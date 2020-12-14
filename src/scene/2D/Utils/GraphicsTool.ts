@@ -7,9 +7,6 @@ import Point from "../../../utils/Math/geometry/Point";
 import Vector2 from "../../../utils/Math/geometry/Vector2";
 import GeometryTool from "../../../utils/Math/tool/GeometryTool";
 import { Graphics } from "pixi.js";
-import Line2D from "../../Model/Geometry/Line2D";
-import Lineseg2D from "../../Model/Geometry/Lineseg2D";
-import Vector2D from "../../Model/Geometry/Vector2D";
 
 export default class GraphicsTool {
   // 画原点
@@ -70,8 +67,8 @@ export default class GraphicsTool {
     point2: Point,
     gap: number
   ): void {
-    let v2d1: Vector2D;
-    let v2d2: Vector2D;
+    let v2d1: Vector2;
+    let v2d2: Vector2;
     const distance: number = point1.distanceToPoint(point2);
     let temp = 0;
     while (temp < distance) {
@@ -106,7 +103,7 @@ export default class GraphicsTool {
 
   public static drawSector(
     graphicsInst: Graphics,
-    param2: Vector2D,
+    param2: Vector2,
     radius: number,
     startAngle: number,
     angleValue: number
@@ -171,7 +168,7 @@ export default class GraphicsTool {
 
   public static drawPolygonDash(
     graphicsInst: Graphics,
-    points: Vector2D[],
+    points: Vector2[],
     len = 1
   ) {
     const vec = points;

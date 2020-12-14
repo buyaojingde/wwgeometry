@@ -23,12 +23,12 @@ export default class Segment {
     return this.start;
   }
 
-  public get to(): Point {
-    return this.end;
-  }
-
   public set from(val) {
     this.start = val;
+  }
+
+  public get to(): Point {
+    return this.end;
   }
 
   public set to(val) {

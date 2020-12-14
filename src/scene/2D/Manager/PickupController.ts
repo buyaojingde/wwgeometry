@@ -6,7 +6,7 @@ import Room2D from "../../../scene/2D/ViewObject/Room2D";
 import { action } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
 import ConfigStructure from "../../../utils/ConfigStructure";
-import Vector2D from "../../Model/Geometry/Vector2D";
+import Vector2 from "../../../utils/Math/geometry/Vector2";
 import { getRootObject } from "../Utils";
 import BaseScene from "../Utils/BaseScene";
 import Structure2D from "../ViewObject/Structure2D";
@@ -54,8 +54,7 @@ export default class PickupController extends BaseController {
 
         const mousePoint = this.getPoint(event.x, event.y, true);
         const { pageX: x, pageY: y } = event;
-        let object: any;
-        object = this.getObject(x, y);
+        const object = this.getObject(x, y);
       })();
     });
 
@@ -72,10 +71,9 @@ export default class PickupController extends BaseController {
           return;
         }
 
-        let object: any;
         const { pageX: x, pageY: y } = event;
 
-        object = this.getObject(x, y);
+        const object = this.getObject(x, y);
 
         Model2DActive.reset();
         if (object instanceof Structure2D) {
@@ -92,8 +90,7 @@ export default class PickupController extends BaseController {
       const { center } = event;
       const { x, y } = center;
 
-      let object: any;
-      object = this.getObject(x, y);
+      const object = this.getObject(x, y);
       this.pickUpIn2D(object);
     });
 
@@ -106,8 +103,7 @@ export default class PickupController extends BaseController {
       }
       const { pageX: x, pageY: y } = event;
 
-      let object: any;
-      object = this.getObject(x, y);
+      const object = this.getObject(x, y);
     });
   }
 
@@ -183,7 +179,7 @@ export default class PickupController extends BaseController {
     return this.mapPointToPosition(x, y, isScreenPos);
   }
 
-  public getDisplayObjectShapePosition(pos: Vector2D) {
+  public getDisplayObjectShapePosition(pos: Vector2) {
     if (!pos) {
       return null;
     }

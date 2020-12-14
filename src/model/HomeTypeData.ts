@@ -55,9 +55,7 @@ class HomeTypeData {
     try {
       res = await this.hasRequest;
     } catch (e) {
-      if (/auth\ fail/.test(e.message)) {
-      }
-      throw e;
+      throw new Error(e);
     } finally {
       this.hasRequest = null;
     }
@@ -84,7 +82,7 @@ class HomeTypeData {
 
   private async _getHome(from?: string, path?: any) {
     if (from == "local") {
-      const obj = require("../devTools/博智林机器人创研中心4号楼土建模型20200619增加施工电梯3-4数据.json");
+      const obj = require("../../devTools/博智林机器人创研中心6号楼土建6F.json");
       this.gottenHome = HomeConvert.convert(obj);
       return this.gottenHome;
     }

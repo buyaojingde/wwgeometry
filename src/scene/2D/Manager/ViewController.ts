@@ -1,7 +1,8 @@
 import { reaction } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
 import View2DData from "../../../store/View2DData";
-import Vector2D from "../../Model/Geometry/Vector2D";
+import Vector2 from "../../../utils/Math/geometry/Vector2";
+import Scene2D from "../index";
 import { pointToVector } from "../Utils";
 import BaseController from "./BaseController";
 import Point = PIXI.Point;
@@ -13,7 +14,7 @@ const SCENE_2D_MIN_SCALE = 0.12;
  * * by lianbo.guo
  **/
 export default class ViewController extends BaseController {
-  protected scene: any;
+  protected scene!: Scene2D;
   protected interactionManager: any;
   private renderDom: any;
 
@@ -53,7 +54,7 @@ export default class ViewController extends BaseController {
       const { x: startX, y: startY } = startPosition;
 
       View2DData.setPosition(
-        new Vector2D(startX + nowX - startPointX, startY + nowY - startPointY)
+        new Vector2(startX + nowX - startPointX, startY + nowY - startPointY)
       );
     };
     // @ts-ignore
@@ -74,7 +75,7 @@ export default class ViewController extends BaseController {
           return;
         }
       }
-      startPosition = this.scene.position.clone();
+      startPosition = new Vector2(this.scene.position.x, this.scene.position.y);
       const { pageX: x, pageY: y } = event;
       startPoint = new Point();
       this.interactionManager.mapPositionToPoint(startPoint, x, y);
@@ -118,9 +119,10 @@ export default class ViewController extends BaseController {
     this.interactionManager.mapPositionToPoint(pointBefore, x, y);
     const pointBeforeStage = this.scene.getStage().toLocal(pointBefore);
 
-    View2DData.setScale(new Vector2D(scale, scale));
+    View2DData.setScale(new Vector2(scale, scale));
 
     const point = this.stage.toGlobal(pointBeforeStage);
+
     const offset = pointToVector(point).subtract(pointToVector(pointBefore));
 
     const position = View2DData.position;
