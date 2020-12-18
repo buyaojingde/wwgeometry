@@ -26,7 +26,7 @@ import { drawGrid } from "../Math/GraphicsUtils";
 import BaseEvent2D from "./Events/Base";
 import SelectStructureAction from "./Events/SelectStructureAction";
 import HomePlan from "./Layer/HomePlan";
-import { LayerOrder, layerOrderGroups } from "./Layer/LayerOrder";
+// import { LayerOrder, layerOrderGroups } from "./Layer/LayerOrder";
 import CameraController from "./Manager/CameraController";
 import PickupController from "./Manager/PickupController";
 import ViewController from "./Manager/ViewController";
@@ -34,11 +34,12 @@ import { pointToVector, vectorToPoint } from "./Utils";
 import DOMEventManager from "./Utils/DOMEventManager";
 import GraphicsTool from "./Utils/GraphicsTool";
 import ViewObject from "./ViewObject/ViewObject";
-import Layer = PIXI.display.Layer;
-import Stage = PIXI.display.Stage;
+// import Layer = PIXI.display.Layer;
+// import Stage = PIXI.display.Stage;
 import Graphics = PIXI.Graphics;
 import WebGLRenderer = PIXI.Renderer;
 import ObservablePoint = PIXI.ObservablePoint;
+import Stats from "stats.js";
 
 export interface IDOMRect {
   width: number;
@@ -53,29 +54,24 @@ export interface IDOMRect {
 
 export default class Scene2D extends SceneBase implements IScene2D {
   private static _instance: Scene2D; // 静态单例
-  // @ts-ignore
-  public viewController: ViewController; // 视图控制器
+  public viewController!: ViewController; // 视图控制器
   public rendererDom: any; // 渲染节点
-  // @ts-ignore
-  public DOMEventListener: DOMEventManager; // Dom监听器
+  public DOMEventListener!: DOMEventManager; // Dom监听器
 
   public getApplication() {
     return this.scene;
   }
 
   public getStage() {
-    return this.scene.stage as Stage;
+    return this.scene.stage;
   }
 
   public lineWidth = 0;
   private allEvents: BaseEvent2D[] = [];
-  // @ts-ignore
-  private scene: Application; // 场景
+  private scene!: Application; // 场景
   private Vue: any; // Vue 模型
-  // @ts-ignore
-  private bindNode: HTMLElement; // 绑定的canvas对象
-  // @ts-ignore
-  private _grid: Graphics; // 原始形状
+  private bindNode!: HTMLElement; // 绑定的canvas对象
+  private _grid!: Graphics; // 原始形状
   private _assistContanier: PIXI.Container = new PIXI.Container();
   private _coordinate!: PIXI.Container;
   private _axisGroup!: PIXI.Container;
@@ -125,6 +121,26 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.scene.stop();
   }
 
+  initStats() {
+    const stats = new Stats();
+    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(stats.dom);
+    stats.dom.style.cssText =
+      "position:fixed;bottom:0;right:0;cursor:pointer;opacity:0.9;z-index:10000";
+
+    function animate() {
+      stats.begin();
+
+      // monitored code goes here
+
+      stats.end();
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  }
+
   /**
    * 初始化PIXI
    */
@@ -142,7 +158,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
       this.scene.renderer = Renderer2D;
     }
     this.stopRender();
-    this.scene.stage = new Stage();
+    // this.scene.stage = new PIXI.Container();
+    this.scene.stage.sortableChildren = true;
     Object.defineProperty(this.scene.stage, "scaleNumber", {
       get: () => View2DData.scaleNumber,
     });
@@ -162,7 +179,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     this.drawBaseInfo();
 
-    this.initLayers();
+    // this.initLayers();
 
     this.initController();
 
@@ -170,7 +187,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.selfLoad("local").then((r) => console.log(r));
 
     this.initSyncEvent();
-
+    this.initStats();
     LianBoTest.init();
   }
 
@@ -379,14 +396,12 @@ export default class Scene2D extends SceneBase implements IScene2D {
     }
 
     this._homePlan = homePlan;
-
     stage.addChildAt(homePlan.container, 0);
   }
 
   public refreshHomePlan() {
     this.setHomePlan(new HomePlan(this));
 
-    this._homePlan.render();
     Model2DActive.reset();
   }
 
@@ -532,10 +547,11 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
   protected drawBaseInfo() {
     this._grid = new Graphics();
+    this._grid.zIndex = -1;
     drawGrid(this._grid, { lineWidth: parseFloat("" + 1 / this.scale.x) });
     this.scene.stage.addChild(this._grid);
     this._coordinate = new PIXI.Container();
-    this._coordinate.parentGroup = layerOrderGroups[LayerOrder.Camera];
+    // this._coordinate.parentGroup = layerOrderGroups[LayerOrder.Camera];
     const grp = new Graphics();
     this._coordinate.addChild(grp);
     GraphicsTool.drawZeroPoint(grp);
@@ -681,17 +697,17 @@ export default class Scene2D extends SceneBase implements IScene2D {
     }
   }
 
-  private initLayers() {
-    const stage = this.getStage();
-    for (const key in layerOrderGroups) {
-      if (layerOrderGroups.hasOwnProperty(key)) {
-        const group = layerOrderGroups[key];
-        const layer: Layer = new Layer(group);
-        layer.name = group.name;
-        stage.addChild(layer);
-      }
-    }
-  }
+  // private initLayers() {
+  //   const stage = this.getStage();
+  //   for (const key in layerOrderGroups) {
+  //     if (layerOrderGroups.hasOwnProperty(key)) {
+  //       const group = layerOrderGroups[key];
+  //       const layer: Layer = new Layer(group);
+  //       layer.name = group.name;
+  //       stage.addChild(layer);
+  //     }
+  //   }
+  // }
 
   private initSwitchController() {
     this.allEvents.push();

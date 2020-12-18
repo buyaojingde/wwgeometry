@@ -5,7 +5,7 @@ import { Application } from "pixi.js";
 import HomePlan2D from "../2D/Layer/HomePlan";
 import DOMEventManager from "../2D/Utils/DOMEventManager";
 import Home from "../Model/Home/Home";
-import Stage = PIXI.display.Stage;
+// import Stage = PIXI.display.Stage;
 
 export interface IScene2D {
   homePlan: HomePlan2D;
@@ -26,6 +26,7 @@ export interface IScene2D {
   // @ts-ignore
   stopRender();
 
+  // @ts-ignore
   getStage(): Stage;
 
   getApplication(): Application;

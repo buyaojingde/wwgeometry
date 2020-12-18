@@ -15,7 +15,7 @@ export default class RoomLayer extends LayerBase {
         });
         this._disposeArr.push(disposeF);
         this.dataViewMap.set(dataObj, room2D);
-        this.container.home.curLevel.addRoom(dataObj);
+        // this.container.home.curLevel.addRoom(dataObj);
         const stage = this.container.getStage();
         stage.addChild(room2D);
       }
@@ -84,6 +84,7 @@ export default class RoomLayer extends LayerBase {
   public constructor(scene: any) {
     super(scene);
     this.init();
+    // this.container.zindex = 1;
     // tslint:disable-next-line:no-string-literal
     // window['Columnlayer'] = () => {
     //   console.log('Columnlayer>>' + this._layerName);

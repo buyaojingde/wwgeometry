@@ -17,6 +17,7 @@ class HomeConvert {
   eleGeo!: any[];
   eles!: any[];
   spaces!: any[];
+  itemCount = 2000; //最大渲染数量
   convert(obj: any): Home {
     const home = new Home();
     this.geo = obj.geometries;
@@ -28,9 +29,19 @@ class HomeConvert {
     const lvl = new Level();
     lvl.initQuadTree();
     home.levels = [];
-    structures.forEach((item) => lvl.addStructure(item));
+    let stCount = 1;
+    for (const st of structures) {
+      if (stCount > this.itemCount) break;
+      lvl.addStructure(st);
+      stCount++;
+    }
     const rooms = this.generateRoom();
-    rooms.forEach((item) => lvl.addRoom(item));
+    for (const room of rooms) {
+      if (stCount > this.itemCount) break;
+      lvl.addRoom(room);
+      stCount++;
+    }
+    console.log("构建数量" + stCount);
     home.levels.push(lvl);
     return home;
   }
@@ -122,18 +133,19 @@ class HomeConvert {
   findColumn(): Structure[] {
     const columns: Structure[] = [];
     for (const ele of this.eles) {
-      if (
-        // ele.builtInCategory !== "OST_Doors" &&
-        // ele.builtInCategory !== "OST_Windows" &&
-        ele.builtInCategory !== "OST_Floors"
-      ) {
-        const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
-        const wGeo = this.geo.find((item) => item.id === wGeoId.geomIDs[0]);
-        if (wGeo.solids.length > 0) {
-          const st = this.convertColumn(wGeo, ele);
-          if (st) {
-            columns.push(st);
-          }
+      // if (
+      //   // ele.builtInCategory === "OST_Doors" &&
+      //   // ele.builtInCategory === "OST_Windows" &&
+      //   ele.builtInCategory === "OST_Floors"
+      // ) {
+      //   continue;
+      // }
+      const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
+      const wGeo = this.geo.find((item) => item.id === wGeoId.geomIDs[0]);
+      if (wGeo.solids.length > 0) {
+        const st = this.convertColumn(wGeo, ele);
+        if (st) {
+          columns.push(st);
         }
       }
     }
@@ -229,7 +241,7 @@ class HomeConvert {
     const v2ds = topFace.points.map((item) =>
       GeometryTool.vector3toVector2(item)
     );
-    structure.boundingPoints = v2ds.map((item) => new Point(item.x, -item.y));
+    structure.boundary = v2ds.map((item) => new Point(item.x, -item.y));
     structure.geo = geo;
     structure.ele = ele;
     structure.rvtId = ele.revitId.toString();

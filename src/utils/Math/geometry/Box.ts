@@ -37,18 +37,18 @@ export default class Box {
    * @date 2020-11-12 15:07:27
    * @Description: Box的点分布
    *
-   *   0 ************* 3
+   *   0 ************* 1
    *     *           *
    *     *           *
    *     *           *
-   *   1 ************* 2
+   *   3 ************* 2
    */
   get points(): Point[] {
     return [
       new Point(this.min.x, this.min.y),
-      new Point(this.min.x, this.max.y),
-      new Point(this.max.x, this.max.y),
       new Point(this.max.x, this.min.y),
+      new Point(this.max.x, this.max.y),
+      new Point(this.min.x, this.max.y),
     ];
   }
 
@@ -59,7 +59,7 @@ export default class Box {
    *          0
    *     *************
    *     *           *
-   *  1  *           * 3
+   *  3  *           * 1
    *     *           *
    *     *************
    *          2

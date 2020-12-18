@@ -14,7 +14,7 @@ export enum LayerName {
 
 export default abstract class LayerBase extends EventEmitter {
   protected _disposeArr: Array<() => void> = [];
-  protected container: any;
+  public container: any;
   protected dataViewMap: Map<IDataObject, IViewObject>;
   protected _loadComplete = false;
   // @ts-ignore

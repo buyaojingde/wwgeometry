@@ -90,6 +90,11 @@ class SweepLineStatus {
     }
     return a.rad - b.rad;
   }
+
+  findAdjacent(p: Point) {
+    // @ts-ignore
+    const current = this.splayTree._root;
+  }
 }
 
 export default class Sweep {
@@ -121,5 +126,6 @@ export default class Sweep {
   private handle(currentEvent: EventItem) {
     const p = currentEvent.p;
     const group = currentEvent.index;
+    this.sls.findAdjacent(p);
   }
 }

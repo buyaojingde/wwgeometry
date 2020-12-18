@@ -1,9 +1,6 @@
-import "pixi-layers";
-import * as PIXI from "pixi.js";
 import View2DData from "../../../store/View2DData";
 import RoomLayer from "./RoomLayer";
 import StructureLayer from "./StructureLayer";
-import Stage = PIXI.display.Stage;
 
 export enum HomeLayers {
   Structure,
@@ -13,14 +10,15 @@ export enum HomeLayers {
 const SCENE_2D = "scene2D";
 export default class HomePlan2D {
   // private container: any;
-  public container: Stage;
+  public container: PIXI.Container;
   private scene: any;
   private _roomLayer: RoomLayer;
 
   public constructor(scene: any) {
     console.log("new HomePlan");
     this.scene = scene;
-    this.container = new Stage();
+    this.container = new PIXI.Container();
+    this.container.sortableChildren = true;
     this.container.interactive = false;
     this.container.name = SCENE_2D + "_HP";
     Object.defineProperty(this.container, "scaleNumber", {
@@ -45,8 +43,7 @@ export default class HomePlan2D {
     return this._structureLayer;
   }
 
-  // @ts-ignore
-  private _layers: object;
+  private _layers!: object;
 
   public get layers() {
     return this._layers;
@@ -57,14 +54,14 @@ export default class HomePlan2D {
   }
 
   public render(ignoreLayerList: any[] = []) {
-    Object.values(this._layers)
-      .filter(
-        (layer) =>
-          !ignoreLayerList.some((layerClass) => layer instanceof layerClass)
-      )
-      .forEach((layer) => layer && layer.render());
-
-    this.checkLayerShow(ignoreLayerList);
+    const allLayers = Object.values(this._layers).filter(
+      (layer) =>
+        !ignoreLayerList.some((layerClass) => layer instanceof layerClass)
+    );
+    for (const allLayer of allLayers) {
+      allLayer && allLayer.render();
+    }
+    // this.checkLayerShow(ignoreLayerList);
   }
 
   public load() {
@@ -134,11 +131,9 @@ export default class HomePlan2D {
   /**
    * 隐藏层的显示
    */
-  // @ts-ignore
-  public hideLayer(layer) {
+  public hideLayer(layer: any) {
     const layerObjects = layer.getObjects();
-    // @ts-ignore
-    layerObjects.forEach((val) => {
+    layerObjects.forEach((val: any) => {
       if (val.visible !== undefined) {
         val.visible = false;
       }

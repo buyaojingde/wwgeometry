@@ -4,7 +4,6 @@ import Constant from "../../../utils/Math/contanst/constant";
 import { IViewObject } from "../../Interface/IViewObject";
 import Structure, { StType } from "../../Model/Home/Structure";
 import ObserveVector2D from "../../Model/ObserveMath/ObserveVector2D";
-import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
 import GraphicsTool from "../Utils/GraphicsTool";
 import ViewObject from "./ViewObject";
 
@@ -17,13 +16,8 @@ export default class Structure2D extends ViewObject implements IViewObject {
   constructor(structure: Structure) {
     super(structure);
     this.visible = structure.visible;
-    this.parentGroup = layerOrderGroups[LayerOrder.Structure];
+    // this.parentGroup = layerOrderGroups[LayerOrder.Structure];
     this._disposeArr.push(
-      reaction(
-        () => this.scaleNum,
-        () => this.updateLineWidth(),
-        { fireImmediately: true }
-      ),
       reaction(
         () => [this.changeColor, this.active, this.isEdit, this.isVis],
         () => this.customRender()
@@ -70,7 +64,7 @@ export default class Structure2D extends ViewObject implements IViewObject {
 
   @computed
   public get fillColor() {
-    let color = 0x8a8a8a;
+    let color = Constant.colorHexNumber("#8a8a8a");
     switch (this.cType) {
       case StType.Wall:
         color = Constant.colorHexNumber("#FFD700"); // 金色 0xFFD700
@@ -126,13 +120,15 @@ export default class Structure2D extends ViewObject implements IViewObject {
       return 0.5;
     }
     switch (this.cType) {
-      case "OST_Walls":
+      case StType.Floor:
+        return 0.4;
+      case StType.Wall:
         return 0.8;
-      case "OST_GenericModel":
+      case StType.PCWall:
         return 0.7;
-      case "OST_StructuralFraming":
+      case StType.Framing:
         return 0.3;
-      case "OST_StructuralColumns":
+      case StType.Column:
         return 1.0;
     }
     return this.replicaOpacity;
@@ -141,14 +137,6 @@ export default class Structure2D extends ViewObject implements IViewObject {
   private _fillGraphics!: PIXI.Graphics;
 
   // region 标线
-
-  get fillGraphics(): PIXI.Graphics {
-    return this._fillGraphics;
-  }
-
-  set fillGraphics(value: PIXI.Graphics) {
-    this._fillGraphics = value;
-  }
 
   drawMid(arg: any) {
     const startSeg = this.strct.box.edges[arg[0]].center;
@@ -160,34 +148,26 @@ export default class Structure2D extends ViewObject implements IViewObject {
   public customRender() {
     // this.interactive = this.isVis; // 隐藏时将interactive 置为false
     this.visible = this.isVis;
-    this.clearChildren();
+    // this.clearChildren();
 
-    this.fill();
-    this.drawEdges();
+    this.customFill();
+    // this.drawEdges();
   }
 
-  public fill(fillColor: number = this.fillColor): void {
-    this.fillGraphics = new PIXI.Graphics();
-    this.fillGraphics.beginFill(fillColor, this.opacity);
-    const p0: any = this.strct.boundingPoints[0];
-    this.fillGraphics.moveTo(p0.x, p0.y);
+  public customFill(fillColor: number = this.fillColor): void {
+    this.clear();
+    this.beginFill(fillColor, this.opacity);
+    const p0: any = this.strct.boundary[0];
+    this.moveTo(p0.x, p0.y);
 
-    this.strct.boundingPoints.forEach((point) => {
+    this.strct.boundary.forEach((point) => {
       if (!point) {
         console.log("stop");
       }
-      this.fillGraphics.lineTo(point.x, point.y);
+      this.lineTo(point.x, point.y);
     });
 
-    this.fillGraphics.endFill();
-    this.addChild(this.fillGraphics);
-  }
-
-  public updateLineWidth() {
-    const graphics = this.edgeGraphics;
-    if (graphics) {
-      // graphics.updateLineStyle({ lineWidth: this.scaleNum });
-    }
+    this.endFill();
   }
 
   public drawEdges(borderColor: number = this.borderColor) {
@@ -196,9 +176,9 @@ export default class Structure2D extends ViewObject implements IViewObject {
     }
     this.edgeGraphics.clear();
     this.edgeGraphics.lineStyle(0.5, borderColor, this.borderOpacity);
-    const p0 = this.strct.boundingPoints[0];
+    const p0 = this.strct.boundary[0];
     this.edgeGraphics.moveTo(p0.x, p0.y);
-    this.strct.boundingPoints.forEach((item) => {
+    this.strct.boundary.forEach((item) => {
       this.edgeGraphics.lineTo(item.x, item.y);
     });
     if (this.strct.midSeg && this.strct.midSeg.start && this.strct.midSeg.end) {

@@ -28,7 +28,7 @@ export default class Constant {
    * @date 2020-11-11 14:59:08
    * @Description: 以#开头的字符串转16进制的数字
    */
-  public static colorHexNumber(color: string) {
+  public static colorHexNumber(color: string): number {
     const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
     let result = 0x000000;
     if (reg.test(color)) {
@@ -99,9 +99,9 @@ export default class Constant {
    */
   public static colorRandom() {
     return (
-      MathUtils.getRandomInt(0, 255) * 10000 +
-      MathUtils.getRandomInt(0, 255) * 100 +
-      MathUtils.getRandomInt(0, 255)
+      MathUtils.getRandomInt(0, 256) * 10000 +
+      MathUtils.getRandomInt(0, 256) * 100 +
+      MathUtils.getRandomInt(0, 256)
     );
   }
 }

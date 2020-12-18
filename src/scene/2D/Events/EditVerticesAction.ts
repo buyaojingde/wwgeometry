@@ -73,7 +73,7 @@ export default class EditVerticesAction extends BaseEvent {
     const structures = level.structures;
     for (const structure of structures) {
       if (structure.visible) {
-        for (const v of structure.boundingPoints) {
+        for (const v of structure.boundary) {
           const vc: IColumnVertices = { vertex: v, structure: structure };
           this._vertices.push(vc);
         }
@@ -128,7 +128,7 @@ export default class EditVerticesAction extends BaseEvent {
     this.editSt && this.editSt.setEdit(false);
     if (this.currentP) {
       const structure = this.currentP.structure;
-      const idx = structure.boundingPoints.indexOf(this.currentP.vertex);
+      const idx = structure.boundary.indexOf(this.currentP.vertex);
       if (idx !== -1) {
         geoV = structure.topFaceGeo[idx];
         Model2DActive.setStructureVec(geoV);

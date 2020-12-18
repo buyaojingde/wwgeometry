@@ -50,7 +50,7 @@ const onDrag: any = {
     };
   },
 };
-export default class DragContainer extends Container {
+export default class DragContainer extends PIXI.Graphics {
   public cursor = "pointer";
 
   // @ts-ignore
@@ -124,10 +124,5 @@ export default class DragContainer extends Container {
     };
 
     return getScene(this._parentSelf);
-  }
-
-  @computed
-  public get scaleNum() {
-    return View2DData.scaleNumber;
   }
 }

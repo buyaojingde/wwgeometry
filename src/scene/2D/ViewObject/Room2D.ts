@@ -2,7 +2,6 @@ import { computed, reaction } from "mobx";
 import Model2DActive from "../../../store/Model2DActive";
 import Constant from "../../../utils/Math/contanst/constant";
 import Room from "../../Model/Home/Room";
-import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
 import GraphicsTool from "../Utils/GraphicsTool";
 import ViewObject from "./ViewObject";
 
@@ -10,7 +9,7 @@ export default class Room2D extends ViewObject {
   constructor(room: Room) {
     super(room);
     this.visible = room.visible;
-    this.parentGroup = layerOrderGroups[LayerOrder.Room];
+    // this.parentGroup = layerOrderGroups[LayerOrder.Room];
     this.customRender();
     reaction(
       () => [this.active, this.isVis],

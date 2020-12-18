@@ -57,7 +57,7 @@ export default class SelectStructureAction extends BaseEvent {
   }
 
   debugColumn() {
-    console.log(this.structure.boundingPoints);
+    console.log(this.structure.boundary);
   }
 
   private initHotKeyEvents() {

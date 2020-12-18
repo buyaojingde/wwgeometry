@@ -7,7 +7,6 @@ import HookManager from "../../../utils/HookManager";
 
 import { Renderer2D } from "../../Base/Renderer";
 import BaseEvent2D from "../Events/Base";
-import { layerOrderGroups } from "../Layer/LayerOrder";
 import Application = PIXI.Application;
 import Stage = PIXI.Container;
 import WebGLRenderer = PIXI.Renderer;
@@ -19,8 +18,7 @@ export default class BaseScene extends HookManager {
   protected name = "none";
   protected app: Application;
   protected Vue: any;
-  // @ts-ignore
-  protected bindNode: HTMLElement;
+  protected bindNode!: HTMLElement;
   protected Scene2D: Scene2D;
 
   constructor(opt: {}) {
@@ -121,8 +119,6 @@ export default class BaseScene extends HookManager {
     );
     this.app.renderer.plugins.interaction.resolution = 1;
 
-    this.initLayers();
-
     const fn = this.resize.bind(this);
     this.Scene2D.on("resize", fn);
 
@@ -144,15 +140,5 @@ export default class BaseScene extends HookManager {
 
   protected addController(contrl: BaseEvent2D) {
     this.disposeArr.push(() => contrl.destroy());
-  }
-
-  private initLayers() {
-    const stage = this.getStage();
-    for (const key in layerOrderGroups) {
-      if (layerOrderGroups.hasOwnProperty(key)) {
-        const group = layerOrderGroups[key];
-        // stage.addChild(new Layer(group));
-      }
-    }
   }
 }

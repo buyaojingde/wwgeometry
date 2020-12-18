@@ -9,15 +9,15 @@ export default class StructureLayer extends LayerBase {
   public add(dataObj: IDataObject) {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Structure) {
-        const Column2d: Structure2D = new Structure2D(dataObj);
+        const structure2D: Structure2D = new Structure2D(dataObj);
         const disposeF = (dataObj as Structure).on("destroyLayerData", () => {
           this.remove(dataObj);
         });
         this._disposeArr.push(disposeF);
-        this.dataViewMap.set(dataObj, Column2d);
-        this.container.home.curLevel.addStructure(dataObj);
+        this.dataViewMap.set(dataObj, structure2D);
+        // this.container.home.curLevel.addStructure(dataObj);
         const stage = this.container.getStage();
-        stage.addChild(Column2d);
+        stage.addChild(structure2D);
       }
     }
   }

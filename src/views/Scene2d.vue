@@ -73,6 +73,7 @@ export default observer({
   components: {},
   data() {
     return {
+      eleList: [],
       searchRvtId: "",
       vm: Model2DActive,
       expandedKeys: [],
@@ -118,15 +119,18 @@ export default observer({
         this.expandedKeys.push(id);
         setTimeout(() => {
           //TODO: 自动移动scrollview
-          const xs = [...document.querySelectorAll("span.el-tree-node__label")];
-          const result = xs.find((item) => item.innerHTML === id.toString());
+          const result = this.eleList.find(
+            (item) => item.innerHTML === id.toString()
+          );
           // console.log(result);
-          const exeNode = result.parentNode.parentNode;
-          exeNode.scrollIntoView({
-            behavior: "auto",
-            block: "center",
-            inline: "nearest",
-          });
+          if (result) {
+            const exeNode = result.parentNode.parentNode;
+            exeNode.scrollIntoView({
+              behavior: "auto",
+              block: "center",
+              inline: "nearest",
+            });
+          }
         });
       });
     },
@@ -161,6 +165,9 @@ export default observer({
       setTimeout(async () => {
         await this.scene2d.bindVue(this);
         this.isLoading = false;
+        this.eleList = [
+          ...document.querySelectorAll("span.el-tree-node__label"),
+        ];
       });
     },
     checkIsEmpty() {

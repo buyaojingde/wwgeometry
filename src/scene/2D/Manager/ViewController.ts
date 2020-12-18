@@ -67,11 +67,11 @@ export default class ViewController extends BaseController {
     };
 
     this.on("win.input.end.right", endEvent);
-    this.on("win.input.end", endEvent);
+    // this.on("win.input.end", endEvent);
     // @ts-ignore
     this.on("input.start", (event) => {
       if (/mouse/.test(event.type)) {
-        if (event.button !== 2 && event.button !== 1) {
+        if (event.button !== 2) {
           return;
         }
       }

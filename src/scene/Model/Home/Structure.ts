@@ -21,6 +21,7 @@ export const StType = {
   Column: "OST_StructuralColumns",
   Door: "OST_Doors",
   Window: "OST_Windows",
+  Floor: "OST_Floors",
 };
 
 export default class Structure
@@ -72,10 +73,10 @@ export default class Structure
     this._ele = value;
   }
 
-  private _boundingPoints!: Point[];
+  private _boundary!: Point[];
 
-  get boundingPoints(): Point[] {
-    return this._boundingPoints;
+  get boundary(): Point[] {
+    return this._boundary;
   }
 
   /**
@@ -83,9 +84,9 @@ export default class Structure
    * @date 2020-11-04 10:45:47
    * @Description: 仅在boundingPoints初始化时设置
    */
-  set boundingPoints(value: Point[]) {
-    this._boundingPoints = value;
-    this._polygon = new Polygon(this._boundingPoints);
+  set boundary(value: Point[]) {
+    this._boundary = value;
+    this._polygon = new Polygon(this._boundary);
   }
 
   private _geo: any;
@@ -194,7 +195,7 @@ export default class Structure
   }
 
   public move(offset: Vector2): void {
-    this.boundingPoints.forEach((item) => item.add(offset));
+    this.boundary.forEach((item) => item.add(offset));
   }
 
   /**
@@ -203,7 +204,7 @@ export default class Structure
    * @Description: 从当前取得的坐标点中取得对应的几何数据的坐标
    */
   public getFaceP(p: Point): any {
-    const index = this.boundingPoints.indexOf(p);
+    const index = this.boundary.indexOf(p);
     if (index !== -1) {
       return this.topFaceGeo[index];
     }
@@ -244,7 +245,7 @@ export default class Structure
       y: Model2DActive.structureVec3.y,
     });
     const offset = currentP.subtract(this.position);
-    this.boundingPoints.forEach((item) => item.move(offset));
+    this.boundary.forEach((item) => item.move(offset));
     this.doRender();
   }
 

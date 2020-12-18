@@ -1,5 +1,4 @@
 import { reaction } from "mobx";
-import { LayerOrder, layerOrderGroups } from "../Layer/LayerOrder";
 import BaseController from "./BaseController";
 import Container = PIXI.Container;
 
@@ -8,13 +7,10 @@ import Container = PIXI.Container;
  * * by lianbo.guo
  **/
 export default class CameraController extends BaseController {
-  // @ts-ignore
-  private view: Container;
+  private view!: Container;
 
   public constructor(scene: any) {
     super(scene);
-
-    this.controllerGroup = layerOrderGroups[LayerOrder.Camera];
 
     this.initControllerView();
 
@@ -42,7 +38,7 @@ export default class CameraController extends BaseController {
 
   private initControllerView() {
     this.view = new Container();
-    this.view.parentGroup = this.controllerGroup;
+    // this.view.parentGroup = this.controllerGroup;
 
     this.view.visible = false;
 

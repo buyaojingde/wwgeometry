@@ -61,7 +61,7 @@ export default class SubjectAction extends BaseEvent {
     const level = this._scene2D.home.curLevel;
     const structures = level.structures;
     for (const structure of structures) {
-      for (const v of structure.boundingPoints) {
+      for (const v of structure.boundary) {
         const vs: any = {};
         vs.point = v;
         vs.structure = structure;

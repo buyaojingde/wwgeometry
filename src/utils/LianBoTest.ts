@@ -1,5 +1,6 @@
 import * as isect from "isect";
 import maxBy from "lodash/maxBy";
+import { Graphics } from "pixi.js";
 import {
   Color,
   DoubleSide,
@@ -13,7 +14,6 @@ import {
   Vector3,
 } from "three";
 import Scene2D from "../scene/2D";
-import { LayerOrder, layerOrderGroups } from "../scene/2D/Layer/LayerOrder";
 import GraphicsTool from "../scene/2D/Utils/GraphicsTool";
 import JSTSUtils from "../scene/2D/Utils/JSTSUtils";
 import GeoSurface from "../scene/Model/Geometry/GeoSurface";
@@ -21,6 +21,7 @@ import Structure, { StType } from "../scene/Model/Home/Structure";
 import ObserveVector3 from "../scene/Model/ObserveMath/ObserveVector3";
 import ConfigStructure from "./ConfigStructure";
 import Constant from "./Math/contanst/constant";
+import Box from "./Math/geometry/Box";
 import Matrix3x3 from "./Math/geometry/Matrix3x3";
 import Point from "./Math/geometry/Point";
 import Polygon from "./Math/geometry/Polygon";
@@ -149,7 +150,86 @@ class LianBoTest {
   testMain() {
     // this.testJSTS();
     // this.drawRemainder();
-    this.testIsect();
+    // this.testrenderHome();
+    // this.renderTest();
+
+    this.testGrpzIndex();
+  }
+
+  calcBox(minP: Point, width: number, height: number) {
+    const maxP = minP.translate(new Vector2(width, height));
+    return new Box(minP, maxP);
+  }
+
+  testGrpzIndex() {
+    const width = 40;
+    const height = 50;
+    this.container.sortableChildren = true;
+    for (let i = 0; i < 10; i++) {
+      const grpPath = this.calcBox(
+        new Point((width * i) / 2, (height * i) / 2),
+        width,
+        height
+      ).points;
+      const grp = new PIXI.Graphics();
+      grp.zIndex = 10 - i;
+      grp.lineStyle(1, Constant.colorRandom(), 1);
+      grp.beginFill(Constant.colorRandom(), 1);
+      GraphicsTool.drawPolygon(grp, grpPath);
+      grp.endFill();
+      this.container.addChild(grp);
+    }
+    this.renderTest();
+    console.log("done");
+  }
+
+  testrenderHome() {
+    // @ts-ignore
+    const draws: any[] = this.lvl.structures.concat(this.lvl.rooms);
+    for (const testStructure of draws) {
+      const grp = new PIXI.Graphics();
+      grp.cacheAsBitmap = true;
+      grp.lineStyle(1, Constant.colorRandom(), 1);
+      grp.beginFill(Constant.colorRandom(), 0.8);
+      GraphicsTool.drawPolygon(grp, testStructure.boundary);
+      grp.endFill();
+      this.container.addChild(grp);
+    }
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-16 17:35:20
+   * @Description: pixi 渲染的性能测试
+   *
+   */
+  pixiRenderPerformance() {
+    const maxWidth = 40;
+    const maxHeight = 50;
+    const width = 5;
+    const height = 5;
+
+    for (let i = 0; i < maxHeight; i++) {
+      for (let j = 0; j < maxWidth; j++) {
+        const grp = new PIXI.Graphics();
+        // const con = new PIXI.Container();
+        // grp.cacheAsBitmap = true;
+        const grpPath = [
+          { x: width * j, y: height * i },
+          { x: width * (j + 1), y: height * i },
+          { x: width * (j + 1), y: height * (i + 1) },
+          { x: width * j, y: height * (i + 1) },
+        ];
+        // con.addChild(grp);
+        grp.lineStyle(1, Constant.colorRandom(), 1);
+        grp.beginFill(Constant.colorRandom(), 0.8);
+        GraphicsTool.drawPolygon(grp, grpPath);
+        grp.endFill();
+        this.container.addChild(grp);
+      }
+    }
+    this.renderTest();
+    console.log("done");
   }
 
   testSegIntersection() {
@@ -490,7 +570,7 @@ class LianBoTest {
     txt.style.fontSize = 13;
 
     txt.anchor.set(0.5, 0.5);
-    txt.parentGroup = layerOrderGroups[LayerOrder.Camera];
+    // txt.parentGroup = layerOrderGroups[LayerOrder.Camera];
     this.container.addChild(txt);
   }
 

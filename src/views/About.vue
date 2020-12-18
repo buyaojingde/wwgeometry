@@ -4,11 +4,10 @@
   </div>
 </template>
 <script>
-// @ is an alias to /src
 import scene2d from "./Scene2d";
 
 export default {
-  name: "About",
+  name: "s2d",
   components: {
     scene2d,
   },
