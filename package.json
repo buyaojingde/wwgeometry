@@ -1,13 +1,4 @@
 {
-  "name": "fms_map_edit",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
-  },
   "dependencies": {
     "@doodle3d/clipper-js": "^1.0.10",
     "@turf/area": "6.x",
@@ -69,5 +60,17 @@
     "prettier": "^2.2.0",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "name": "fms_map_edit",
+  "prettier": {
+    "singleQuote": true
+  },
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint"
+  },
+  "version": "0.1.0"
 }

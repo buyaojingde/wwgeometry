@@ -1,5 +1,5 @@
-import Hammer from "hammerjs";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
+import Hammer from 'hammerjs';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
 import EventEmitter = PIXI.utils.EventEmitter;
 
 export default class DOMEventManager extends EventEmitter {
@@ -10,150 +10,150 @@ export default class DOMEventManager extends EventEmitter {
 
   constructor(element = window as any) {
     super();
-    console.log("DOMEventManager");
+    console.log('DOMEventManager');
     this.element = element;
     this.hammer = new Hammer.Manager(this.element);
     this.initPan();
 
-    window.addEventListener("resize", this.emitEvent.bind(this), false);
+    window.addEventListener('resize', this.emitEvent.bind(this), false);
 
     window.addEventListener(
-      "contextmenu",
-      (event) => this.emitEvent(event, "win"),
+      'contextmenu',
+      (event) => this.emitEvent(event, 'win'),
       false
     );
     this.element.addEventListener(
-      "contextmenu",
+      'contextmenu',
       (event) => this.emitEvent(event),
       false
     );
 
     window.addEventListener(
-      "keydown",
-      (event) => this.emitEvent(event, "win"),
+      'keydown',
+      (event) => this.emitEvent(event, 'win'),
       false
     );
     this.element.addEventListener(
-      "keydown",
+      'keydown',
       (event) => this.emitEvent(event),
       false
     );
 
     window.addEventListener(
-      "keyup",
-      (event) => this.emitEvent(event, "win"),
+      'keyup',
+      (event) => this.emitEvent(event, 'win'),
       false
     );
     this.element.addEventListener(
-      "keyup",
+      'keyup',
       (event) => this.emitEvent(event),
       false
     );
 
     this.element.addEventListener(
-      "mousedown",
+      'mousedown',
       (event) => {
-        this.aliasEvent("input.start", event);
+        this.aliasEvent('input.start', event);
       },
       false
     );
 
     window.addEventListener(
-      "mousedown",
-      (event) => this.aliasEvent("input.start", event, "win"),
+      'mousedown',
+      (event) => this.aliasEvent('input.start', event, 'win'),
       false
     );
 
     this.element.addEventListener(
-      "dblclick",
-      (event) => this.aliasEvent("dblclick", event),
+      'dblclick',
+      (event) => this.aliasEvent('dblclick', event),
       false
     );
     window.addEventListener(
-      "dblclick",
-      (event) => this.aliasEvent("dblclick", event, "win"),
+      'dblclick',
+      (event) => this.aliasEvent('dblclick', event, 'win'),
       false
     );
 
     this.element.addEventListener(
-      "mouseup",
+      'mouseup',
       (event) => {
         if (event.button === 2) {
-          this.aliasEvent("input.end.right", event);
+          this.aliasEvent('input.end.right', event);
         } else {
-          this.aliasEvent("input.end", event);
+          this.aliasEvent('input.end', event);
         }
       },
       false
     );
     window.addEventListener(
-      "mouseup",
+      'mouseup',
       (event) => {
         if (event.button === 2) {
-          this.aliasEvent("input.end.right", event, "win");
+          this.aliasEvent('input.end.right', event, 'win');
         } else {
-          this.aliasEvent("input.end", event, "win");
+          this.aliasEvent('input.end', event, 'win');
         }
       },
       false
     );
 
     this.element.addEventListener(
-      "mousemove",
-      (event) => this.aliasEvent("input.move", event),
+      'mousemove',
+      (event) => this.aliasEvent('input.move', event),
       false
     );
     window.addEventListener(
-      "mousemove",
-      (event) => this.aliasEvent("input.move", event, "win"),
+      'mousemove',
+      (event) => this.aliasEvent('input.move', event, 'win'),
       false
     );
 
     this.element.addEventListener(
-      "touchmove",
+      'touchmove',
       (event) => this.onTouchmove(event),
       false
     );
     this.element.addEventListener(
-      "touchend",
+      'touchend',
       (event) => this.onTouchEnd(event),
       false
     );
     this.element.addEventListener(
-      "touchstart",
+      'touchstart',
       (event) => this.onTouchStart(event),
       false
     );
 
     window.addEventListener(
-      "touchstart",
-      (event) => this.onTouchStart(event, "win"),
+      'touchstart',
+      (event) => this.onTouchStart(event, 'win'),
       false
     );
     window.addEventListener(
-      "touchend",
-      (event) => this.onTouchEnd(event, "win"),
+      'touchend',
+      (event) => this.onTouchEnd(event, 'win'),
       false
     );
     window.addEventListener(
-      "touchmove",
-      (event) => this.onTouchmove(event, "win"),
+      'touchmove',
+      (event) => this.onTouchmove(event, 'win'),
       false
     );
 
     this.element.addEventListener(
-      "wheel",
+      'wheel',
       (event) => this.onMouseWheel(event),
       false
     );
 
-    this.hammer.on("pan", this.emitEvent.bind(this));
-    this.hammer.on("panstart", this.emitEvent.bind(this));
-    this.hammer.on("panmove", this.emitEvent.bind(this));
-    this.hammer.on("panup", this.emitEvent.bind(this));
-    this.hammer.on("tap", this.emitEvent.bind(this));
-    this.hammer.on("hammer.input", this.emitEvent.bind(this));
-    this.hammer.on("doubletap", this.emitEvent.bind(this));
+    this.hammer.on('pan', this.emitEvent.bind(this));
+    this.hammer.on('panstart', this.emitEvent.bind(this));
+    this.hammer.on('panmove', this.emitEvent.bind(this));
+    this.hammer.on('panup', this.emitEvent.bind(this));
+    this.hammer.on('tap', this.emitEvent.bind(this));
+    this.hammer.on('hammer.input', this.emitEvent.bind(this));
+    this.hammer.on('doubletap', this.emitEvent.bind(this));
   }
 
   // @ts-ignore
@@ -194,15 +194,15 @@ export default class DOMEventManager extends EventEmitter {
    * @param event
    */
   // @ts-ignore
-  protected aliasEvent(type, event, proxy = "") {
-    proxy = proxy.length ? proxy + "." : proxy;
+  protected aliasEvent(type, event, proxy = '') {
+    proxy = proxy.length ? proxy + '.' : proxy;
     this.emit(proxy + event.type, event);
     this.emit(proxy + type, event);
   }
 
   // @ts-ignore
-  protected emitEvent(event, proxy = "") {
-    proxy = proxy.length ? proxy + "." : proxy;
+  protected emitEvent(event, proxy = '') {
+    proxy = proxy.length ? proxy + '.' : proxy;
     this.emit(proxy + event.type, event);
   }
 
@@ -239,12 +239,12 @@ export default class DOMEventManager extends EventEmitter {
    * @param proxy
    */
   // @ts-ignore
-  protected touchAliasEventEmit(type: string, event, proxy = "") {
+  protected touchAliasEventEmit(type: string, event, proxy = '') {
     event = this.compatibleTouchAction(event);
 
-    proxy = proxy.length ? proxy + "." : proxy;
+    proxy = proxy.length ? proxy + '.' : proxy;
 
-    if (proxy === "win.") {
+    if (proxy === 'win.') {
       this.emit(proxy + type, event);
     }
 
@@ -257,8 +257,8 @@ export default class DOMEventManager extends EventEmitter {
   }
 
   // @ts-ignore
-  protected onTouchStart(event, proxy = "") {
-    this.touchAliasEventEmit("input.start", event, proxy);
+  protected onTouchStart(event, proxy = '') {
+    this.touchAliasEventEmit('input.start', event, proxy);
 
     // switch (event.touches.length) {
     //   case 1: // one-fingered touch: rotate
@@ -280,8 +280,8 @@ export default class DOMEventManager extends EventEmitter {
   }
 
   // @ts-ignore
-  protected onTouchEnd(event, proxy = "") {
-    this.touchAliasEventEmit("input.end", event, proxy);
+  protected onTouchEnd(event, proxy = '') {
+    this.touchAliasEventEmit('input.end', event, proxy);
   }
 
   /**
@@ -289,7 +289,7 @@ export default class DOMEventManager extends EventEmitter {
    * @param proxy
    */
   // @ts-ignore
-  protected onTouchmove(event, proxy = "") {
+  protected onTouchmove(event, proxy = '') {
     const handleTouchMoveDolly = () => {
       const dx = event.touches[0].pageX - event.touches[1].pageX;
       const dy = event.touches[0].pageY - event.touches[1].pageY;
@@ -319,7 +319,7 @@ export default class DOMEventManager extends EventEmitter {
 
     switch (event.touches.length) {
       case 1: // one-fingered touch: rotate
-        this.touchAliasEventEmit("input.move", event, proxy);
+        this.touchAliasEventEmit('input.move', event, proxy);
         break;
 
       case 2: // two-fingered touch: dolly
@@ -353,7 +353,7 @@ export default class DOMEventManager extends EventEmitter {
 
   protected onMouseWheel(event: WheelEvent) {
     event.deltaY < 0
-      ? this.aliasEvent("scale+", event)
-      : this.aliasEvent("scale-", event);
+      ? this.aliasEvent('scale+', event)
+      : this.aliasEvent('scale-', event);
   }
 }

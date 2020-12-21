@@ -1,4 +1,4 @@
-import DOMEventManager from "../2D/Utils/DOMEventManager";
+import DOMEventManager from '../2D/Utils/DOMEventManager';
 
 export default class BaseEvent {
   public get enable() {
@@ -39,7 +39,7 @@ export default class BaseEvent {
     while (this.disposeArr.length) {
       const dispose = this.disposeArr.pop();
 
-      if (typeof dispose === "function") {
+      if (typeof dispose === 'function') {
         dispose();
       } else {
         const { event, fn } = dispose;

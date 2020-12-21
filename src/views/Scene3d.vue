@@ -4,7 +4,7 @@
 
 <script lang="ts">
 export default {
-  name: "Scene3d",
+  name: 'Scene3d',
   components: {},
 };
 </script>

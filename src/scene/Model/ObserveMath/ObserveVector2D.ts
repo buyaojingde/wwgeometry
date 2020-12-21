@@ -1,8 +1,8 @@
 /**
  * * by lianbo.guo
  **/
-import { action, observable } from "mobx";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
+import { action, observable } from 'mobx';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
 
 export default class ObserveVector2D extends Vector2 {
   @observable

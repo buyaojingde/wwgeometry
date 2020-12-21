@@ -80,7 +80,7 @@ export default class MathUtils {
   }
 
   public static isNum(val: any): boolean {
-    return typeof val === "number" && !isNaN(val);
+    return typeof val === 'number' && !isNaN(val);
   }
 
   /**

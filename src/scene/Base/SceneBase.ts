@@ -1,5 +1,5 @@
-import HomePlan2D from "../2D/Layer/HomePlan";
-import Home from "../Model/Home/Home";
+import HomePlan2D from '../2D/Layer/HomePlan';
+import Home from '../Model/Home/Home';
 import EventEmitter = PIXI.utils.EventEmitter;
 
 export default abstract class SceneBase extends EventEmitter {

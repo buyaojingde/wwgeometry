@@ -1,6 +1,6 @@
-import * as isect from "isect";
-import maxBy from "lodash/maxBy";
-import { Graphics } from "pixi.js";
+import * as isect from 'isect';
+import maxBy from 'lodash/maxBy';
+import { Graphics } from 'pixi.js';
 import {
   Color,
   DoubleSide,
@@ -12,25 +12,25 @@ import {
   Shape,
   ShapeBufferGeometry,
   Vector3,
-} from "three";
-import Scene2D from "../scene/2D";
-import GraphicsTool from "../scene/2D/Utils/GraphicsTool";
-import JSTSUtils from "../scene/2D/Utils/JSTSUtils";
-import GeoSurface from "../scene/Model/Geometry/GeoSurface";
-import Structure, { StType } from "../scene/Model/Home/Structure";
-import ObserveVector3 from "../scene/Model/ObserveMath/ObserveVector3";
-import ConfigStructure from "./ConfigStructure";
-import Constant from "./Math/contanst/constant";
-import Box from "./Math/geometry/Box";
-import Matrix3x3 from "./Math/geometry/Matrix3x3";
-import Point from "./Math/geometry/Point";
-import Polygon from "./Math/geometry/Polygon";
+} from 'three';
+import Scene2D from '../scene/2D';
+import GraphicsTool from '../scene/2D/Utils/GraphicsTool';
+import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
+import GeoSurface from '../scene/Model/Geometry/GeoSurface';
+import Structure, { StType } from '../scene/Model/Home/Structure';
+import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
+import ConfigStructure from './ConfigStructure';
+import Constant from './Math/contanst/constant';
+import Box from './Math/geometry/Box';
+import Matrix3x3 from './Math/geometry/Matrix3x3';
+import Point from './Math/geometry/Point';
+import Polygon from './Math/geometry/Polygon';
 // import PolygonOp from "./Math/geometry/PolygonOp";
-import Segment from "./Math/geometry/Segment";
-import Vector2 from "./Math/geometry/Vector2";
-import MathUtils from "./Math/math/MathUtils";
-import Quadtree from "./Math/math/Quadtree";
-import PolygonClipper from "./PolygonClipper";
+import Segment from './Math/geometry/Segment';
+import Vector2 from './Math/geometry/Vector2';
+import MathUtils from './Math/math/MathUtils';
+import Quadtree from './Math/math/Quadtree';
+import PolygonClipper from './PolygonClipper';
 import GeometryFactory = jsts.geom.GeometryFactory;
 import Geometry = jsts.geom.Geometry;
 import Coordinate = jsts.geom.Coordinate;
@@ -77,13 +77,13 @@ class LianBoTest {
   }
 
   testFindOutFace() {
-    const st = this.lvl.findByRvtId("2189459");
+    const st = this.lvl.findByRvtId('2189459');
     const segs = this.findOutWallFace(st);
   }
   // 1647061
   testOutFace() {
-    const st = this.lvl.findByRvtId("2189472");
-    const st1 = this.lvl.findByRvtId("1647145");
+    const st = this.lvl.findByRvtId('2189472');
+    const st1 = this.lvl.findByRvtId('1647145');
     // const st2 = this.lvl.findByRvtId("1647548");
     // const r2 = this.lvl.findByRvtId("1647548");
     const segs = st.outFace([st1]);
@@ -97,9 +97,9 @@ class LianBoTest {
   }
 
   testJSTSPlyIntersection() {
-    const ply = this.lvl.findByRvtId("1647039").polygon;
-    const ply1 = this.lvl.findByRvtId("1650962").polygon;
-    const ply2 = this.lvl.findByRvtId("2187646").polygon;
+    const ply = this.lvl.findByRvtId('1647039').polygon;
+    const ply1 = this.lvl.findByRvtId('1650962').polygon;
+    const ply2 = this.lvl.findByRvtId('2187646').polygon;
     const result = JSTSUtils.iItersectionPlg(ply, ply2);
     const result1 = JSTSUtils.iDifference(ply, ply2);
     console.log(result);
@@ -129,9 +129,9 @@ class LianBoTest {
   testPolygonOverlap() {
     MathUtils.Epsilon = ConfigStructure.accuracy;
     this.container.removeChildren();
-    const f0 = this.lvl.findByRvtId("2187670");
-    const s1 = this.lvl.findByRvtId("1647122");
-    const r0 = this.lvl.findByRvtId("1650976");
+    const f0 = this.lvl.findByRvtId('2187670');
+    const s1 = this.lvl.findByRvtId('1647122');
+    const r0 = this.lvl.findByRvtId('1650976');
     console.log(f0.polygon.isBox());
     console.log(s1.polygon.isBox());
 
@@ -180,7 +180,7 @@ class LianBoTest {
       this.container.addChild(grp);
     }
     this.renderTest();
-    console.log("done");
+    console.log('done');
   }
 
   testrenderHome() {
@@ -229,7 +229,7 @@ class LianBoTest {
       }
     }
     this.renderTest();
-    console.log("done");
+    console.log('done');
   }
 
   testSegIntersection() {
@@ -285,8 +285,8 @@ class LianBoTest {
   }
 
   testIsect() {
-    const a = this.lvl.findByRvtId("2087366").polygon;
-    const b = this.lvl.findByRvtId("2040197").polygon;
+    const a = this.lvl.findByRvtId('2087366').polygon;
+    const b = this.lvl.findByRvtId('2040197').polygon;
     const seg = new Segment(new Point(0, 0), new Point(1, 1));
     const seg1 = new Segment(new Point(0, 1), new Point(1, 0));
     // @ts-ignore
@@ -334,10 +334,10 @@ class LianBoTest {
     // const f1 = this.lvl.findByRvtId("2189474");
     // const f2 = this.lvl.findByRvtId("1647040");
     // const offsetPlyg = JSTSUtils.iUnion(w0.polygon, f0.polygon);
-    const f0 = this.lvl.findByRvtId("2187670");
-    const s1 = this.lvl.findByRvtId("1647122");
-    const r1 = this.lvl.findByRvtId("1698735");
-    const c1 = this.lvl.findByRvtId("1650976");
+    const f0 = this.lvl.findByRvtId('2187670');
+    const s1 = this.lvl.findByRvtId('1647122');
+    const r1 = this.lvl.findByRvtId('1698735');
+    const c1 = this.lvl.findByRvtId('1650976');
     const sts = Scene2D.getInstance()
       .home.curLevel.structures.filter((item) => {
         return (
@@ -414,7 +414,7 @@ class LianBoTest {
 
   findOutWallPath() {
     const startWalls = Scene2D.getInstance().home.curLevel.structures.filter(
-      (item) => item.rvtId === "1647035"
+      (item) => item.rvtId === '1647035'
     );
     let startWall!: Structure;
     if (startWalls.length > 0) startWall = startWalls[0];
@@ -556,17 +556,17 @@ class LianBoTest {
   }
 
   testCanvas() {
-    const canvas: any = document.createElement("canvas");
+    const canvas: any = document.createElement('canvas');
     document.body.append(canvas);
     // canvas.width = ConfigStructure.maxCanvasV3.x - ConfigStructure.minCanvasV3.x;
     // canvas.height = ConfigStructure.maxCanvasV3.y - ConfigStructure.minCanvasV3.y;
-    const ctx = canvas.getContext("2d");
-    ctx!.strokeStyle = "rgba(255,0,0,0.5)";
+    const ctx = canvas.getContext('2d');
+    ctx!.strokeStyle = 'rgba(255,0,0,0.5)';
     ctx!.strokeRect(0, 0, 200, 200);
   }
 
   testPIXITextRoom() {
-    const txt = new PIXI.Text("");
+    const txt = new PIXI.Text('');
     txt.style.fontSize = 13;
 
     txt.anchor.set(0.5, 0.5);
@@ -609,7 +609,7 @@ class LianBoTest {
   }
 
   testColorHex() {
-    const re = Constant.colorHexNumber("#ffffff");
+    const re = Constant.colorHexNumber('#ffffff');
     console.log(re);
     const re1 = Constant.colorHex(0xffffff);
     console.log(re1);
@@ -659,10 +659,10 @@ class LianBoTest {
     console.log(r2);
   }
 
-  public drawTest(str: string, pos: any, color = "") {
+  public drawTest(str: string, pos: any, color = '') {
     const style = {
       fontSize: this.lineWidth() * 15,
-      fill: color ? color : "#ff0000",
+      fill: color ? color : '#ff0000',
     };
     const Text = new PIXI.Text(str, style);
     this.container.addChild(Text);
@@ -701,9 +701,9 @@ class LianBoTest {
   }
 
   public renderBimTest() {
-    console.log("test!");
+    console.log('test!');
     // const revitObj = require('./lianboJson.json');
-    const revitObj = require("./P000001-B0004-F0004.json");
+    const revitObj = require('./P000001-B0004-F0004.json');
     let firstP: any;
     if (revitObj.length > 0) {
       const geo = revitObj[0];
@@ -798,7 +798,7 @@ class LianBoTest {
       mesh.applyMatrix(matrixWorld);
       group.add(mesh);
       // mesh.updateMatrix();
-      console.log("!");
+      console.log('!');
     };
     const group = new Group();
     for (const geo of revitObj) {

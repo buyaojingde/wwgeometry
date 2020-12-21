@@ -1,12 +1,12 @@
-import { Matrix4, Vector3 } from "three";
-import MathUtils from "../../../utils/Math/math/MathUtils";
+import { Matrix4, Vector3 } from 'three';
+import MathUtils from '../../../utils/Math/math/MathUtils';
 
 export default class GeoSurface {
   points: Vector3[];
 
   constructor(points: Vector3[]) {
     if (points.length < 3) {
-      throw new Error("cant compose face");
+      throw new Error('cant compose face');
     }
     this.points = points;
     const height = Number.NEGATIVE_INFINITY;

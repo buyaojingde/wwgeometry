@@ -1,6 +1,6 @@
-import MathUtils from "../math/MathUtils";
-import Point from "./Point";
-import Segment from "./Segment";
+import MathUtils from '../math/MathUtils';
+import Point from './Point';
+import Segment from './Segment';
 
 export default class Box {
   public min: Point;

@@ -1,12 +1,12 @@
 /**
  * 绘制方法
  */
-import Constant from "../../../utils/Math/contanst/constant";
-import Box from "../../../utils/Math/geometry/Box";
-import Point from "../../../utils/Math/geometry/Point";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import GeometryTool from "../../../utils/Math/tool/GeometryTool";
-import { Graphics } from "pixi.js";
+import Constant from '../../../utils/Math/contanst/constant';
+import Box from '../../../utils/Math/geometry/Box';
+import Point from '../../../utils/Math/geometry/Point';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import GeometryTool from '../../../utils/Math/tool/GeometryTool';
+import { Graphics } from 'pixi.js';
 
 export default class GraphicsTool {
   // 画原点

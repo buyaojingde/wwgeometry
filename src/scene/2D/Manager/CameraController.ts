@@ -1,5 +1,5 @@
-import { reaction } from "mobx";
-import BaseController from "./BaseController";
+import { reaction } from 'mobx';
+import BaseController from './BaseController';
 import Container = PIXI.Container;
 
 /**

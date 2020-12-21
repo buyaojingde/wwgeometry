@@ -1,4 +1,4 @@
-import { Graphics } from "pixi.js";
+import { Graphics } from 'pixi.js';
 import {
   Box3,
   BoxBufferGeometry,
@@ -20,7 +20,7 @@ import {
   ShapeBufferGeometry,
   Vector3,
   VertexColors,
-} from "three";
+} from 'three';
 
 /**
  * Desc: 绘制双向箭头
@@ -184,7 +184,7 @@ export function drawGrid(graphics: Graphics, opt = {}) {
   const length = options.size * options.step;
   unitGrid.width = length;
   unitGrid.height = length;
-  const items = ["column", "row"];
+  const items = ['column', 'row'];
   for (const item of items) {
     for (let i = 0; i <= unitNum; i++) {
       const offset = i * options.step;
@@ -192,10 +192,10 @@ export function drawGrid(graphics: Graphics, opt = {}) {
         options.lineWidth,
         !(i % 10) ? options.lineColor2 : options.lineColor
       );
-      if (item === "row") {
+      if (item === 'row') {
         unitGrid.moveTo(0, offset);
         unitGrid.lineTo(length, offset);
-      } else if (item === "column") {
+      } else if (item === 'column') {
         unitGrid.moveTo(offset, 0);
         unitGrid.lineTo(offset, length);
       }
@@ -611,9 +611,9 @@ export function buildFloorGrid(size, divisions, color1, color2): LineSegments {
   }
 
   const geometry = new BufferGeometry();
-  geometry.addAttribute("position", new Float32BufferAttribute(vertices, 3));
+  geometry.addAttribute('position', new Float32BufferAttribute(vertices, 3));
   // @ts-ignore
-  geometry.addAttribute("color", new Float32BufferAttribute(colors, 3));
+  geometry.addAttribute('color', new Float32BufferAttribute(colors, 3));
 
   return new LineSegments(geometry, lineSegmentsMaterial);
 }

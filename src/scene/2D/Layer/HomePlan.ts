@@ -1,13 +1,13 @@
-import View2DData from "../../../store/View2DData";
-import RoomLayer from "./RoomLayer";
-import StructureLayer from "./StructureLayer";
+import View2DData from '../../../store/View2DData';
+import RoomLayer from './RoomLayer';
+import StructureLayer from './StructureLayer';
 
 export enum HomeLayers {
   Structure,
   Room,
 }
 
-const SCENE_2D = "scene2D";
+const SCENE_2D = 'scene2D';
 export default class HomePlan2D {
   // private container: any;
   public container: PIXI.Container;
@@ -15,20 +15,20 @@ export default class HomePlan2D {
   private _roomLayer: RoomLayer;
 
   public constructor(scene: any) {
-    console.log("new HomePlan");
+    console.log('new HomePlan');
     this.scene = scene;
     this.container = new PIXI.Container();
     this.container.sortableChildren = true;
     this.container.interactive = false;
-    this.container.name = SCENE_2D + "_HP";
-    Object.defineProperty(this.container, "scaleNumber", {
+    this.container.name = SCENE_2D + '_HP';
+    Object.defineProperty(this.container, 'scaleNumber', {
       get: () => View2DData.scaleNumber,
     });
     const homePlanScene = {
       getStage: () => this.container,
       getScene: () => this.scene,
     };
-    Object.defineProperty(homePlanScene, "home", {
+    Object.defineProperty(homePlanScene, 'home', {
       get: () => scene.home,
     });
 
@@ -107,7 +107,7 @@ export default class HomePlan2D {
       }
       if (!!layer && !!layer.checkLayerShow) {
         this.hideLayer(layer);
-        layer.checkLayerShow("");
+        layer.checkLayerShow('');
       }
     });
   }
@@ -123,7 +123,7 @@ export default class HomePlan2D {
         return;
       }
       if (layer.checkLeaveLayerShow) {
-        layer.checkLeaveLayerShow("");
+        layer.checkLeaveLayerShow('');
       }
     });
   }

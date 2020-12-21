@@ -1,9 +1,9 @@
-import { computed, reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import Constant from "../../../utils/Math/contanst/constant";
-import Room from "../../Model/Home/Room";
-import GraphicsTool from "../Utils/GraphicsTool";
-import ViewObject from "./ViewObject";
+import { computed, reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import Constant from '../../../utils/Math/contanst/constant';
+import Room from '../../Model/Home/Room';
+import GraphicsTool from '../Utils/GraphicsTool';
+import ViewObject from './ViewObject';
 
 export default class Room2D extends ViewObject {
   constructor(room: Room) {
@@ -51,7 +51,7 @@ export default class Room2D extends ViewObject {
     this._grp.lineStyle(3, Constant.colorMap.GREEN, 1);
     GraphicsTool.drawPolygon(this._grp, this.room.boundary);
     if (!this._roomText) {
-      this._roomText = new PIXI.Text("");
+      this._roomText = new PIXI.Text('');
       this._roomText.style.fontSize = 9;
 
       this._roomText.anchor.set(0.5, 0.5);

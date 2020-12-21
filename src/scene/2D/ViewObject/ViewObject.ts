@@ -1,5 +1,5 @@
-import { IViewObject } from "../../Interface/IViewObject";
-import DragContainer from "./DragContainer";
+import { IViewObject } from '../../Interface/IViewObject';
+import DragContainer from './DragContainer';
 
 export default abstract class ViewObject
   extends DragContainer
@@ -48,7 +48,7 @@ export default abstract class ViewObject
       }
       // this.parent && this.parent.removeChild(this);
     } catch (e) {
-      console.warn("destroy error", e);
+      console.warn('destroy error', e);
     }
   }
 

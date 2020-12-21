@@ -1,4 +1,4 @@
-import MathUtils from "../math/MathUtils";
+import MathUtils from '../math/MathUtils';
 
 /**
  * @author lianbo
@@ -35,7 +35,7 @@ export default class Vector2 {
 
   public get normalize(): Vector2 {
     if (this.isZero) {
-      throw new Error("0 向量，无单位向量");
+      throw new Error('0 向量，无单位向量');
     }
     const length = this.length;
     return new Vector2(this.x / length, this.y / length);
@@ -113,7 +113,7 @@ export default class Vector2 {
 
   public normalized(): this {
     if (this.isZero) {
-      throw new Error("0 向量，无单位向量");
+      throw new Error('0 向量，无单位向量');
     }
     const length = this.length;
     this.x = this.x / length;

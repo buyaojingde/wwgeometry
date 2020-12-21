@@ -1,5 +1,5 @@
-import { action, observable } from "mobx";
-import ObserveVector2D from "../scene/Model/ObserveMath/ObserveVector2D";
+import { action, observable } from 'mobx';
+import ObserveVector2D from '../scene/Model/ObserveMath/ObserveVector2D';
 
 class View2DData {
   /**

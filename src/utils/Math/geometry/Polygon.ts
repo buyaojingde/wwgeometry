@@ -1,9 +1,9 @@
-import MathUtils from "../math/MathUtils";
-import GeometryTool from "../tool/GeometryTool";
-import Box from "./Box";
-import Matrix3x3 from "./Matrix3x3";
-import Point from "./Point";
-import Segment from "./Segment";
+import MathUtils from '../math/MathUtils';
+import GeometryTool from '../tool/GeometryTool';
+import Box from './Box';
+import Matrix3x3 from './Matrix3x3';
+import Point from './Point';
+import Segment from './Segment';
 
 /**
  * @author lianbo

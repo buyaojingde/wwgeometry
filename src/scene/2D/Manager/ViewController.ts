@@ -1,10 +1,10 @@
-import { reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import View2DData from "../../../store/View2DData";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import Scene2D from "../index";
-import { pointToVector } from "../Utils";
-import BaseController from "./BaseController";
+import { reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import View2DData from '../../../store/View2DData';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import Scene2D from '../index';
+import { pointToVector } from '../Utils';
+import BaseController from './BaseController';
 import Point = PIXI.Point;
 
 const SCENE_2D_MAX_SCALE = 5;
@@ -66,10 +66,10 @@ export default class ViewController extends BaseController {
       startPoint = null;
     };
 
-    this.on("win.input.end.right", endEvent);
+    this.on('win.input.end.right', endEvent);
     // this.on("win.input.end", endEvent);
     // @ts-ignore
-    this.on("input.start", (event) => {
+    this.on('input.start', (event) => {
       if (/mouse/.test(event.type)) {
         if (event.button !== 2) {
           return;
@@ -83,14 +83,14 @@ export default class ViewController extends BaseController {
     });
     // this.on('win.input.move', moveEvent);
     // @ts-ignore
-    this.on("win.input.move", (event) => {
+    this.on('win.input.move', (event) => {
       moveEvent(event);
     });
     // @ts-ignore
-    this.on("contextmenu", (event) => event.preventDefault());
+    this.on('contextmenu', (event) => event.preventDefault());
 
     // @ts-ignore
-    this.on("scale+", (event) => {
+    this.on('scale+', (event) => {
       const scaleResult = Math.min(
         this.scene.scale.x + this.makeScaleStep(),
         SCENE_2D_MAX_SCALE
@@ -98,7 +98,7 @@ export default class ViewController extends BaseController {
       this.calculateScaleOffset(event, scaleResult);
     });
     // @ts-ignore
-    this.on("scale-", (event) => {
+    this.on('scale-', (event) => {
       const scaleResult = Math.max(
         this.scene.scale.x - this.makeScaleStep(),
         SCENE_2D_MIN_SCALE

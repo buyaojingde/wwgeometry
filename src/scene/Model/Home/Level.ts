@@ -1,10 +1,10 @@
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Box from "../../../utils/Math/geometry/Box";
-import Quadtree from "../../../utils/Math/math/Quadtree";
-import IBuildable from "../BaseInterface/IBuildable";
-import ObjectNamed from "../BaseInterface/ObjectNamed";
-import Room from "./Room";
-import Structure, { StType } from "./Structure";
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Box from '../../../utils/Math/geometry/Box';
+import Quadtree from '../../../utils/Math/math/Quadtree';
+import IBuildable from '../BaseInterface/IBuildable';
+import ObjectNamed from '../BaseInterface/ObjectNamed';
+import Room from './Room';
+import Structure, { StType } from './Structure';
 
 export default class Level extends ObjectNamed implements IBuildable {
   constructor() {

@@ -1,7 +1,7 @@
-import LayerBase, { LayerName } from "../../Base/LayerBase";
-import { IDataObject } from "../../Interface/IDataObject";
-import Structure from "../../Model/Home/Structure";
-import Structure2D from "../ViewObject/Structure2D";
+import LayerBase, { LayerName } from '../../Base/LayerBase';
+import { IDataObject } from '../../Interface/IDataObject';
+import Structure from '../../Model/Home/Structure';
+import Structure2D from '../ViewObject/Structure2D';
 
 export default class StructureLayer extends LayerBase {
   protected _layerName = LayerName.Structure;
@@ -10,7 +10,7 @@ export default class StructureLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Structure) {
         const structure2D: Structure2D = new Structure2D(dataObj);
-        const disposeF = (dataObj as Structure).on("destroyLayerData", () => {
+        const disposeF = (dataObj as Structure).on('destroyLayerData', () => {
           this.remove(dataObj);
         });
         this._disposeArr.push(disposeF);

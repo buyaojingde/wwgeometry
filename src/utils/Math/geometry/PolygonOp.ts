@@ -1,8 +1,8 @@
-import * as isect from "isect";
-import CircularLinkedList from "../dataStructure/CircularLinkedList";
-import Point from "./Point";
-import Polygon from "./Polygon";
-import Segment from "./Segment";
+import * as isect from 'isect';
+import CircularLinkedList from '../dataStructure/CircularLinkedList';
+import Point from './Point';
+import Polygon from './Polygon';
+import Segment from './Segment';
 
 interface IslsEdgeNode {
   pointA: Point[];

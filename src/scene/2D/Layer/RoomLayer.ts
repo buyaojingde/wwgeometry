@@ -1,7 +1,7 @@
-import LayerBase, { LayerName } from "../../Base/LayerBase";
-import { IDataObject } from "../../Interface/IDataObject";
-import Room from "../../Model/Home/Room";
-import Room2D from "../ViewObject/Room2D";
+import LayerBase, { LayerName } from '../../Base/LayerBase';
+import { IDataObject } from '../../Interface/IDataObject';
+import Room from '../../Model/Home/Room';
+import Room2D from '../ViewObject/Room2D';
 
 export default class RoomLayer extends LayerBase {
   protected _layerName = LayerName.Room;
@@ -10,7 +10,7 @@ export default class RoomLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Room) {
         const room2D: Room2D = new Room2D(dataObj);
-        const disposeF = (dataObj as Room).on("destroyLayerData", () => {
+        const disposeF = (dataObj as Room).on('destroyLayerData', () => {
           this.remove(dataObj);
         });
         this._disposeArr.push(disposeF);

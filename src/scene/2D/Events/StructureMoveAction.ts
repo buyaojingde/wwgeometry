@@ -1,11 +1,11 @@
 import Container = PIXI.Container;
-import { reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import BaseEvent from "../../Base/BaseEvent";
-import Structure from "../../Model/Home/Structure";
-import Scene2D from "../index";
-import PickupController from "../Manager/PickupController";
+import { reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import BaseEvent from '../../Base/BaseEvent';
+import Structure from '../../Model/Home/Structure';
+import Scene2D from '../index';
+import PickupController from '../Manager/PickupController';
 
 /**
  * 构建移动动作
@@ -42,7 +42,7 @@ export default class StructureMoveAction extends BaseEvent {
         const enable = strct instanceof Structure;
         if (enable) {
           this.structure = strct;
-          console.log("got you");
+          console.log('got you');
         }
         this.enable = enable;
       }
@@ -62,9 +62,9 @@ export default class StructureMoveAction extends BaseEvent {
     this.view.visible = true;
 
     // @ts-ignore
-    this.on("input.move", (event) => this.moveAction(event));
+    this.on('input.move', (event) => this.moveAction(event));
     // @ts-ignore
-    this.on("win.input.end", (event) => {
+    this.on('win.input.end', (event) => {
       this.moveDone(event);
       Model2DActive.setDragStructure(null);
     });

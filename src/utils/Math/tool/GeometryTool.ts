@@ -1,4 +1,4 @@
-import MathUtils from "../math/MathUtils";
+import MathUtils from '../math/MathUtils';
 
 /**
  * @author lianbo

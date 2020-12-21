@@ -1,4 +1,4 @@
-import ObjectIndex from "./ObjectIndex";
+import ObjectIndex from './ObjectIndex';
 
 export default class ObjectNamed extends ObjectIndex {
   constructor() {

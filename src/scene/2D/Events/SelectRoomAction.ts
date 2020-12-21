@@ -1,11 +1,11 @@
-import GraphicsTool from "../../../scene/2D/Utils/GraphicsTool";
-import Room from "../../../scene/Model/Home/Room";
-import LianBoTest from "../../../utils/LianBoTest";
-import Box from "../../../utils/Math/geometry/Box";
-import { reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import BaseEvent from "../../Base/BaseEvent";
-import Scene2D from "../index";
+import GraphicsTool from '../../../scene/2D/Utils/GraphicsTool';
+import Room from '../../../scene/Model/Home/Room';
+import LianBoTest from '../../../utils/LianBoTest';
+import Box from '../../../utils/Math/geometry/Box';
+import { reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import BaseEvent from '../../Base/BaseEvent';
+import Scene2D from '../index';
 import Container = PIXI.Container;
 
 export default class SelectRoomAction extends BaseEvent {
@@ -70,12 +70,12 @@ export default class SelectRoomAction extends BaseEvent {
     this._activeLayer.addChild(this._grp);
     const poly = this.room.polygon;
     if (!poly.similarBox()) {
-      console.log("不可切房间！！！");
+      console.log('不可切房间！！！');
     } else {
       poly.optimize();
       const boxs: Box[] = poly.cutBox();
       boxs.forEach((item, index) => {
-        const boxTxt = new PIXI.Text("");
+        const boxTxt = new PIXI.Text('');
         this._activeLayer.addChild(boxTxt);
         boxTxt.style.fontSize = 13;
 

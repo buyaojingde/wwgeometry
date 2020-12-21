@@ -1,7 +1,7 @@
-import SplayTree from "splayTree";
-import MathUtils from "../../math/MathUtils";
-import Point from "../Point";
-import Segment from "../Segment";
+import SplayTree from 'splayTree';
+import MathUtils from '../../math/MathUtils';
+import Point from '../Point';
+import Segment from '../Segment';
 
 class EventItem {
   public p: Point;
@@ -62,7 +62,7 @@ class SweepLineStatus {
     const ak = a.intersectionY(this.currentP);
     const bk = b.intersectionY(this.currentP);
     if (!ak || !bk) {
-      throw new Error(" EventPoint exception...");
+      throw new Error(' EventPoint exception...');
     }
     if (!MathUtils.equal(ak, bk)) return ak - bk;
     const aVertical = a.isVertical();

@@ -1,7 +1,7 @@
 /**
  * * by lianbo.guo
  **/
-import BaseEvent from "../../2D/Events/Base";
+import BaseEvent from '../../2D/Events/Base';
 
 export default abstract class BaseController extends BaseEvent {
   // protected controllerGroup: PIXI.display.Group;

@@ -1,6 +1,6 @@
 // @ts-ignore
-import ClipperLib = require("@doodle3d/clipper-js");
-import Shape from "@doodle3d/clipper-js";
+import ClipperLib = require('@doodle3d/clipper-js');
+import Shape from '@doodle3d/clipper-js';
 // import { Clipper, IntPoint } from 'js-clipper'
 // import PickUp from '../../../scene/3D/PickUp';
 
@@ -55,7 +55,7 @@ export default class PolygonClipper {
   public static jtMiterOffset(outPs: any[], offsetValue: number) {
     const subject = PolygonClipper.pointsToShape([outPs]);
     const option: any = {
-      jointType: "jtMiter",
+      jointType: 'jtMiter',
       miterLimit: 2000.0,
     };
     const resizeShape: Shape = subject.offset(

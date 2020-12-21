@@ -1,7 +1,7 @@
 /**
  * * by lianbo.guo
  **/
-import BaseEvent from "../../Base/BaseEvent";
+import BaseEvent from '../../Base/BaseEvent';
 
 export default class BaseEvent2D extends BaseEvent {
   // @ts-ignore

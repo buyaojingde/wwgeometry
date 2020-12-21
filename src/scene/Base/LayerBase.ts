@@ -1,15 +1,15 @@
 import EventEmitter = PIXI.utils.EventEmitter;
-import AH from "../2D/Utils/AH";
-import { IDataObject } from "../Interface/IDataObject";
-import { IViewObject } from "../Interface/IViewObject";
+import AH from '../2D/Utils/AH';
+import { IDataObject } from '../Interface/IDataObject';
+import { IViewObject } from '../Interface/IViewObject';
 
 const layerEventEmit = new EventEmitter();
 
 export const LayerEvent = layerEventEmit;
 
 export enum LayerName {
-  Structure = "column",
-  Room = "room",
+  Structure = 'column',
+  Room = 'room',
 }
 
 export default abstract class LayerBase extends EventEmitter {

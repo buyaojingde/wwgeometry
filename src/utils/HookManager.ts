@@ -1,4 +1,4 @@
-import mapValues from "lodash/mapValues";
+import mapValues from 'lodash/mapValues';
 
 /**
  * 用于统一处理Hook中定义的Hook函数
@@ -15,8 +15,8 @@ export default abstract class HookManager {
     }
   }
 
-  protected getHook(name = "") {
-    if (name !== "") {
+  protected getHook(name = '') {
+    if (name !== '') {
       return this.Hook[name].bind(this);
     }
 

@@ -1,45 +1,45 @@
-import EditEdgeAction from "../../scene/2D/Events/EditEdgeAction";
-import EditVerticesAction from "../../scene/2D/Events/EditVerticesAction";
-import SelectRoomAction from "../../scene/2D/Events/SelectRoomAction";
-import SubjectAction from "../../scene/2D/Events/SubjectAction";
-import Structure, { StType } from "../../scene/Model/Home/Structure";
-import ConfigStructure from "../../utils/ConfigStructure";
-import { EventEnum, EventMgr } from "../../utils/EventManager";
-import Constant from "../../utils/Math/contanst/constant";
-import Box from "../../utils/Math/geometry/Box";
-import Point from "../../utils/Math/geometry/Point";
-import MathUtils from "../../utils/Math/math/MathUtils";
-import Quadtree from "../../utils/Math/math/Quadtree";
-import { Bind, Throttle } from "lodash-decorators";
-import { autorun, computed, observable, reaction } from "mobx";
-import { Application } from "pixi.js";
-import { Vector2 } from "three";
-import HomeTypeData from "../../model/HomeTypeData";
-import Model2DActive from "../../store/Model2DActive";
-import View2DData from "../../store/View2DData";
-import VueStoreData from "../../store/VueStoreData";
-import LianBoTest from "../../utils/LianBoTest";
-import { Renderer2D } from "../Base/Renderer";
-import SceneBase from "../Base/SceneBase";
-import { IScene2D } from "../Interface/IScene";
-import { drawGrid } from "../Math/GraphicsUtils";
-import BaseEvent2D from "./Events/Base";
-import SelectStructureAction from "./Events/SelectStructureAction";
-import HomePlan from "./Layer/HomePlan";
+import EditEdgeAction from '../../scene/2D/Events/EditEdgeAction';
+import EditVerticesAction from '../../scene/2D/Events/EditVerticesAction';
+import SelectRoomAction from '../../scene/2D/Events/SelectRoomAction';
+import SubjectAction from '../../scene/2D/Events/SubjectAction';
+import Structure, { StType } from '../../scene/Model/Home/Structure';
+import ConfigStructure from '../../utils/ConfigStructure';
+import { EventEnum, EventMgr } from '../../utils/EventManager';
+import Constant from '../../utils/Math/contanst/constant';
+import Box from '../../utils/Math/geometry/Box';
+import Point from '../../utils/Math/geometry/Point';
+import MathUtils from '../../utils/Math/math/MathUtils';
+import Quadtree from '../../utils/Math/math/Quadtree';
+import { Bind, Throttle } from 'lodash-decorators';
+import { autorun, computed, observable, reaction } from 'mobx';
+import { Application } from 'pixi.js';
+import { Vector2 } from 'three';
+import HomeTypeData from '../../model/HomeTypeData';
+import Model2DActive from '../../store/Model2DActive';
+import View2DData from '../../store/View2DData';
+import VueStoreData from '../../store/VueStoreData';
+import LianBoTest from '../../utils/LianBoTest';
+import { Renderer2D } from '../Base/Renderer';
+import SceneBase from '../Base/SceneBase';
+import { IScene2D } from '../Interface/IScene';
+import { drawGrid } from '../Math/GraphicsUtils';
+import BaseEvent2D from './Events/Base';
+import SelectStructureAction from './Events/SelectStructureAction';
+import HomePlan from './Layer/HomePlan';
 // import { LayerOrder, layerOrderGroups } from "./Layer/LayerOrder";
-import CameraController from "./Manager/CameraController";
-import PickupController from "./Manager/PickupController";
-import ViewController from "./Manager/ViewController";
-import { pointToVector, vectorToPoint } from "./Utils";
-import DOMEventManager from "./Utils/DOMEventManager";
-import GraphicsTool from "./Utils/GraphicsTool";
-import ViewObject from "./ViewObject/ViewObject";
+import CameraController from './Manager/CameraController';
+import PickupController from './Manager/PickupController';
+import ViewController from './Manager/ViewController';
+import { pointToVector, vectorToPoint } from './Utils';
+import DOMEventManager from './Utils/DOMEventManager';
+import GraphicsTool from './Utils/GraphicsTool';
+import ViewObject from './ViewObject/ViewObject';
 // import Layer = PIXI.display.Layer;
 // import Stage = PIXI.display.Stage;
 import Graphics = PIXI.Graphics;
 import WebGLRenderer = PIXI.Renderer;
 import ObservablePoint = PIXI.ObservablePoint;
-import Stats from "stats.js";
+import Stats from 'stats.js';
 
 export interface IDOMRect {
   width: number;
@@ -126,7 +126,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(stats.dom);
     stats.dom.style.cssText =
-      "position:fixed;bottom:0;right:0;cursor:pointer;opacity:0.9;z-index:10000";
+      'position:fixed;bottom:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
 
     function animate() {
       stats.begin();
@@ -160,13 +160,13 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.stopRender();
     // this.scene.stage = new PIXI.Container();
     this.scene.stage.sortableChildren = true;
-    Object.defineProperty(this.scene.stage, "scaleNumber", {
+    Object.defineProperty(this.scene.stage, 'scaleNumber', {
       get: () => View2DData.scaleNumber,
     });
-    this.scene.stage.name = "scene2D";
+    this.scene.stage.name = 'scene2D';
 
-    this.rendererDom = document.createElement("div");
-    this.rendererDom.setAttribute("tabindex", "1"); // 让元素可以接受keydown事件
+    this.rendererDom = document.createElement('div');
+    this.rendererDom.setAttribute('tabindex', '1'); // 让元素可以接受keydown事件
     this.rendererDom.appendChild(this.scene.view);
 
     this.DOMEventListener = new DOMEventManager(this.rendererDom);
@@ -184,7 +184,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.initController();
 
     // 从本地加载数据
-    this.selfLoad("local").then((r) => console.log(r));
+    this.selfLoad('local').then((r) => console.log(r));
 
     this.initSyncEvent();
     this.initStats();
@@ -223,15 +223,15 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     if (
       !!this.bindNode &&
-      !this.bindNode.getElementsByTagName("canvas").length
+      !this.bindNode.getElementsByTagName('canvas').length
     ) {
       this.bindNode.appendChild(this.rendererDom);
     }
 
     this.initSwitchController();
     this.scene.start();
-    this.DOMEventListener.on("resize", this.onWindowResize);
-    this.DOMEventListener.on("keydown", this.onKeyDown.bind(this));
+    this.DOMEventListener.on('resize', this.onWindowResize);
+    this.DOMEventListener.on('keydown', this.onKeyDown.bind(this));
 
     setTimeout(() => {
       this.resize();
@@ -248,7 +248,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
   // @ts-ignore
   public onKeyDown(event) {
-    if (event.code === "Space") {
+    if (event.code === 'Space') {
       this.resetView();
     }
   }
@@ -299,7 +299,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     // 画布零点位置为摄像机位置，画布零点放置在左上角，是为了墙体处于屏幕中间
     setTimeout(() => this.resetView());
 
-    this.emit("resize", width, height);
+    this.emit('resize', width, height);
   }
 
   /**
@@ -365,8 +365,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
   }
 
   public stop() {
-    this.DOMEventListener.off("resize", this.onWindowResize);
-    this.DOMEventListener.off("keydown", this.onKeyDown.bind(this));
+    this.DOMEventListener.off('resize', this.onWindowResize);
+    this.DOMEventListener.off('keydown', this.onKeyDown.bind(this));
     this.stopRender();
     while (this.allEvents.length) {
       const event = this.allEvents.pop();
@@ -518,8 +518,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
     const rooms = this.home.curLevel.rooms;
     const dataRoom: any = {};
-    dataRoom.label = "room";
-    dataRoom.id = "room";
+    dataRoom.label = 'room';
+    dataRoom.id = 'room';
     data.push(dataRoom);
     dataRoom.children = [];
     for (const room of rooms) {
@@ -531,8 +531,8 @@ export default class Scene2D extends SceneBase implements IScene2D {
       dataRoom.children.push(roomTree);
     }
     const allData: any = {};
-    allData.label = "build";
-    allData.id = "0";
+    allData.label = 'build';
+    allData.id = '0';
     allData.children = data;
     const dd = [];
     dd.push(allData);
@@ -548,7 +548,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   protected drawBaseInfo() {
     this._grid = new Graphics();
     this._grid.zIndex = -1;
-    drawGrid(this._grid, { lineWidth: parseFloat("" + 1 / this.scale.x) });
+    drawGrid(this._grid, { lineWidth: parseFloat('' + 1 / this.scale.x) });
     this.scene.stage.addChild(this._grid);
     this._coordinate = new PIXI.Container();
     // this._coordinate.parentGroup = layerOrderGroups[LayerOrder.Camera];

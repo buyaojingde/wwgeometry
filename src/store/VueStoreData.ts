@@ -1,7 +1,7 @@
 /**
  * * by lianbo.guo
  **/
-import { computed, observable } from "mobx";
+import { computed, observable } from 'mobx';
 
 class VueStoreData {
   @observable
@@ -12,14 +12,14 @@ class VueStoreData {
   public get unit() {
     switch (this.unitScale) {
       case 10:
-        return "mm";
+        return 'mm';
       case 1:
-        return "cm";
+        return 'cm';
       case 0.01:
-        return "m";
+        return 'm';
 
       default:
-        return "";
+        return '';
     }
   }
 

@@ -2,15 +2,15 @@
  * 选择控制器，用于选择2D场景中的物体
  * * by lianbo.guo
  **/
-import Room2D from "../../../scene/2D/ViewObject/Room2D";
-import { action } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import { getRootObject } from "../Utils";
-import BaseScene from "../Utils/BaseScene";
-import Structure2D from "../ViewObject/Structure2D";
-import BaseController from "./BaseController";
+import Room2D from '../../../scene/2D/ViewObject/Room2D';
+import { action } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import { getRootObject } from '../Utils';
+import BaseScene from '../Utils/BaseScene';
+import Structure2D from '../ViewObject/Structure2D';
+import BaseController from './BaseController';
 import DisplayObject = PIXI.DisplayObject;
 import InteractionManager = PIXI.InteractionManager;
 import Point = PIXI.Point;
@@ -41,7 +41,7 @@ export default class PickupController extends BaseController {
 
   public initEvents() {
     // @ts-ignore
-    this.on("input.start", (event) => {
+    this.on('input.start', (event) => {
       action(() => {
         // 鼠标右键取消选中
         if (event.button === 2) {
@@ -59,12 +59,12 @@ export default class PickupController extends BaseController {
     });
 
     // @ts-ignore
-    this.on("input.end", (event) => {
+    this.on('input.end', (event) => {
       const mousePoint = this.getPoint(event.x, event.y, true);
     });
 
     // @ts-ignore
-    this.on("panstart", ({ srcEvent: event }) => {
+    this.on('panstart', ({ srcEvent: event }) => {
       action(() => {
         // 仅允许左键
         if (event.button && event.button !== -1) {
@@ -83,7 +83,7 @@ export default class PickupController extends BaseController {
     });
 
     // @ts-ignore
-    this.on("tap", (event) => {
+    this.on('tap', (event) => {
       if (this.isEdit) {
         return;
       }
@@ -94,10 +94,10 @@ export default class PickupController extends BaseController {
       this.pickUpIn2D(object);
     });
 
-    this.on("tap", this.showTapPos.bind(this));
+    this.on('tap', this.showTapPos.bind(this));
 
     // @ts-ignore
-    this.on("dblclick", (event) => {
+    this.on('dblclick', (event) => {
       if (this.isEdit) {
         return;
       }

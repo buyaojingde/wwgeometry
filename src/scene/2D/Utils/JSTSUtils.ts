@@ -1,7 +1,7 @@
-import Point from "../../../utils/Math/geometry/Point";
-import Polygon from "../../../utils/Math/geometry/Polygon";
-import * as jsts from "jsts";
-import Segment from "../../../utils/Math/geometry/Segment";
+import Point from '../../../utils/Math/geometry/Point';
+import Polygon from '../../../utils/Math/geometry/Polygon';
+import * as jsts from 'jsts';
+import Segment from '../../../utils/Math/geometry/Segment';
 import GeometryFactory = jsts.geom.GeometryFactory;
 import BufferParameters = jsts.operation.buffer.BufferParameters;
 import BufferOp = jsts.operation.buffer.BufferOp;

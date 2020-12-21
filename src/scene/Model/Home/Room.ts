@@ -1,9 +1,9 @@
-import { observable } from "mobx";
-import Point from "../../../utils/Math/geometry/Point";
-import Polygon from "../../../utils/Math/geometry/Polygon";
-import ObjectNamed from "../BaseInterface/ObjectNamed";
-import Level from "./Level";
-import Structure from "./Structure";
+import { observable } from 'mobx';
+import Point from '../../../utils/Math/geometry/Point';
+import Polygon from '../../../utils/Math/geometry/Polygon';
+import ObjectNamed from '../BaseInterface/ObjectNamed';
+import Level from './Level';
+import Structure from './Structure';
 
 export default class Room extends ObjectNamed {
   get level(): Level {
@@ -53,7 +53,7 @@ export default class Room extends ObjectNamed {
   private _visible = true;
   private _active = true;
 
-  private _rvtName = "";
+  private _rvtName = '';
 
   get visible(): boolean {
     return this._visible;
@@ -76,9 +76,9 @@ export default class Room extends ObjectNamed {
     if (!this.destroyed) {
       this.destroyed = true;
 
-      this.emit("destroy");
+      this.emit('destroy');
       if (emitLayer) {
-        this.emit("destroyLayerData");
+        this.emit('destroyLayerData');
       }
       this.removeAllListeners();
     }

@@ -1,10 +1,10 @@
-import { reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import BaseEvent from "../../Base/BaseEvent";
-import Structure from "../../Model/Home/Structure";
-import Scene2D from "../index";
+import { reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import BaseEvent from '../../Base/BaseEvent';
+import Structure from '../../Model/Home/Structure';
+import Scene2D from '../index';
 
 export default class SelectStructureAction extends BaseEvent {
   private _scene2D: Scene2D;
@@ -61,26 +61,26 @@ export default class SelectStructureAction extends BaseEvent {
   }
 
   private initHotKeyEvents() {
-    this.on("keyup", (event: any) => {
+    this.on('keyup', (event: any) => {
       this.structure.doRender();
     });
-    this.on("keydown", (event: any) => {
+    this.on('keydown', (event: any) => {
       if (!this.structure) return;
       if (this._throttle) {
         const key = event.key;
         const offset = new Vector2();
         const offsetLength = 1;
         switch (key) {
-          case "ArrowUp":
+          case 'ArrowUp':
             offset.setY(-offsetLength);
             break;
-          case "ArrowDown":
+          case 'ArrowDown':
             offset.setY(offsetLength);
             break;
-          case "ArrowLeft":
+          case 'ArrowLeft':
             offset.setX(-offsetLength);
             break;
-          case "ArrowRight":
+          case 'ArrowRight':
             offset.setX(offsetLength);
             break;
         }

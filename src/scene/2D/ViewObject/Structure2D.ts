@@ -1,11 +1,11 @@
-import { computed, reaction } from "mobx";
-import Model2DActive from "../../../store/Model2DActive";
-import Constant from "../../../utils/Math/contanst/constant";
-import { IViewObject } from "../../Interface/IViewObject";
-import Structure, { StType } from "../../Model/Home/Structure";
-import ObserveVector2D from "../../Model/ObserveMath/ObserveVector2D";
-import GraphicsTool from "../Utils/GraphicsTool";
-import ViewObject from "./ViewObject";
+import { computed, reaction } from 'mobx';
+import Model2DActive from '../../../store/Model2DActive';
+import Constant from '../../../utils/Math/contanst/constant';
+import { IViewObject } from '../../Interface/IViewObject';
+import Structure, { StType } from '../../Model/Home/Structure';
+import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
+import GraphicsTool from '../Utils/GraphicsTool';
+import ViewObject from './ViewObject';
 
 // declare function require(moduleName: string): any;
 const WALL_ACTIVE_COLOR = 0x10bb88;
@@ -22,9 +22,9 @@ export default class Structure2D extends ViewObject implements IViewObject {
         () => [this.changeColor, this.active, this.isEdit, this.isVis],
         () => this.customRender()
       ),
-      this._data.once("destroy", this.destroy.bind(this)),
-      this._data.on("render", () => this.customRender()),
-      this._data.on("drawMid", this.drawMid.bind(this))
+      this._data.once('destroy', this.destroy.bind(this)),
+      this._data.on('render', () => this.customRender()),
+      this._data.on('drawMid', this.drawMid.bind(this))
     );
     this.customRender();
   }
@@ -64,25 +64,25 @@ export default class Structure2D extends ViewObject implements IViewObject {
 
   @computed
   public get fillColor() {
-    let color = Constant.colorHexNumber("#8a8a8a");
+    let color = Constant.colorHexNumber('#8a8a8a');
     switch (this.cType) {
       case StType.Wall:
-        color = Constant.colorHexNumber("#FFD700"); // 金色 0xFFD700
+        color = Constant.colorHexNumber('#FFD700'); // 金色 0xFFD700
         break;
       case StType.PCWall:
-        color = Constant.colorHexNumber("#FF5F12"); //#FF5F12
+        color = Constant.colorHexNumber('#FF5F12'); //#FF5F12
         break;
       case StType.Framing:
-        color = Constant.colorHexNumber("#2e564b"); // 灰色
+        color = Constant.colorHexNumber('#2e564b'); // 灰色
         break;
       case StType.Column:
-        color = Constant.colorHexNumber("#000000");
+        color = Constant.colorHexNumber('#000000');
         break;
       case StType.Door:
-        color = Constant.colorHexNumber("#329908");
+        color = Constant.colorHexNumber('#329908');
         break;
       case StType.Window:
-        color = Constant.colorHexNumber("#0f719d");
+        color = Constant.colorHexNumber('#0f719d');
         break;
     }
     if (this.changeColor) {
@@ -162,7 +162,7 @@ export default class Structure2D extends ViewObject implements IViewObject {
 
     this.strct.boundary.forEach((point) => {
       if (!point) {
-        console.log("stop");
+        console.log('stop');
       }
       this.lineTo(point.x, point.y);
     });

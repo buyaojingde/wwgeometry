@@ -1,10 +1,10 @@
-import MathUtils from "../math/MathUtils";
-import GeometryTool from "../tool/GeometryTool";
-import Box from "./Box";
-import Line2 from "./Line2";
-import Matrix3x3 from "./Matrix3x3";
-import Point from "./Point";
-import Vector2 from "./Vector2";
+import MathUtils from '../math/MathUtils';
+import GeometryTool from '../tool/GeometryTool';
+import Box from './Box';
+import Line2 from './Line2';
+import Matrix3x3 from './Matrix3x3';
+import Point from './Point';
+import Vector2 from './Vector2';
 
 export default class Segment {
   public start: Point;
@@ -347,7 +347,7 @@ export default class Segment {
           if (other.contain(this.start)) {
             return new Segment(other.start, this.start);
           } else {
-            console.error("我怀疑不平行，说了要已经平行的！！！");
+            console.error('我怀疑不平行，说了要已经平行的！！！');
             return null;
           }
         }
@@ -360,7 +360,7 @@ export default class Segment {
           if (other.contain(this.start)) {
             return new Segment(other.end, this.start);
           } else {
-            console.error("我怀疑不平行，说了要已经平行的！！！");
+            console.error('我怀疑不平行，说了要已经平行的！！！');
             return null;
           }
         }

@@ -3,7 +3,7 @@
  * @date 2020-10-20 17:07:35
  * @Description: 计算吸附的工具
  */
-import MathUtils from "../math/MathUtils";
+import MathUtils from '../math/MathUtils';
 
 export class AdsorptionTool {
   /**

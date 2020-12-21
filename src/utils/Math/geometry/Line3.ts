@@ -1,5 +1,5 @@
-import MathUtils from "../math/MathUtils";
-import Vector3 from "./Vector3";
+import MathUtils from '../math/MathUtils';
+import Vector3 from './Vector3';
 
 export default class Line3 {
   public p: Vector3; // 点

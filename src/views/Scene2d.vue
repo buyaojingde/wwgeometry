@@ -62,31 +62,31 @@
 </template>
 
 <script>
-import { observer } from "mobx-vue";
-import Scene2D from "../scene/2D";
-import Model2DActive from "../store/Model2DActive";
-import VueStoreData from "../store/VueStoreData";
-import { EventMgr, EventEnum } from "../utils/EventManager";
+import { observer } from 'mobx-vue';
+import Scene2D from '../scene/2D';
+import Model2DActive from '../store/Model2DActive';
+import VueStoreData from '../store/VueStoreData';
+import { EventMgr, EventEnum } from '../utils/EventManager';
 
 export default observer({
-  name: "Scene2d",
+  name: 'Scene2d',
   components: {},
   data() {
     return {
       eleList: [],
-      searchRvtId: "",
+      searchRvtId: '',
       vm: Model2DActive,
       expandedKeys: [],
       checkedKeys: [],
       treeData: [],
       defaultProps: {
-        children: "children",
-        label: "label",
+        children: 'children',
+        label: 'label',
       },
-      imgUrl: "",
+      imgUrl: '',
       isLoading: true,
       scene2d: null,
-      testText: "test",
+      testText: 'test',
     };
   },
   computed: {},
@@ -126,9 +126,9 @@ export default observer({
           if (result) {
             const exeNode = result.parentNode.parentNode;
             exeNode.scrollIntoView({
-              behavior: "auto",
-              block: "center",
-              inline: "nearest",
+              behavior: 'auto',
+              block: 'center',
+              inline: 'nearest',
             });
           }
         });
@@ -166,7 +166,7 @@ export default observer({
         await this.scene2d.bindVue(this);
         this.isLoading = false;
         this.eleList = [
-          ...document.querySelectorAll("span.el-tree-node__label"),
+          ...document.querySelectorAll('span.el-tree-node__label'),
         ];
       });
     },
@@ -183,7 +183,7 @@ export default observer({
     },
     testClick() {
       Model2DActive.setSubjectState(!Model2DActive.subjectState);
-      this.testText = !Model2DActive.subjectState ? "test" : "endTest";
+      this.testText = !Model2DActive.subjectState ? 'test' : 'endTest';
     },
     syncSt() {
       if (Model2DActive.editEdgeState) {

@@ -1,6 +1,6 @@
-import MathUtils from "../math/MathUtils";
-import Point from "./Point";
-import Vector2 from "./Vector2";
+import MathUtils from '../math/MathUtils';
+import Point from './Point';
+import Vector2 from './Vector2';
 
 /**
  * @author lianbo

@@ -1,17 +1,17 @@
-import GraphicsTool from "../../../scene/2D/Utils/GraphicsTool";
-import Structure from "../../../scene/Model/Home/Structure";
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Constant from "../../../utils/Math/contanst/constant";
-import Point from "../../../utils/Math/geometry/Point";
-import Segment from "../../../utils/Math/geometry/Segment";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import MathUtils from "../../../utils/Math/math/MathUtils";
-import { AdsorptionTool } from "../../../utils/Math/tool/AdsorptionTool";
-import { reaction } from "mobx";
-import Vue from "vue";
-import Model2DActive from "../../../store/Model2DActive";
-import BaseEvent from "../../Base/BaseEvent";
-import Scene2D from "../index";
+import GraphicsTool from '../../../scene/2D/Utils/GraphicsTool';
+import Structure from '../../../scene/Model/Home/Structure';
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Constant from '../../../utils/Math/contanst/constant';
+import Point from '../../../utils/Math/geometry/Point';
+import Segment from '../../../utils/Math/geometry/Segment';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import MathUtils from '../../../utils/Math/math/MathUtils';
+import { AdsorptionTool } from '../../../utils/Math/tool/AdsorptionTool';
+import { reaction } from 'mobx';
+import Vue from 'vue';
+import Model2DActive from '../../../store/Model2DActive';
+import BaseEvent from '../../Base/BaseEvent';
+import Scene2D from '../index';
 import Container = PIXI.Container;
 import Graphics = PIXI.Graphics;
 
@@ -57,17 +57,17 @@ export default class EditEdgeAction extends BaseEvent {
 
   public initEvents(): void {
     // @ts-ignore
-    this.on("input.move", (event) => this.moveHandler(event));
+    this.on('input.move', (event) => this.moveHandler(event));
     // @ts-ignore
-    this.on("tap", (event) => this.tapHandler(event));
+    this.on('tap', (event) => this.tapHandler(event));
   }
 
   private start() {
     Vue.prototype.$message({
-      type: "info",
-      message: "请选择基准点后，开始编辑",
+      type: 'info',
+      message: '请选择基准点后，开始编辑',
     });
-    Model2DActive.setCanvasCursor("pointer");
+    Model2DActive.setCanvasCursor('pointer');
     this._scene2D.pickupController.enable = false;
     this.initSeg();
   }
@@ -93,7 +93,7 @@ export default class EditEdgeAction extends BaseEvent {
   private end() {
     this._activeLayer.removeChildren();
     this.editSt && this.editSt.setEdit(false);
-    Model2DActive.setCanvasCursor("default");
+    Model2DActive.setCanvasCursor('default');
     this._scene2D.pickupController.enable = true;
     this._scene2D.editStructure.structure = null;
     this._scene2D.editStructure.index = null;
@@ -153,14 +153,14 @@ export default class EditEdgeAction extends BaseEvent {
     } else {
       this.editSeg && this.editSeg.clear();
       this._textRad.visible = false;
-      Vue.prototype.$message({ type: "error", message: "请选择构建顶点" });
+      Vue.prototype.$message({ type: 'error', message: '请选择构建顶点' });
       return;
     }
   }
 
   private drawSlopeAuxiliary(rad: number) {
     if (!this._textRad) {
-      this._textRad = new PIXI.Text("");
+      this._textRad = new PIXI.Text('');
       this._textRad.style.fontSize = 13;
 
       this._textRad.anchor.set(0.5, 0.5);

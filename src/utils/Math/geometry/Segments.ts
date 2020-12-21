@@ -1,4 +1,4 @@
-import Segment from "./Segment";
+import Segment from './Segment';
 
 export default class Segments {
   public constructor(ps: Segment[]) {

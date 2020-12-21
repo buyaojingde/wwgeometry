@@ -1,12 +1,12 @@
-import { reaction } from "mobx";
-import Vue from "vue";
-import Model2DActive from "../../../store/Model2DActive";
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Constant from "../../../utils/Math/contanst/constant";
-import Point from "../../../utils/Math/geometry/Point";
-import { AdsorptionTool } from "../../../utils/Math/tool/AdsorptionTool";
-import BaseEvent from "../../Base/BaseEvent";
-import Scene2D from "../index";
+import { reaction } from 'mobx';
+import Vue from 'vue';
+import Model2DActive from '../../../store/Model2DActive';
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Constant from '../../../utils/Math/contanst/constant';
+import Point from '../../../utils/Math/geometry/Point';
+import { AdsorptionTool } from '../../../utils/Math/tool/AdsorptionTool';
+import BaseEvent from '../../Base/BaseEvent';
+import Scene2D from '../index';
 import Container = PIXI.Container;
 import Graphics = PIXI.Graphics;
 
@@ -41,13 +41,13 @@ export default class SubjectAction extends BaseEvent {
   }
 
   public initEvents(): void {
-    this.on("input.move", (event: any) => this.moveHandler(event));
-    this.on("tap", (event: any) => this.tapHandler(event));
+    this.on('input.move', (event: any) => this.moveHandler(event));
+    this.on('tap', (event: any) => this.tapHandler(event));
   }
 
   private start() {
-    Vue.prototype.$message({ type: "info", message: "请选择基准点" });
-    Model2DActive.setCanvasCursor("pointer");
+    Vue.prototype.$message({ type: 'info', message: '请选择基准点' });
+    Model2DActive.setCanvasCursor('pointer');
     this._scene2D.pickupController.enable = false;
     this.initVertices();
   }
@@ -73,7 +73,7 @@ export default class SubjectAction extends BaseEvent {
   private end() {
     // this._activeLayer.removeChildren();
     // Model2DActive.subject = null;
-    Model2DActive.setCanvasCursor("default");
+    Model2DActive.setCanvasCursor('default');
     this._scene2D.pickupController.enable = true;
     this._vertices = [];
   }
@@ -121,7 +121,7 @@ export default class SubjectAction extends BaseEvent {
       Model2DActive.subjectVec3.copy(geoP);
       // this._scene2D.updateCoordinate();
     } else {
-      Vue.prototype.$message({ type: "error", message: "请选择基准点" });
+      Vue.prototype.$message({ type: 'error', message: '请选择基准点' });
       return;
     }
   }

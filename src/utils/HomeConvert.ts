@@ -1,16 +1,16 @@
-import { Vector3 } from "three";
-import JSTSUtils from "../scene/2D/Utils/JSTSUtils";
-import GeoSurface from "../scene/Model/Geometry/GeoSurface";
-import Home from "../scene/Model/Home/Home";
-import Level from "../scene/Model/Home/Level";
-import Room from "../scene/Model/Home/Room";
-import Structure from "../scene/Model/Home/Structure";
-import Model2DActive from "../store/Model2DActive";
-import ConfigStructure from "./ConfigStructure";
-import Point from "./Math/geometry/Point";
-import Polygon from "./Math/geometry/Polygon";
-import MathUtils from "./Math/math/MathUtils";
-import GeometryTool from "./Math/tool/GeometryTool";
+import { Vector3 } from 'three';
+import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
+import GeoSurface from '../scene/Model/Geometry/GeoSurface';
+import Home from '../scene/Model/Home/Home';
+import Level from '../scene/Model/Home/Level';
+import Room from '../scene/Model/Home/Room';
+import Structure from '../scene/Model/Home/Structure';
+import Model2DActive from '../store/Model2DActive';
+import ConfigStructure from './ConfigStructure';
+import Point from './Math/geometry/Point';
+import Polygon from './Math/geometry/Polygon';
+import MathUtils from './Math/math/MathUtils';
+import GeometryTool from './Math/tool/GeometryTool';
 
 class HomeConvert {
   geo!: any[];
@@ -41,7 +41,7 @@ class HomeConvert {
       lvl.addRoom(room);
       stCount++;
     }
-    console.log("构建数量" + stCount);
+    console.log('构建数量' + stCount);
     home.levels.push(lvl);
     return home;
   }
@@ -49,11 +49,11 @@ class HomeConvert {
   generateRoom() {
     const rooms: Room[] = [];
     for (const room of this.spaces) {
-      if (room.spaceType === "Room") {
+      if (room.spaceType === 'Room') {
         if (room.boundary.length > 0) {
           const roomData = new Room();
           roomData.rvtName = room.name;
-          roomData.rvtId = room.code.split("-").pop();
+          roomData.rvtId = room.code.split('-').pop();
           const roomBoundary: Point[] = [];
           Array.from(room.boundary).forEach((item) =>
             roomBoundary.push(ConfigStructure.computePoint(item))

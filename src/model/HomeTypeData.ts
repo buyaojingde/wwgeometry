@@ -2,11 +2,11 @@
  * * by lianbo.guo
  **/
 // import { saveAs } from 'file-saver';
-import { computed, observable } from "mobx";
-import Home from "../scene/Model/Home/Home";
-import HomeConvert from "../utils/HomeConvert";
+import { computed, observable } from 'mobx';
+import Home from '../scene/Model/Home/Home';
+import HomeConvert from '../utils/HomeConvert';
 
-const scene2D = require("../scene/2D").default;
+const scene2D = require('../scene/2D').default;
 
 class HomeTypeData {
   @observable.ref
@@ -28,7 +28,7 @@ class HomeTypeData {
 
   public get() {
     if (!this.gottenHome) {
-      throw new Error("还未获取到Home");
+      throw new Error('还未获取到Home');
     }
     return this.gottenHome;
   }
@@ -54,8 +54,8 @@ class HomeTypeData {
     const home = scene2D.getInstance().home;
     const homeData = null;
     const str = JSON.stringify(homeData);
-    const file = new File([str], "pave.json", {
-      type: "text/plain;charset=utf-8",
+    const file = new File([str], 'pave.json', {
+      type: 'text/plain;charset=utf-8',
     });
     // saveAs(file);
     // axioss.post(devLuo, str, {headers: {
@@ -69,8 +69,8 @@ class HomeTypeData {
   }
 
   private async _getHome(from?: string, path?: any) {
-    if (from == "local") {
-      const obj = require("../../../Downloads/博智林机器人创研中心6号楼土建6F.json");
+    if (from == 'local') {
+      const obj = require('../../../Downloads/博智林机器人创研中心6号楼土建6F.json');
       this.gottenHome = HomeConvert.convert(obj);
       return this.gottenHome;
     }

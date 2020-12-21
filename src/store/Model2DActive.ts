@@ -1,9 +1,9 @@
-import ObserveVector3 from "../scene/Model/ObserveMath/ObserveVector3";
-import ConfigStructure from "../utils/ConfigStructure";
-import { EventEnum, EventMgr } from "../utils/EventManager";
-import Point from "../utils/Math/geometry/Point";
-import { action, observable, when } from "mobx";
-import Structure from "../scene/Model/Home/Structure";
+import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
+import ConfigStructure from '../utils/ConfigStructure';
+import { EventEnum, EventMgr } from '../utils/EventManager';
+import Point from '../utils/Math/geometry/Point';
+import { action, observable, when } from 'mobx';
+import Structure from '../scene/Model/Home/Structure';
 
 class Model2DActive {
   @observable
@@ -12,7 +12,7 @@ class Model2DActive {
   public selection!: any | null; // 正在选择构建
   // 正在选择构建
   @observable
-  public cursorText = "default"; // canvas中需要显示的光标
+  public cursorText = 'default'; // canvas中需要显示的光标
   @observable
   public editVertexState = false;
   @observable

@@ -1,27 +1,27 @@
-import Level from "../../../scene/Model/Home/Level";
-import Room from "../../../scene/Model/Home/Room";
-import Model2DActive from "../../../store/Model2DActive";
-import ConfigStructure from "../../../utils/ConfigStructure";
-import Box from "../../../utils/Math/geometry/Box";
-import Polygon from "../../../utils/Math/geometry/Polygon";
-import Segment from "../../../utils/Math/geometry/Segment";
-import Segments from "../../../utils/Math/geometry/Segments";
-import Vector2 from "../../../utils/Math/geometry/Vector2";
-import { action, observable } from "mobx";
-import Point from "../../../utils/Math/geometry/Point";
-import JSTSUtils from "../../2D/Utils/JSTSUtils";
-import { IDataObject } from "../../Interface/IDataObject";
-import IBuildable from "../BaseInterface/IBuildable";
-import ObjectIndex from "../BaseInterface/ObjectIndex";
+import Level from '../../../scene/Model/Home/Level';
+import Room from '../../../scene/Model/Home/Room';
+import Model2DActive from '../../../store/Model2DActive';
+import ConfigStructure from '../../../utils/ConfigStructure';
+import Box from '../../../utils/Math/geometry/Box';
+import Polygon from '../../../utils/Math/geometry/Polygon';
+import Segment from '../../../utils/Math/geometry/Segment';
+import Segments from '../../../utils/Math/geometry/Segments';
+import Vector2 from '../../../utils/Math/geometry/Vector2';
+import { action, observable } from 'mobx';
+import Point from '../../../utils/Math/geometry/Point';
+import JSTSUtils from '../../2D/Utils/JSTSUtils';
+import { IDataObject } from '../../Interface/IDataObject';
+import IBuildable from '../BaseInterface/IBuildable';
+import ObjectIndex from '../BaseInterface/ObjectIndex';
 
 export const StType = {
-  Wall: "OST_Walls",
-  PCWall: "OST_GenericModel",
-  Framing: "OST_StructuralFraming",
-  Column: "OST_StructuralColumns",
-  Door: "OST_Doors",
-  Window: "OST_Windows",
-  Floor: "OST_Floors",
+  Wall: 'OST_Walls',
+  PCWall: 'OST_GenericModel',
+  Framing: 'OST_StructuralFraming',
+  Column: 'OST_StructuralColumns',
+  Door: 'OST_Doors',
+  Window: 'OST_Windows',
+  Floor: 'OST_Floors',
 };
 
 export default class Structure
@@ -175,7 +175,7 @@ export default class Structure
     if (this.destroyed) {
       return;
     }
-    this.emit("render");
+    this.emit('render');
   }
 
   build(): void {}
@@ -186,9 +186,9 @@ export default class Structure
     if (!this.destroyed) {
       this.destroyed = true;
 
-      this.emit("destroy");
+      this.emit('destroy');
       if (emitLayer) {
-        this.emit("destroyLayerData");
+        this.emit('destroyLayerData');
       }
       this.removeAllListeners();
     }
@@ -208,7 +208,7 @@ export default class Structure
     if (index !== -1) {
       return this.topFaceGeo[index];
     }
-    throw new Error("输入参数不是构建的顶点！");
+    throw new Error('输入参数不是构建的顶点！');
   }
 
   /**

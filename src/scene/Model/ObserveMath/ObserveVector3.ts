@@ -1,8 +1,8 @@
 /**
  * * by lianbo.guo
  **/
-import { action, observable } from "mobx";
-import MathUtils from "../../../utils/Math/math/MathUtils";
+import { action, observable } from 'mobx';
+import MathUtils from '../../../utils/Math/math/MathUtils';
 
 export default class ObserveVector3 {
   @observable
