@@ -5,6 +5,7 @@ import SubjectAction from '../../scene/2D/Events/SubjectAction';
 import Structure, { StType } from '../../scene/Model/Home/Structure';
 import ConfigStructure from '../../utils/ConfigStructure';
 import { EventEnum, EventMgr } from '../../utils/EventManager';
+import HomeConvert from '../../utils/HomeConvert';
 import Constant from '../../utils/Math/contanst/constant';
 import Box from '../../utils/Math/geometry/Box';
 import Point from '../../utils/Math/geometry/Point';
@@ -669,8 +670,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
    */
   public async loadHomeData(buildData: any) {
     try {
-      // @ts-ignore
-      this.home = await HomeConvert.convert(buildData);
+      this.home = await HomeConvert.adapt(buildData);
       // 计算墙的中线
       this.home.curLevel.preprocess();
       this.home.curLevel.preprocessRoom();

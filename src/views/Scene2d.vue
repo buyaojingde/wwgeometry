@@ -119,6 +119,14 @@ export default observer({
         this.expandedKeys.push(id);
         setTimeout(() => {
           //TODO: 自动移动scrollview
+          if (this.eleList.length < 1) {
+            const ele = this.$refs.mapTree.$el;
+            if (ele) {
+              this.eleList = [
+                ...ele.querySelectorAll('span.el-tree-node__label'),
+              ];
+            }
+          }
           const result = this.eleList.find(
             (item) => item.innerHTML === id.toString()
           );
@@ -166,7 +174,9 @@ export default observer({
         await this.scene2d.bindVue(this);
         this.isLoading = false;
         this.eleList = [
-          ...document.querySelectorAll('span.el-tree-node__label'),
+          ...this.$refs.mapTree.$el.querySelectorAll(
+            'span.el-tree-node__label'
+          ),
         ];
       });
     },
@@ -209,7 +219,7 @@ export default observer({
       }
     },
     async loadBuild(buildData) {
-      await this.$_scene2d.loadHomeData(buildData);
+      await this.scene2d.loadHomeData(buildData);
       // console.log(buildData);
     },
   },

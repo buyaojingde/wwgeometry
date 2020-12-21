@@ -1,5 +1,4 @@
 import { Vector3 } from 'three';
-import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Home from '../scene/Model/Home/Home';
 import Level from '../scene/Model/Home/Level';
@@ -19,11 +18,16 @@ class HomeConvert {
   spaces!: any[];
   itemCount = 2000; //最大渲染数量
   convert(obj: any): Home {
-    const home = new Home();
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;
     this.eles = obj.elems;
     this.spaces = obj.spaces;
+    this.setElements();
+    return this.generateHome();
+  }
+
+  generateHome() {
+    const home = new Home();
     this.calcZeroAndBound();
     const structures = this.findColumn();
     const lvl = new Level();
@@ -43,7 +47,32 @@ class HomeConvert {
     }
     console.log('构建数量' + stCount);
     home.levels.push(lvl);
+    this.gc();
     return home;
+  }
+
+  gc() {
+    this.elements = [];
+    this.spaces = [];
+    this.eles = [];
+    this.eleGeo = [];
+    this.geo = [];
+    this.hiddenElement = null;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-21 14:23:12
+   * @Description: 本地数据转线上数据结构
+   */
+  setElements() {
+    this.elements = [];
+    for (const ele of this.eles) {
+      const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
+      const wGeo = this.geo.filter((item) => item.id === wGeoId.geomIDs[0]);
+      const elementItem = { element: ele, geometrys: wGeo };
+      this.elements.push(elementItem);
+    }
   }
 
   generateRoom() {
@@ -98,23 +127,26 @@ class HomeConvert {
     }
     const calcSurround = () => {
       for (const v of allGeo) {
-        if (v.x < minX) {
-          minX = v.x;
+        const x = v.x || v.X;
+        const y = v.y || v.Y;
+        const z = v.z || v.Z;
+        if (x < minX) {
+          minX = x;
         }
-        if (v.y < minY) {
-          minY = v.y;
+        if (y < minY) {
+          minY = y;
         }
-        if (v.x > maxX) {
-          maxX = v.x;
+        if (x > maxX) {
+          maxX = x;
         }
-        if (v.y > maxY) {
-          maxY = v.y;
+        if (y > maxY) {
+          maxY = y;
         }
-        if (v.z < minZ) {
-          minZ = v.z;
+        if (z < minZ) {
+          minZ = z;
         }
-        if (v.z > maxZ) {
-          maxZ = v.z;
+        if (z > maxZ) {
+          maxZ = z;
         }
       }
     };
@@ -132,18 +164,17 @@ class HomeConvert {
 
   findColumn(): Structure[] {
     const columns: Structure[] = [];
-    for (const ele of this.eles) {
-      // if (
-      //   // ele.builtInCategory === "OST_Doors" &&
-      //   // ele.builtInCategory === "OST_Windows" &&
-      //   ele.builtInCategory === "OST_Floors"
-      // ) {
-      //   continue;
-      // }
-      const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
-      const wGeo = this.geo.find((item) => item.id === wGeoId.geomIDs[0]);
+    for (const ele of this.elements) {
+      if (
+        // ele.element.builtInCategory === "OST_Doors" &&
+        // ele.element.builtInCategory === "OST_Windows" &&
+        ele.element.builtInCategory === 'OST_Floors'
+      ) {
+        continue;
+      }
+      const wGeo = ele.geometrys[0];
       if (wGeo.solids.length > 0) {
-        const st = this.convertColumn(wGeo, ele);
+        const st = this.convertColumn(wGeo, ele.element);
         if (st) {
           columns.push(st);
         }
@@ -246,6 +277,17 @@ class HomeConvert {
     structure.ele = ele;
     structure.rvtId = ele.revitId.toString();
     return structure;
+  }
+
+  private hiddenElement: any;
+  private elements: any[] = [];
+
+  public adapt(data: any) {
+    this.elements = data.elements;
+    this.geo = this.elements.map((item) => item.geometrys[0]);
+    this.spaces = data.roomNOs;
+    this.hiddenElement = data.hiddenElement;
+    return this.generateHome();
   }
 }
 
