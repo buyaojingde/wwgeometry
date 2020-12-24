@@ -127,9 +127,9 @@ class HomeConvert {
     }
     const calcSurround = () => {
       for (const v of allGeo) {
-        const x = v.x || v.X;
-        const y = v.y || v.Y;
-        const z = v.z || v.Z;
+        const x = v.x !== undefined ? v.x : v.X;
+        const y = v.y !== undefined ? v.y : v.Y;
+        const z = v.z !== undefined ? v.z : v.Z;
         if (x < minX) {
           minX = x;
         }

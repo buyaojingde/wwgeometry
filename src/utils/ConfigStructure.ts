@@ -36,9 +36,9 @@ class ConfigStructure {
     //   Model2DActive.subjectVec3.y = this.zeroPoint.y;
     //   Model2DActive.subjectVec3.z = 0;
     // }
-    const x = origin.x || origin.X;
-    const y = origin.y || origin.Y;
-    const z = origin.z || origin.Z;
+    const x = origin.x !== undefined ? origin.x : origin.X;
+    const y = origin.y !== undefined ? origin.y : origin.Y;
+    const z = origin.z !== undefined ? origin.z : origin.Z;
     return {
       x: (x - this.zeroPoint.x) / 10,
       y: (y - this.zeroPoint.y) / 10,
