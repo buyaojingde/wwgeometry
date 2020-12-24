@@ -252,10 +252,10 @@ export default observer({
 .map-tree {
   overflow: auto;
   background: #ffffff;
-  height: 100%;
+  height: 92%;
   width: 20%;
-  position: absolute;
-  top: 40px;
+  position: fixed;
+  top: 7%;
 }
 
 .scene-container {
