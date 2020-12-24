@@ -1,34 +1,48 @@
-import SplayTree from 'splayTree';
+import SplayTree from 'splaytree';
 import MathUtils from '../../math/MathUtils';
 import Point from '../Point';
 import Segment from '../Segment';
 
+class SegItem {
+  seg: Segment;
+  group: number;
+
+  public constructor(seg: Segment, group: number) {
+    this.seg = seg;
+    this.group = group;
+  }
+}
+
 class EventItem {
   public p: Point;
-  public seg!: Segment[];
-  public index!: number; // 事件分组，不同组之间才做运算
-  public constructor(p: Point, seg?: Segment) {
+  public seg: SegItem | undefined;
+
+  public constructor(p: Point, seg?: SegItem) {
     this.p = p;
-    if (seg) {
-      this.seg = [seg];
-    }
+    this.seg = seg;
   }
 }
 
 class EventPointStatus {
   private splayTree: SplayTree<Point, EventItem>;
+
   public constructor() {
     this.splayTree = new SplayTree<Point, EventItem>(this.byX);
   }
-  public isEmpty(): boolean {
+
+  public get isEmpty(): boolean {
     return this.splayTree.isEmpty();
   }
+
   public byX(a: Point, b: Point) {
     if (a.x > b.x) return 1;
     if (a.x === b.x) {
       if (a.y > b.y) {
         return 1;
       } else {
+        if (a.y === b.y) {
+          return 0;
+        }
         return -1;
       }
     }
@@ -36,12 +50,14 @@ class EventPointStatus {
   }
 
   add(seg: Segment, group = 0) {
-    const eItem = new EventItem(seg.start, seg);
-    eItem.index = group;
-    const eItem1 = new EventItem(seg.end, seg);
-    eItem1.index = group;
+    const eItem = new EventItem(seg.start, new SegItem(seg, group));
+    const eItem1 = new EventItem(seg.end, new SegItem(seg, group));
     this.splayTree.add(eItem.p, eItem);
     this.splayTree.add(eItem1.p, eItem1);
+  }
+
+  insert(e: EventItem) {
+    this.splayTree.add(e.p, e);
   }
 
   pop() {
@@ -51,18 +67,88 @@ class EventPointStatus {
 }
 
 class SweepLineStatus {
-  public splayTree: SplayTree<Segment, undefined>;
-  public constructor() {
-    this.splayTree = new SplayTree<Segment, undefined>(this.compareSeg);
-  }
+  public splayTree: SplayTree<SegItem, undefined>;
   public currentP!: Point;
 
-  compareSeg(a: Segment, b: Segment) {
+  public constructor() {
+    this.splayTree = new SplayTree<SegItem, undefined>((a, b) =>
+      this.compareSeg(a, b)
+    );
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-23 16:08:00
+   * @Description: 相邻的上面的线段
+   */
+  public above(seg: SegItem): SegItem | undefined {
+    let find = this.splayTree.find(seg);
+    if (!find) return;
+    let done;
+    while (!done) {
+      const next = this.splayTree.next(find);
+      if (!next) return;
+      const ab = next.key;
+      if (!ab) return;
+      if (ab.group !== seg.group) {
+        return ab;
+      }
+      find = next;
+    }
+    return;
+  }
+
+  public insert(seg: SegItem) {
+    this.splayTree.insert(seg);
+  }
+
+  public del(seg: SegItem) {
+    this.splayTree.remove(seg);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-24 16:58:09
+   * @Description: 当this.current.p变化时,为啥不能自动排序.
+   */
+  public sort() {
+    if (this.splayTree.isEmpty()) return;
+    const item = this.splayTree.keys();
+    this.splayTree.clear();
+    if (!item) return;
+    item.forEach((item) => this.splayTree.insert(item));
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-23 16:08:00
+   * @Description: 相邻的下面的线段
+   */
+  public below(seg: SegItem): SegItem | undefined {
+    let find = this.splayTree.find(seg);
+    if (!find) return;
+    let done;
+    while (!done) {
+      const prev = this.splayTree.prev(find);
+      if (!prev) return;
+      const ab = prev.key;
+      if (!ab) return;
+      if (ab.group !== seg.group) {
+        return ab;
+      }
+      find = prev;
+    }
+    return;
+  }
+
+  compareSeg(seg: SegItem, seg1: SegItem) {
+    const a = seg.seg;
+    const b = seg1.seg;
     if (a.equalTo(b)) return 0;
     const ak = a.intersectionY(this.currentP);
     const bk = b.intersectionY(this.currentP);
-    if (!ak || !bk) {
-      throw new Error(' EventPoint exception...');
+    if (ak === null || bk === null) {
+      throw new Error(' EventPoint exception...'); //理论上不可能出现，如果出现，证明代码逻辑有问题
     }
     if (!MathUtils.equal(ak, bk)) return ak - bk;
     const aVertical = a.isVertical();
@@ -76,24 +162,13 @@ class SweepLineStatus {
       }
       return aMax - bMax;
     }
-    if (aVertical) {
-      if (MathUtils.equal(aMax, bk)) {
-        return -1;
-      }
-      return 1;
-    }
-    if (bVertical) {
-      if (MathUtils.equal(bMax, ak)) {
-        return 1;
-      }
-      return -1;
-    }
+    // if (aVertical) {
+    //   return aMax - bk;
+    // }
+    // if (bVertical) {
+    //   return ak - bMax;
+    // }
     return a.rad - b.rad;
-  }
-
-  findAdjacent(p: Point) {
-    // @ts-ignore
-    const current = this.splayTree._root;
   }
 }
 
@@ -116,16 +191,58 @@ export default class Sweep {
   }
 
   public calc() {
-    while (this.eps.isEmpty) {
+    while (!this.eps.isEmpty) {
       const currentEvent = this.eps.pop();
+      if (!currentEvent) break;
+
       currentEvent && this.handle(currentEvent);
+      if (currentEvent.seg && currentEvent.seg.seg) {
+        const seg = currentEvent.seg.seg;
+        if (seg.byX()[1] === currentEvent.p) {
+          this.sls.del(currentEvent.seg);
+        }
+      }
     }
     return this.result;
   }
 
   private handle(currentEvent: EventItem) {
     const p = currentEvent.p;
-    const group = currentEvent.index;
-    this.sls.findAdjacent(p);
+    if (!currentEvent.seg) return;
+    const current = currentEvent.seg;
+    this.sls.currentP = p;
+
+    if (currentEvent.seg && currentEvent.seg.seg) {
+      const seg = currentEvent.seg.seg;
+      if (seg.byX()[0] === currentEvent.p) {
+        // 起点
+        this.sls.insert(currentEvent.seg);
+      }
+      if (seg.byX()[1] === currentEvent.p) {
+        // 起点
+        this.sls.sort();
+        // console.log(this.sls.splayTree);
+      }
+    }
+
+    const above = current && this.sls.above(current);
+    const below = current && this.sls.below(current);
+    if (above) {
+      const intersect = current.seg.intersect(above.seg, true);
+      if (intersect) {
+        this.result.push(intersect);
+        const event = new EventItem(intersect);
+        this.eps.insert(event);
+      }
+    }
+
+    if (below) {
+      const intersect = current.seg.intersect(below.seg, true);
+      if (intersect) {
+        this.result.push(intersect);
+        const event = new EventItem(intersect);
+        this.eps.insert(event);
+      }
+    }
   }
 }

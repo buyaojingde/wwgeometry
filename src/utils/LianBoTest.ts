@@ -1,6 +1,7 @@
 import * as isect from 'isect';
 import maxBy from 'lodash/maxBy';
 import { Graphics } from 'pixi.js';
+import SplayTree from 'splaytree';
 import {
   Color,
   DoubleSide,
@@ -21,6 +22,7 @@ import Structure, { StType } from '../scene/Model/Home/Structure';
 import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
 import ConfigStructure from './ConfigStructure';
 import Constant from './Math/contanst/constant';
+import Sweep from './Math/geometry/algorithm/Sweep';
 import Box from './Math/geometry/Box';
 import Matrix3x3 from './Math/geometry/Matrix3x3';
 import Point from './Math/geometry/Point';
@@ -153,7 +155,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testGrpzIndex();
+    this.testSweep();
   }
 
   calcBox(minP: Point, width: number, height: number) {
@@ -284,13 +286,36 @@ class LianBoTest {
     }
   }
 
+  testSplayTree() {
+    const tree = new SplayTree<number, undefined>();
+    tree.add(1);
+    tree.add(2);
+    console.log(tree);
+  }
+
+  testSweep() {
+    const seg = new Segment(new Point(0, 0), new Point(1, 1));
+    const seg1 = new Segment(new Point(0, 1), new Point(1, 0));
+    const seg2 = new Segment(new Point(0.25, 0), new Point(0.75, 1));
+    // const p = new Point(0.25, 0);
+    //
+    // console.log(seg.intersectionY(p));
+    // console.log(seg1.intersectionY(p));
+    // console.log(seg2.intersectionY(p));
+    const sweep = new Sweep([[seg, seg1, seg2]]);
+    console.log(sweep.eps);
+    const result = sweep.calc();
+    console.log(result);
+  }
+
   testIsect() {
     const a = this.lvl.findByRvtId('2087366').polygon;
     const b = this.lvl.findByRvtId('2040197').polygon;
     const seg = new Segment(new Point(0, 0), new Point(1, 1));
     const seg1 = new Segment(new Point(0, 1), new Point(1, 0));
+    const seg2 = new Segment(new Point(0.25, 0), new Point(0.75, 1));
     // @ts-ignore
-    const inter = isect.sweep([seg, seg1], []);
+    const inter = isect.sweep([seg, seg1, seg2], []);
     const inters = inter.run();
     console.log(inters);
     const segT = new Segment(new Point(1, 1), new Point(10, 1));

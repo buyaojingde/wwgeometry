@@ -504,7 +504,7 @@ export default class Segment {
     const endV = p.subtract(this.end);
     const startDot = startV.dot(segV);
     const endDot = -endV.dot(segV);
-    return !!(
+    return (
       MathUtils.greaterEqual(startDot, 0) && MathUtils.greaterEqual(endDot, 0)
     );
   }
@@ -630,5 +630,16 @@ export default class Segment {
       return p.y;
     }
     return new Line2(this.start, this.end).getYFromX(p.x);
+  }
+  /**
+   * @author lianbo
+   * @date 2020-12-23 17:14:30
+   * @Description: 按x的大小输出点
+   */
+  public byX(): Point[] {
+    if (this.start.x < this.end.x) {
+      return [this.start, this.end];
+    }
+    return [this.end, this.start];
   }
 }

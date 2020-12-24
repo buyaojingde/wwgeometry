@@ -98,10 +98,6 @@ export default class Constant {
    * @Description: 随机颜色
    */
   public static colorRandom() {
-    return (
-      MathUtils.getRandomInt(0, 256) * 10000 +
-      MathUtils.getRandomInt(0, 256) * 100 +
-      MathUtils.getRandomInt(0, 256)
-    );
+    return MathUtils.getRandomInt(0, 16777215);
   }
 }
