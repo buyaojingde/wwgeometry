@@ -123,7 +123,7 @@ export default class Box {
 
   /**
    * @author lianbo
-   * @date 2020-11-12 15:14:08
+   * @date 2020-12-25 17：19：05
    * @Description: box之间的边相切，不相交，返回相切部分的边，只考虑外切的情况
    */
   outsideTouch(other: Box): { seg: Segment; index: number }[] {
