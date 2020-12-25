@@ -62,7 +62,7 @@ export default class SelectRoomAction extends BaseEvent {
   }
 
   private drawSeg() {
-    const sts = this.room.relStructures;
+    const sts = this.room.allSts();
     for (const st of sts) {
       for (const grpElement of st.roomRels) {
         if (grpElement.room !== this.room) continue;
@@ -78,10 +78,6 @@ export default class SelectRoomAction extends BaseEvent {
   }
 
   private scale = 10000;
-
-  private drawOffsetRoom() {
-    LianBoTest.testTurfUnion([this.room, ...this.room.relStructures]);
-  }
 
   private drawBox() {
     if (!this._grp) {
@@ -110,6 +106,6 @@ export default class SelectRoomAction extends BaseEvent {
   private onEnd() {
     if (!this._grp) return;
     this._grp.clear();
-    this.room && this.room.relStructures.forEach((st) => st.setEdit(false));
+    // this.room && this.room.allSts().forEach((st) => st.setEdit(false));
   }
 }

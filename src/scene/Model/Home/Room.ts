@@ -1,9 +1,29 @@
 import { observable } from 'mobx';
 import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
+import Segment from '../../../utils/Math/geometry/Segment';
 import ObjectNamed from '../BaseInterface/ObjectNamed';
 import Level from './Level';
 import Structure from './Structure';
+
+/**
+ * @author lianbo
+ * @date 2020-12-25 14:55:23
+ * @Description: 房间的墙，直观的墙，不是Structure里的墙，一般来说，一面墙就是一条线段
+ */
+class RoomWall {
+  public sts: Structure[];
+  public wall: Segment;
+  public constructor(sts: Structure[], seg: Segment) {
+    this.sts = sts;
+    this.wall = seg;
+  }
+
+  public addSt(st: Structure) {
+    if (this.sts.includes(st)) return;
+    this.sts.push(st);
+  }
+}
 
 export default class Room extends ObjectNamed {
   get level(): Level {
@@ -19,13 +39,6 @@ export default class Room extends ObjectNamed {
 
   set topFaceGeo(value: any) {
     this._topFaceGeo = value;
-  }
-  get relStructures(): Structure[] {
-    return this._relStructures;
-  }
-
-  set relStructures(value: Structure[]) {
-    this._relStructures = value;
   }
   get active(): boolean {
     return this._active;
@@ -44,8 +57,14 @@ export default class Room extends ObjectNamed {
   }
   public destroyed = false;
 
-  constructor() {
+  constructor(roomBoundary: Point[]) {
     super();
+    this.boundary = roomBoundary;
+    const polygon = new Polygon(this.boundary);
+    const edges = polygon.edges;
+    for (const edge of edges) {
+      this.addWall(new RoomWall([], edge));
+    }
   }
   private _topFaceGeo: any;
 
@@ -98,14 +117,33 @@ export default class Room extends ObjectNamed {
     };
   }
 
-  private _relStructures: Structure[] = [];
+  private _relStructures: RoomWall[] = [];
 
-  public addStructure(st: Structure): boolean {
-    if (this._relStructures.includes(st)) {
+  public addWall(wall: RoomWall): boolean {
+    if (this._relStructures.includes(wall)) {
       return false;
     }
-    this._relStructures.push(st);
+    this._relStructures.push(wall);
     return true;
+  }
+
+  public addStructure(edge: Segment, st: Structure) {
+    for (const wallData of this._relStructures) {
+      if (wallData.wall.containSeg(edge)) {
+        wallData.addSt(st);
+      }
+    }
+  }
+
+  public allSts(): Structure[] {
+    const sts: Structure[] = [];
+    for (const relStructure of this._relStructures) {
+      for (const st of relStructure.sts) {
+        if (sts.includes(st)) continue;
+        sts.push(st);
+      }
+    }
+    return sts;
   }
 
   private _level!: Level;

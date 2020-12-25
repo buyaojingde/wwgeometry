@@ -101,26 +101,28 @@ export default class Level extends ObjectNamed implements IBuildable {
       return item.data instanceof Structure;
     });
     const boxes = room.polygon.cutBox();
-    const res: { seg: Segment; index: number }[] = [];
     for (const box of boxes) {
-      for (const other of others) {
+      for (const stData of others) {
+        const res: Segment[] = [];
         let otherBoxes: Box[] = [];
-        if (other.data.stType === StType.Column) {
-          otherBoxes = other.data.polygon.cutBox();
+        if (stData.data.stType === StType.Column) {
+          otherBoxes = stData.data.polygon.cutBox();
         } else {
-          otherBoxes = [other.data.box];
+          otherBoxes = [stData.data.box];
         }
         for (const otherB of otherBoxes) {
-          const result = box.outsideTouch(otherB); //TODO:一些柱不是规则的box，所以要想取得柱的关系先分解成Box
-          if (result && result.length > 0) {
-            res.push(...result);
-            room.addStructure(other.data);
+          const result: { seg: Segment; index: number }[] = box.outsideTouch(
+            otherB
+          ); // 一些柱不是规则的box，所以要想取得柱的关系先分解成Box
+          if (result.length > 0) {
+            const tangentEdge: Segment = result[0].seg;
+            res.push(tangentEdge);
+            room.addStructure(tangentEdge, stData.data);
           }
         }
-        other.data.addRoomRel(
-          room,
-          res.map((item) => item.seg)
-        );
+        if (res.length > 0) {
+          stData.data.addRoomRel(room, res);
+        }
       }
     }
   }

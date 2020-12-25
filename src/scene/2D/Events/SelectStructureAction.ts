@@ -1,19 +1,27 @@
 import { reaction } from 'mobx';
 import Model2DActive from '../../../store/Model2DActive';
 import ConfigStructure from '../../../utils/ConfigStructure';
+import Constant from '../../../utils/Math/contanst/constant';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import BaseEvent from '../../Base/BaseEvent';
 import Structure from '../../Model/Home/Structure';
 import Scene2D from '../index';
+import GraphicsTool from '../Utils/GraphicsTool';
 
 export default class SelectStructureAction extends BaseEvent {
   private _scene2D: Scene2D;
   private structure!: Structure;
   private _throttle = true;
+  private _grp: PIXI.Graphics;
+  private _activeLayer: PIXI.Container;
 
   public constructor(scene2D: Scene2D) {
     super(scene2D.DOMEventListener);
     this._scene2D = scene2D;
+    this._activeLayer = new PIXI.Container();
+    scene2D.getStage().addChild(this._activeLayer);
+    this._grp = new PIXI.Graphics();
+    this._activeLayer.addChild(this._grp);
 
     reaction(
       () => {
@@ -32,15 +40,28 @@ export default class SelectStructureAction extends BaseEvent {
           const geoPos = ConfigStructure.computeGeo(position);
           Model2DActive.setStructureVec(geoPos);
           Model2DActive.editStructure = this.structure;
+          this.drawRoomEdge();
           // LianBoTest.testStructures.push(this.structure);
           // const sts = this._scene2D.home.curLevel.quadTree
           //   .retrieve(this.structure.quadData)
           //   .map((item) => item.data)
           //   .filter((item) => !(item instanceof Room));
           // LianBoTest.testTurfUnion(sts);
+        } else {
+          this.onEnd();
         }
       }
     );
+  }
+
+  private drawRoomEdge() {
+    const roomDatas = this.structure.roomRels;
+    for (const roomData of roomDatas) {
+      GraphicsTool.drawLines(this._grp, roomData.segs, {
+        color: Constant.colorRandom(),
+        lineWidth: 3,
+      });
+    }
   }
 
   public initEvents() {
@@ -93,5 +114,9 @@ export default class SelectStructureAction extends BaseEvent {
       }
       console.log(event);
     });
+  }
+
+  private onEnd() {
+    this._grp.clear();
   }
 }

@@ -80,14 +80,13 @@ class HomeConvert {
     for (const room of this.spaces) {
       if (room.spaceType === 'Room') {
         if (room.boundary.length > 0) {
-          const roomData = new Room();
-          roomData.rvtName = room.name;
-          roomData.rvtId = room.code.split('-').pop();
           const roomBoundary: Point[] = [];
           Array.from(room.boundary).forEach((item) =>
             roomBoundary.push(ConfigStructure.computePoint(item))
           );
-          roomData.boundary = roomBoundary;
+          const roomData = new Room(roomBoundary);
+          roomData.rvtName = room.name;
+          roomData.rvtId = room.code.split('-').pop();
           roomData.topFaceGeo = room.boundary;
           rooms.push(roomData);
         }

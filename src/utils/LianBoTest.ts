@@ -503,7 +503,8 @@ class LianBoTest {
     const rooms = Scene2D.getInstance().home.curLevel.rooms;
     const roomPaths: any[][] = [];
     for (const room of rooms) {
-      const path = this.unionSts([room, ...room.relStructures]);
+      const allSts = room.allSts();
+      const path = this.unionSts([room, ...allSts]);
       roomPaths.push(path!);
     }
     const result = PolygonClipper.unionPoint(roomPaths);

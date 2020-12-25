@@ -126,30 +126,35 @@ export default class Box {
    * @date 2020-11-12 15:14:08
    * @Description: box之间的边相切，不相交，返回相切部分的边，只考虑外切的情况
    */
-  outsideTouch(other: Box): { seg: Segment; index: number }[] | null {
-    if (this.noIntersect(other)) return null;
+  outsideTouch(other: Box): { seg: Segment; index: number }[] {
+    const tangentS: { seg: Segment; index: number }[] = [];
+    if (this.noIntersect(other)) return tangentS;
     for (const p of other.points) {
       // 不考虑内部的情况
       if (this.contain(p)) {
-        return null;
+        return tangentS;
       }
     }
     for (const p of this.points) {
       if (other.contain(p)) {
-        return null;
+        return tangentS;
       }
     }
     const edges = this.edges;
     const others = other.edges;
-    const tangentS: { seg: Segment; index: number }[] = [];
+    const otherIndex = [2, 3, 0, 1];
     for (let i = 0; i < edges.length; i++) {
       const edge = edges[i];
-      const index = (i + 2) % others.length;
+      const index = otherIndex[i];
       const otherE = others[index];
       const tangent = edge.tangentVH(otherE);
-      if (tangent) {
+      // 排除只有角和角相切的情况
+      if (tangent && !tangent.isZero()) {
         tangentS.push({ seg: tangent, index: i }); //好像没必要，直接break就可以了
       }
+    }
+    if (tangentS.length > 1) {
+      throw new Error('algorithm error!'); // 理论上两个box只可能有一个外切边，如果有多个，肯定时算法出错了
     }
     return tangentS;
   }

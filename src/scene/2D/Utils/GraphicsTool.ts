@@ -4,6 +4,7 @@
 import Constant from '../../../utils/Math/contanst/constant';
 import Box from '../../../utils/Math/geometry/Box';
 import Point from '../../../utils/Math/geometry/Point';
+import Segment from '../../../utils/Math/geometry/Segment';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import GeometryTool from '../../../utils/Math/tool/GeometryTool';
 import { Graphics } from 'pixi.js';
@@ -52,6 +53,16 @@ export default class GraphicsTool {
     graphicsInst.moveTo(point1.x, point1.y);
     graphicsInst.lineTo(point2.x, point2.y);
     graphicsInst.endFill();
+  }
+
+  public static drawLines(
+    graphicsInst: Graphics,
+    segs: Segment[],
+    options?: any
+  ) {
+    for (const seg of segs) {
+      GraphicsTool.drawLine(graphicsInst, seg.start, seg.end, options);
+    }
   }
 
   /**

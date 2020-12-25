@@ -373,7 +373,7 @@ export default class Segment {
   /**
    * @author lianbo
    * @date 2020-11-12 11:35:09
-   * @Description: 水平或者垂直平行的线段，共线部分
+   * @Description: 水平或者垂直平行的线段，共线部分,可能会交与一点
    * 主要对应Box之间的相交，相切的判断
    */
   public tangentVH(other: Segment): Segment | null {
