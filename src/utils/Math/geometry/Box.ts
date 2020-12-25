@@ -109,7 +109,7 @@ export default class Box {
 
   /**
    * @author lianbo
-   * @date 2020-11-12 16:44:15
+   * @date 2020-12-25 17：20：11
    * @Description: 点在矩形外，不包括边界
    */
   exclude(p: Point): boolean {
