@@ -68,6 +68,11 @@ import Model2DActive from '../store/Model2DActive';
 import VueStoreData from '../store/VueStoreData';
 import { EventMgr, EventEnum } from '../utils/EventManager';
 
+/**
+ * @author lianbo
+ * @date 2020-12-25 09:04:50
+ * @Description: map-tree还是很影响性能，具体原因待查
+ */
 export default observer({
   name: 'Scene2d',
   components: {},
@@ -252,7 +257,7 @@ export default observer({
 .map-tree {
   overflow: auto;
   background: #ffffff;
-  height: 92%;
+  height: 93%;
   width: 20%;
   position: fixed;
   top: 7%;

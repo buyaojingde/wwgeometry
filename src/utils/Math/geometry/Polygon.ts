@@ -456,8 +456,17 @@ export default class Polygon {
       const segi = this.edges[i]; // 边
       const segNext = this.edges[next]; // 下一条边
       const segP = this.vertices[i]; // 两条边夹的点
-      const x = segi.isHorizontal() ? segi.start.x : segi.start.y;
-      const y = segNext.isHorizontal() ? segNext.end.x : segNext.end.y;
+      let x;
+      let y;
+      if (segi.isHorizontal()) {
+        x = segi.start.x;
+        y = segNext.end.y;
+      } else {
+        y = segi.start.y;
+        x = segNext.end.x;
+      }
+      // const x = segi.isHorizontal() ? segi.start.x : segi.start.y;
+      // const y = segNext.isHorizontal() ? segNext.end.x : segNext.end.y;
       const diagonallyP = new Point(x, y);
       if (!this.outside(diagonallyP)) {
         const minX = segP.x < diagonallyP.x ? segP.x : diagonallyP.x;

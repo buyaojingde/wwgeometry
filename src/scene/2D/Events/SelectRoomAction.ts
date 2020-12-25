@@ -1,6 +1,7 @@
 import GraphicsTool from '../../../scene/2D/Utils/GraphicsTool';
 import Room from '../../../scene/Model/Home/Room';
 import LianBoTest from '../../../utils/LianBoTest';
+import Constant from '../../../utils/Math/contanst/constant';
 import Box from '../../../utils/Math/geometry/Box';
 import { reaction } from 'mobx';
 import Model2DActive from '../../../store/Model2DActive';
@@ -19,6 +20,8 @@ export default class SelectRoomAction extends BaseEvent {
     this._scene2D = scene2D;
     this._activeLayer = new Container();
     this._scene2D.getStage().addChild(this._activeLayer);
+    this._grp = new PIXI.Graphics();
+    this._activeLayer.addChild(this._grp);
     reaction(
       () => {
         return Model2DActive.selection;
@@ -55,6 +58,23 @@ export default class SelectRoomAction extends BaseEvent {
   private onStart() {
     // this.room.relStructures.forEach((st) => st.setEdit(true));
     // this.drawOffsetRoom();
+    this.drawSeg();
+  }
+
+  private drawSeg() {
+    const sts = this.room.relStructures;
+    for (const st of sts) {
+      for (const grpElement of st.roomRels) {
+        if (grpElement.room !== this.room) continue;
+        const segs = grpElement.segs;
+        for (const seg of segs) {
+          GraphicsTool.drawLine(this._grp, seg.start, seg.end, {
+            color: Constant.colorRandom(),
+            lineWidth: 3,
+          });
+        }
+      }
+    }
   }
 
   private scale = 10000;
@@ -66,8 +86,8 @@ export default class SelectRoomAction extends BaseEvent {
   private drawBox() {
     if (!this._grp) {
       this._grp = new PIXI.Graphics();
+      this._activeLayer.addChild(this._grp);
     }
-    this._activeLayer.addChild(this._grp);
     const poly = this.room.polygon;
     if (!poly.similarBox()) {
       console.log('不可切房间！！！');
@@ -90,7 +110,6 @@ export default class SelectRoomAction extends BaseEvent {
   private onEnd() {
     if (!this._grp) return;
     this._grp.clear();
-    this._activeLayer.removeChildren();
-    this.room.relStructures.forEach((st) => st.setEdit(false));
+    this.room && this.room.relStructures.forEach((st) => st.setEdit(false));
   }
 }

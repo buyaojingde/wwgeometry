@@ -155,7 +155,13 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testSweep();
+    this.testCutBox();
+  }
+
+  testCutBox() {
+    const column = this.lvl.findByRvtId('2037034');
+    const boxes = column.polygon.cutBox();
+    console.log(boxes);
   }
 
   calcBox(minP: Point, width: number, height: number) {
@@ -284,6 +290,11 @@ class LianBoTest {
         console.log(ps);
       }
     }
+  }
+
+  testRoomRel() {
+    const room = this.lvl.findByRvtId('2039946');
+    this.lvl.preprocessRoom(room);
   }
 
   testSplayTree() {
@@ -445,13 +456,12 @@ class LianBoTest {
     if (startWalls.length > 0) startWall = startWalls[0];
     if (!startWall) return;
     const faces = startWall.wallFaces();
-    startWall.roomRelSegs;
     let outFace: Segment;
-    for (const face of faces) {
-      if (!startWall.roomRelSegs.some((item) => item.collinear(face))) {
-        outFace = face;
-      }
-    }
+    // for (const face of faces) {
+    //   if (!startWall.roomRels.some((item) => item.collinear(face))) {
+    //     outFace = face;
+    //   }
+    // }
   }
 
   testClipperOffset() {

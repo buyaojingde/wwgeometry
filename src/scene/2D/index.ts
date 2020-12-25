@@ -673,7 +673,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
       this.home = await HomeConvert.adapt(buildData);
       // 计算墙的中线
       this.home.curLevel.preprocess();
-      this.home.curLevel.preprocessRoom();
+      this.home.curLevel.preprocessRooms();
       this.homePlan.render();
       this.resetView();
       this.afterLoadHome();
@@ -688,7 +688,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
       this.home = await HomeTypeData.getHome(from, path);
       // 计算墙的中线
       this.home.curLevel.preprocess();
-      this.home.curLevel.preprocessRoom();
+      this.home.curLevel.preprocessRooms();
       this.homePlan.render();
       this.resetView();
       this.afterLoadHome();

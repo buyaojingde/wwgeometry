@@ -48,7 +48,7 @@ export default class Segment {
    * @Description: 方向
    */
   public get dir(): Vector2 {
-    return new Vector2(this.dy, this.dx);
+    return new Vector2(this.dx, this.dy);
   }
 
   public get negativeDir(): Vector2 {

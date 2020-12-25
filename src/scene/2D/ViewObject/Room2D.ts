@@ -45,11 +45,11 @@ export default class Room2D extends ViewObject {
     const fillColor = this.active
       ? Constant.colorMap.BLUE
       : Constant.colorMap.GRAY;
-    this._grp.beginFill(fillColor, 0.1);
+    this._grp.beginFill(fillColor, 0.2);
     GraphicsTool.drawPolygon(this._grp, this.room.boundary);
     this._grp.endFill();
     this._grp.lineStyle(3, Constant.colorMap.GREEN, 1);
-    GraphicsTool.drawPolygon(this._grp, this.room.boundary);
+    // GraphicsTool.drawPolygon(this._grp, this.room.boundary);
     if (!this._roomText) {
       this._roomText = new PIXI.Text('');
       this._roomText.style.fontSize = 9;

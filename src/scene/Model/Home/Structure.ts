@@ -23,16 +23,28 @@ export const StType = {
   Window: 'OST_Windows',
   Floor: 'OST_Floors',
 };
+class RelRoom {
+  room!: Room;
+  segs!: Segment[];
+  public constructor(r: Room, segs: Segment[]) {
+    this.room = r;
+    this.segs = segs;
+  }
+}
 
 export default class Structure
   extends ObjectIndex
   implements IBuildable, IDataObject {
-  get roomRelSegs(): Segment[] {
-    return this._roomRelSegs;
+  public addRoomRel(r: Room, segs: Segment[]) {
+    const item = new RelRoom(r, segs);
+    this.roomRels.push(item);
+  }
+  get roomRels(): RelRoom[] {
+    return this._roomRels;
   }
 
-  set roomRelSegs(value: Segment[]) {
-    this._roomRelSegs = value;
+  set roomRels(value: RelRoom[]) {
+    this._roomRels = value;
   }
   get level(): Level {
     return this._level;
@@ -294,7 +306,7 @@ export default class Structure
 
   private _level!: Level;
 
-  private _roomRelSegs!: Segment[];
+  private _roomRels: RelRoom[] = [];
 
   public outFace(sts: any[]): Segment[] {
     const diffSt = (plg: Polygon, plg2: Polygon): Segment[][] => {

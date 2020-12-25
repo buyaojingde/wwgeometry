@@ -1,5 +1,6 @@
 import ConfigStructure from '../../../utils/ConfigStructure';
 import Box from '../../../utils/Math/geometry/Box';
+import Segment from '../../../utils/Math/geometry/Segment';
 import Quadtree from '../../../utils/Math/math/Quadtree';
 import IBuildable from '../BaseInterface/IBuildable';
 import ObjectNamed from '../BaseInterface/ObjectNamed';
@@ -89,34 +90,40 @@ export default class Level extends ObjectNamed implements IBuildable {
    * @date 2020-11-20 17:37:17
    * @Description: 处理房间和构建的关系
    */
-  public preprocessRoom(): void {
+  public preprocessRooms(): void {
     for (const room of this.rooms) {
-      const others = this._quadTree.retrieve(room.quadData).filter((item) => {
-        return item.data instanceof Structure;
-      });
-      const boxs = room.polygon.cutBox();
-      const res: any[] = [];
-      for (const box of boxs) {
-        for (const other of others) {
-          let otherBoxs: Box[] = [];
-          if (other.data.stType === StType.Column) {
-            otherBoxs = other.data.polygon.cutBox();
-          } else {
-            otherBoxs = [other.data.box];
-          }
-          for (const otherB of otherBoxs) {
-            const result = box.outsideTouch(otherB); //TODO:一些柱不是规则的box，所以要想取得柱的关系先分解成Box
-            if (result && result.length > 0) {
-              res.push(...result);
-              room.addStructure(other.data);
-            }
-          }
-          other.data.roomRelSegs = res.map((item) => item.seg);
-        }
-      }
+      this.preprocessRoom(room);
     }
   }
 
+  public preprocessRoom(room: Room) {
+    const others = this._quadTree.retrieve(room.quadData).filter((item) => {
+      return item.data instanceof Structure;
+    });
+    const boxes = room.polygon.cutBox();
+    const res: { seg: Segment; index: number }[] = [];
+    for (const box of boxes) {
+      for (const other of others) {
+        let otherBoxes: Box[] = [];
+        if (other.data.stType === StType.Column) {
+          otherBoxes = other.data.polygon.cutBox();
+        } else {
+          otherBoxes = [other.data.box];
+        }
+        for (const otherB of otherBoxes) {
+          const result = box.outsideTouch(otherB); //TODO:一些柱不是规则的box，所以要想取得柱的关系先分解成Box
+          if (result && result.length > 0) {
+            res.push(...result);
+            room.addStructure(other.data);
+          }
+        }
+        other.data.addRoomRel(
+          room,
+          res.map((item) => item.seg)
+        );
+      }
+    }
+  }
   /**
    * @author lianbo
    * @date 2020-11-13 16:25:46
