@@ -152,4 +152,18 @@ export default class GeometryTool {
     const b3 = GeometryTool.isLeftSign(p1, p1, p3);
     return b2 * b3 >= 0;
   }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-25 17:48:02
+   * @Description: 三个点按顺序，以p1p2 p1p2线段的对角点
+   *
+   *            *p0           x?
+   *
+   *
+   *            *p1           *p2
+   */
+  public static diagonal(p0: any, p1: any, p2: any): any {
+    return { x: p2.x + p0.x - p1.x, y: p2.y + p0.y - p1.y };
+  }
 }

@@ -33,6 +33,9 @@ class Model2DActive {
   @observable
   public editAxisNet = false;
 
+  @observable
+  public editGuidelines = false;
+
   constructor() {}
 
   @action

@@ -9,6 +9,7 @@ import HomeConvert from '../../utils/HomeConvert';
 import Constant from '../../utils/Math/contanst/constant';
 import Box from '../../utils/Math/geometry/Box';
 import Point from '../../utils/Math/geometry/Point';
+import Segment from '../../utils/Math/geometry/Segment';
 import MathUtils from '../../utils/Math/math/MathUtils';
 import Quadtree from '../../utils/Math/math/Quadtree';
 import { Bind, Throttle } from 'lodash-decorators';
@@ -41,6 +42,7 @@ import Graphics = PIXI.Graphics;
 import WebGLRenderer = PIXI.Renderer;
 import ObservablePoint = PIXI.ObservablePoint;
 import Stats from 'stats.js';
+import _ from 'lodash';
 
 export interface IDOMRect {
   width: number;
@@ -663,6 +665,13 @@ export default class Scene2D extends SceneBase implements IScene2D {
     const offset = pointToVector(pointCenter).subtract(pointToVector(pointG));
 
     this.position.set(this.position.x + offset.x, this.position.y + offset.y);
+  }
+
+  public retrieveSegs(p: Point): Segment[] {
+    const pRect = { x: p.x, y: p.y, width: 0, height: 0 };
+    const nearby = this.home.curLevel.quadTree.retrieve(pRect);
+    const segs = nearby.map((item) => item.data.polygon.edges);
+    return _.flatten(segs);
   }
 
   /**

@@ -13,15 +13,17 @@
             @change="syncSt"
             v-model="vm.structureVec3.x"
             type="number"
+            style="width:200px"
           />
           y:
           <el-input
             @change="syncSt"
             v-model="vm.structureVec3.y"
             type="number"
+            style="width:200px"
           />
           radians:
-          <el-input @change="syncSt" v-model="vm.radians" type="number" />
+          <el-input @change="syncSt" v-model="vm.radians" type="number" style="width:200px" />
         </div>
         <el-button @click="changeV"> submit </el-button>
         <el-button @click="reRender"> render </el-button>

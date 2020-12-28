@@ -92,9 +92,12 @@ export default class PickupController extends BaseController {
 
       const object = this.getObject(x, y);
       this.pickUpIn2D(object);
+      if (!object) {
+        this.showTapPos(event);
+      }
     });
 
-    this.on('tap', this.showTapPos.bind(this));
+    // this.on('tap', this.showTapPos.bind(this));
 
     // @ts-ignore
     this.on('dblclick', (event) => {

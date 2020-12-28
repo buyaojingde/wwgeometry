@@ -1,5 +1,6 @@
 import GraphicsTool from '../../../scene/2D/Utils/GraphicsTool';
 import Room from '../../../scene/Model/Home/Room';
+import ConfigStructure from '../../../utils/ConfigStructure';
 import LianBoTest from '../../../utils/LianBoTest';
 import Constant from '../../../utils/Math/contanst/constant';
 import Box from '../../../utils/Math/geometry/Box';
@@ -35,6 +36,9 @@ export default class SelectRoomAction extends BaseEvent {
         }
         this.enable = enable;
         if (this.enable) {
+          const position = this.room.position;
+          const geoPos = ConfigStructure.computeGeo(position);
+          Model2DActive.setStructureVec(geoPos);
           this.onStart();
         } else {
           this.onEnd();

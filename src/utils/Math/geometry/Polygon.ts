@@ -456,19 +456,11 @@ export default class Polygon {
       const segi = this.edges[i]; // 边
       const segNext = this.edges[next]; // 下一条边
       const segP = this.vertices[i]; // 两条边夹的点
-      let x;
-      let y;
-      if (segi.isHorizontal()) {
-        x = segi.start.x;
-        y = segNext.end.y;
-      } else {
-        y = segi.start.y;
-        x = segNext.end.x;
-      }
-      // const x = segi.isHorizontal() ? segi.start.x : segi.start.y;
-      // const y = segNext.isHorizontal() ? segNext.end.x : segNext.end.y;
-      const diagonallyP = new Point(x, y);
-      if (!this.outside(diagonallyP)) {
+      const diagonally = GeometryTool.diagonal(segi.start, segP, segNext.end);
+      const diagonallyP = new Point(diagonally.x, diagonally.y);
+      const newSeg = new Segment(segi.start, diagonallyP);
+      const newSeg1 = new Segment(segNext.end, diagonallyP);
+      if (this.insideSeg(newSeg) && this.insideSeg(newSeg1)) {
         const minX = segP.x < diagonallyP.x ? segP.x : diagonallyP.x;
         const maxX = segP.x < diagonallyP.x ? diagonallyP.x : segP.x;
         const minY = segP.y < diagonallyP.y ? segP.y : diagonallyP.y;
@@ -637,10 +629,28 @@ export default class Polygon {
   /**
    * @author lianbo
    * @date 2020-11-26 16:45:18
-   * @Description: 线段在多边形内，当且仅当线段中点在多边形内，且不与边相交的时候，return true
+   * @Description: 线段在多边形内，包括边界，两个点都在多边形内，且线段被多边形分割成多段后的中点还是在多半形内
    */
   public insideSeg(seg: Segment): boolean {
-    return this.inside(seg.center) && !this.intersectionSeg(seg);
+    if (this.outside(seg.start) || this.outside(seg.end)) return false;
+    for (const edge of this.edges) {
+      if (seg.isIntersect(edge)) return false;
+    }
+    const ps = this.intersectionSeg(seg);
+    let i = 0;
+    while (i < ps.length - 1) {
+      const prev = ps[i];
+      const next = ps[i + 1];
+      i++;
+      const center = new Point(
+        (prev.x + next.x) * 0.5,
+        (prev.y + next.y) * 0.5
+      );
+      if (this.outside(center)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -648,9 +658,9 @@ export default class Polygon {
    * @date 2020-12-08 17:31:29
    * @Description: 与线段相交，不包括端点
    */
-  public intersectionSeg(seg: Segment): boolean {
-    return this.edges.some((item) => item.intersect(seg));
-  }
+  // public intersectionSeg(seg: Segment): boolean {
+  //   return this.edges.some((item) => item.intersect(seg));
+  // }
 
   /**
    * @author lianbo
@@ -667,5 +677,19 @@ export default class Polygon {
       polygonMat.applyInverse(item)
     );
     return new Polygon(rotateVs);
+  }
+
+  public intersectionSeg(seg: Segment): Point[] {
+    const ps: Point[] = [];
+    for (const edge of this.edges) {
+      const intersectP = seg.intersect(edge, true);
+      if (intersectP) ps.push(intersectP);
+    }
+    ps.sort((a, b) => {
+      const offsetX = a.x - b.x;
+      if (offsetX !== 0) return offsetX;
+      return a.y - b.y;
+    });
+    return ps;
   }
 }

@@ -26,6 +26,15 @@ class RoomWall {
 }
 
 export default class Room extends ObjectNamed {
+  get position(): Point {
+    return this.polygon.box.center;
+  }
+  set polygon(value: Polygon) {
+    this._polygon = value;
+  }
+  get polygon() {
+    return this._polygon;
+  }
   get level(): Level {
     return this._level;
   }
@@ -60,8 +69,7 @@ export default class Room extends ObjectNamed {
   constructor(roomBoundary: Point[]) {
     super();
     this.boundary = roomBoundary;
-    const polygon = new Polygon(this.boundary);
-    const edges = polygon.edges;
+    const edges = this._polygon.edges;
     for (const edge of edges) {
       this.addWall(new RoomWall([], edge));
     }
@@ -73,6 +81,7 @@ export default class Room extends ObjectNamed {
   private _active = true;
 
   private _rvtName = '';
+  private _polygon!: Polygon;
 
   get visible(): boolean {
     return this._visible;
@@ -89,6 +98,7 @@ export default class Room extends ObjectNamed {
 
   set boundary(value: Point[]) {
     this._boundary = value;
+    this._polygon = new Polygon(this._boundary);
   }
 
   public destroy(emitLayer = true) {
@@ -101,9 +111,6 @@ export default class Room extends ObjectNamed {
       }
       this.removeAllListeners();
     }
-  }
-  public get polygon(): Polygon {
-    return new Polygon(this.boundary);
   }
 
   public get quadData(): any {
