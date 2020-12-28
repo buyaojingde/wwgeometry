@@ -43,7 +43,7 @@ export default class GraphicsTool {
     graphicsInst: Graphics,
     point1: any,
     point2: any,
-    options?: any
+    options: any = {}
   ) {
     const lineWidth = options.lineWidth ? options.lineWidth : 1;
     const color = options.color ? options.color : 0x0000000;
@@ -76,12 +76,17 @@ export default class GraphicsTool {
     graphicsInst: Graphics,
     point1: Point,
     point2: Point,
-    gap: number
+    gap: number,
+    options: any = {}
   ): void {
+    const lineWidth = options.lineWidth ? options.lineWidth : 1;
+    const color = options.color ? options.color : 0x0000000;
+    const alpha = options.alpha ? options.alpha : 1;
     let v2d1: Vector2;
     let v2d2: Vector2;
     const distance: number = point1.distanceToPoint(point2);
     let temp = 0;
+    graphicsInst.lineStyle(lineWidth, color, alpha);
     while (temp < distance) {
       v2d1 = GeometryTool.interpolate(point2, point1, temp / distance);
       temp += gap;

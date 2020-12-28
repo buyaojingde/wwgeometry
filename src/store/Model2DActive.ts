@@ -36,7 +36,17 @@ class Model2DActive {
   @observable
   public editGuidelines = false;
 
+  @observable
+  public isEdit = false;
+
   constructor() {}
+
+  @action
+  public setGuidelines(val: boolean) {
+    this.reset();
+    this.clearAll();
+    this.editGuidelines = val;
+  }
 
   @action
   public setEditEdgeState(val: any) {
@@ -90,6 +100,7 @@ class Model2DActive {
   public clearAll() {
     this.selection = null;
     this.editVertexState = false;
+    this.editEdgeState = false;
   }
 
   @action

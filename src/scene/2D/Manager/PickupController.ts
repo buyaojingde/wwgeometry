@@ -18,7 +18,6 @@ import Point = PIXI.Point;
 declare let navigator: any;
 
 export default class PickupController extends BaseController {
-  public isEdit = false;
   protected scene: any;
   private interactionManager: InteractionManager;
   private renderDom: any;
@@ -84,7 +83,7 @@ export default class PickupController extends BaseController {
 
     // @ts-ignore
     this.on('tap', (event) => {
-      if (this.isEdit) {
+      if (Model2DActive.isEdit) {
         return;
       }
       const { center } = event;
@@ -101,7 +100,7 @@ export default class PickupController extends BaseController {
 
     // @ts-ignore
     this.on('dblclick', (event) => {
-      if (this.isEdit) {
+      if (Model2DActive.isEdit) {
         return;
       }
       const { pageX: x, pageY: y } = event;

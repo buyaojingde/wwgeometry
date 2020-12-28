@@ -26,6 +26,7 @@ import SceneBase from '../Base/SceneBase';
 import { IScene2D } from '../Interface/IScene';
 import { drawGrid } from '../Math/GraphicsUtils';
 import BaseEvent2D from './Events/Base';
+import Guidelines from './Events/Guidelines';
 import SelectStructureAction from './Events/SelectStructureAction';
 import HomePlan from './Layer/HomePlan';
 // import { LayerOrder, layerOrderGroups } from "./Layer/LayerOrder";
@@ -78,6 +79,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
   private _assistContanier: PIXI.Container = new PIXI.Container();
   private _coordinate!: PIXI.Container;
   private _axisGroup!: PIXI.Container;
+  private _guidelines!: PIXI.Graphics;
 
   @computed
   public get scale() {
@@ -667,7 +669,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.position.set(this.position.x + offset.x, this.position.y + offset.y);
   }
 
-  public retrieveSegs(p: Point): Segment[] {
+  public retrieveSegs(p: any): Segment[] {
     const pRect = { x: p.x, y: p.y, width: 0, height: 0 };
     const nearby = this.home.curLevel.quadTree.retrieve(pRect);
     const segs = nearby.map((item) => item.data.polygon.edges);
@@ -737,6 +739,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     new EditVerticesAction(this);
     new SubjectAction(this);
     new EditEdgeAction(this);
+    new Guidelines(this);
     //endregion
   }
 
@@ -802,5 +805,17 @@ export default class Scene2D extends SceneBase implements IScene2D {
         this._axisGroup.addChild(container);
       }
     }
+  }
+
+  public drawGuidelines(start: Point, end: Point) {
+    if (!this._guidelines) {
+      this._guidelines = new PIXI.Graphics();
+      // this._guidelines.zIndex = 10;
+      this.getStage().addChild(this._guidelines);
+    }
+    this._guidelines.clear();
+    GraphicsTool.drawDashedLine(this._guidelines, start, end, 5, {
+      color: 0xff0000,
+    });
   }
 }

@@ -1,6 +1,7 @@
 import Model2DActive from '../store/Model2DActive';
 import Matrix3x3 from './Math/geometry/Matrix3x3';
 import Point from './Math/geometry/Point';
+import Segment from './Math/geometry/Segment';
 import MathUtils from './Math/math/MathUtils';
 
 class ConfigStructure {
@@ -11,6 +12,8 @@ class ConfigStructure {
   minCanvasV3!: { x: number; y: number };
   debugger = false;
   public accuracy = 0.1;
+
+  public guidelines: Segment[] = [];
 
   /**
    * @author lianbo

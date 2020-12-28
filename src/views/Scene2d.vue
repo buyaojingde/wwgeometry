@@ -199,8 +199,8 @@ export default observer({
       Model2DActive.setEditEdgeState(false);
     },
     testClick() {
-      Model2DActive.setSubjectState(!Model2DActive.subjectState);
-      this.testText = !Model2DActive.subjectState ? 'test' : 'endTest';
+      Model2DActive.setGuidelines(!Model2DActive.editGuidelines);
+      this.testText = !Model2DActive.editGuidelines ? 'test' : 'endTest';
     },
     syncSt() {
       if (Model2DActive.editEdgeState) {

@@ -46,7 +46,10 @@ export default class Structure2D extends ViewObject implements IViewObject {
 
   get changeColor() {
     return (
-      this.isHover && !this.strct.isMoving && !Model2DActive.editVertexState
+      this.isHover &&
+      !this.strct.isMoving &&
+      !Model2DActive.editVertexState &&
+      !Model2DActive.isEdit
     );
   }
 
