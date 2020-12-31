@@ -11,9 +11,12 @@ import Structure from './Structure';
  * @date 2020-12-25 14:55:23
  * @Description: 房间的墙，直观的墙，不是Structure里的墙，一般来说，一面墙就是一条线段
  */
-class RoomWall {
+class VirtualWall {
   public sts: Structure[];
   public wall: Segment;
+  public width = 10;
+  @observable
+  public visible = false;
   public constructor(sts: Structure[], seg: Segment) {
     this.sts = sts;
     this.wall = seg;
@@ -26,6 +29,9 @@ class RoomWall {
 }
 
 export default class Room extends ObjectNamed {
+  get virtualWalls(): VirtualWall[] {
+    return this._virtualWalls;
+  }
   get position(): Point {
     return this.polygon.box.center;
   }
@@ -71,7 +77,7 @@ export default class Room extends ObjectNamed {
     this.boundary = roomBoundary;
     const edges = this._polygon.edges;
     for (const edge of edges) {
-      this.addWall(new RoomWall([], edge));
+      this.addWall(new VirtualWall([], edge));
     }
   }
   private _topFaceGeo: any;
@@ -124,18 +130,18 @@ export default class Room extends ObjectNamed {
     };
   }
 
-  private _relStructures: RoomWall[] = [];
+  private _virtualWalls: VirtualWall[] = [];
 
-  public addWall(wall: RoomWall): boolean {
-    if (this._relStructures.includes(wall)) {
+  public addWall(wall: VirtualWall): boolean {
+    if (this._virtualWalls.includes(wall)) {
       return false;
     }
-    this._relStructures.push(wall);
+    this._virtualWalls.push(wall);
     return true;
   }
 
   public addStructure(edge: Segment, st: Structure) {
-    for (const wallData of this._relStructures) {
+    for (const wallData of this._virtualWalls) {
       if (wallData.wall.containSeg(edge)) {
         wallData.addSt(st);
       }
@@ -144,13 +150,22 @@ export default class Room extends ObjectNamed {
 
   public allSts(): Structure[] {
     const sts: Structure[] = [];
-    for (const relStructure of this._relStructures) {
+    for (const relStructure of this._virtualWalls) {
       for (const st of relStructure.sts) {
         if (sts.includes(st)) continue;
         sts.push(st);
       }
     }
     return sts;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-31 16:21:00
+   * @Description: 设置相应的墙的厚度
+   */
+  public setVirtualWallWidth(wall: VirtualWall, width: number): void {
+    wall.width = width;
   }
 
   private _level!: Level;

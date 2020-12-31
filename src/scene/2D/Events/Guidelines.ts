@@ -51,11 +51,13 @@ export default class Guidelines extends BaseEvent {
     super.initEvents();
     this.on('input.move', (event: MouseEvent) => this.handleMouseMove(event));
     this.on('tap', (event: any) => this.handleMouseClick(event));
+    this.on('input.end.right', (event: any) => this.cancel(event));
   }
 
   private onStart() {}
 
   private onEnd() {
+    this._grp.clear();
     Model2DActive.isEdit = false;
   }
 
@@ -97,7 +99,20 @@ export default class Guidelines extends BaseEvent {
       ConfigStructure.guidelines[0] = new Segment(this._startP, this._endP);
       this._grp.clear();
       this._scene.drawGuidelines(this._startP, this._endP);
+      this._startP = null;
       // Model2DActive.editGuidelines = false;
+    }
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-29 10:21:40
+   * @Description: 取消本次绘制
+   */
+  private cancel(event: any) {
+    if (this._startP) {
+      this._startP = null;
+      this._grp.clear();
     }
   }
 }

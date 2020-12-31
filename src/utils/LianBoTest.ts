@@ -155,7 +155,17 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testCutBox();
+    this.testStructureMove();
+  }
+
+  /**
+   * @author lianbo
+   * @date 2020-12-29 11:21:04
+   * @Description: 构建移动后房间跟随变化
+   */
+  testStructureMove() {
+    const room = this.lvl.findByRvtId('2039953');
+    const seg = ConfigStructure.guidelines[0];
   }
 
   testCutBox() {

@@ -40,7 +40,7 @@ export default class SelectStructureAction extends BaseEvent {
           const geoPos = ConfigStructure.computeGeo(position);
           Model2DActive.setStructureVec(geoPos);
           Model2DActive.editStructure = this.structure;
-          this.drawRoomEdge();
+          // this.drawRoomEdge();
           // LianBoTest.testStructures.push(this.structure);
           // const sts = this._scene2D.home.curLevel.quadTree
           //   .retrieve(this.structure.quadData)

@@ -49,7 +49,6 @@
         :props="defaultProps"
         highlight-current
         render-after-expand
-        default-expand-all
         show-checkbox
         @node-click="handleNodeClick"
         @check-change="handleCheck"

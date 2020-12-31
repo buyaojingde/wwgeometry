@@ -97,18 +97,21 @@ export default class Level extends ObjectNamed implements IBuildable {
   }
 
   public preprocessRoom(room: Room) {
-    const others = this._quadTree.retrieve(room.quadData).filter((item) => {
-      return item.data instanceof Structure;
-    });
+    const others = this._quadTree
+      .retrieve(room.quadData)
+      .filter((item) => {
+        return item.data instanceof Structure;
+      })
+      .map((item) => item.data);
     const boxes = room.polygon.cutBox();
     for (const box of boxes) {
       for (const stData of others) {
         const res: Segment[] = [];
         let otherBoxes: Box[] = [];
-        if (stData.data.stType === StType.Column) {
-          otherBoxes = stData.data.polygon.cutBox();
+        if (stData.stType === StType.Column) {
+          otherBoxes = stData.polygon.cutBox();
         } else {
-          otherBoxes = [stData.data.box];
+          otherBoxes = [stData.box];
         }
         for (const otherB of otherBoxes) {
           const result: { seg: Segment; index: number }[] = box.outsideTouch(
@@ -117,11 +120,11 @@ export default class Level extends ObjectNamed implements IBuildable {
           if (result.length > 0) {
             const tangentEdge: Segment = result[0].seg;
             res.push(tangentEdge);
-            room.addStructure(tangentEdge, stData.data);
+            room.addStructure(tangentEdge, stData);
           }
         }
         if (res.length > 0) {
-          stData.data.addRoomRel(room, res);
+          stData.addRoomRel(room, res);
         }
       }
     }

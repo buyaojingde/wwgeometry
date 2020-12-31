@@ -48,7 +48,8 @@ export default class GraphicsTool {
     const lineWidth = options.lineWidth ? options.lineWidth : 1;
     const color = options.color ? options.color : 0x0000000;
     const alpha = options.alpha ? options.alpha : 1;
-    graphicsInst.lineStyle(lineWidth, color, alpha);
+    const alignment = options.alignment ? options.alignment : 0.5;
+    graphicsInst.lineStyle(lineWidth, color, alpha, alignment);
     graphicsInst.beginFill(color);
     graphicsInst.moveTo(point1.x, point1.y);
     graphicsInst.lineTo(point2.x, point2.y);

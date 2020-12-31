@@ -10,6 +10,7 @@ export default class StructureLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Structure) {
         const structure2D: Structure2D = new Structure2D(dataObj);
+        structure2D.zIndex = 0;
         const disposeF = (dataObj as Structure).on('destroyLayerData', () => {
           this.remove(dataObj);
         });

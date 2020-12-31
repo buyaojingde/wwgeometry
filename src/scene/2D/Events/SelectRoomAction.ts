@@ -62,7 +62,12 @@ export default class SelectRoomAction extends BaseEvent {
   private onStart() {
     // this.room.relStructures.forEach((st) => st.setEdit(true));
     // this.drawOffsetRoom();
-    this.drawSeg();
+    // this.drawSeg();
+    this.visitableWall(true);
+  }
+
+  private visitableWall(b: boolean) {
+    this.room.virtualWalls.forEach((item) => (item.visible = b));
   }
 
   private drawSeg() {
@@ -110,6 +115,7 @@ export default class SelectRoomAction extends BaseEvent {
   private onEnd() {
     if (!this._grp) return;
     this._grp.clear();
+    this.visitableWall(false);
     // this.room && this.room.allSts().forEach((st) => st.setEdit(false));
   }
 }

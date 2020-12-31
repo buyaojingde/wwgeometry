@@ -8,6 +8,13 @@ import ViewObject from './ViewObject';
 export default class Room2D extends ViewObject {
   constructor(room: Room) {
     super(room);
+    let i = 0;
+    while (i < this.room.virtualWalls.length) {
+      const wallGrp = new PIXI.Graphics();
+      this.addChild(wallGrp);
+      this._virtualWalls.push(wallGrp);
+      i++;
+    }
     this.visible = room.visible;
     // this.parentGroup = layerOrderGroups[LayerOrder.Room];
     this.customRender();
@@ -17,7 +24,19 @@ export default class Room2D extends ViewObject {
         this.customRender();
       }
     );
+    reaction(
+      () => this.wallVisible,
+      () => {
+        this.renderVirtualWall();
+      }
+    );
   }
+
+  @computed
+  public get wallVisible(): boolean[] {
+    return this.room.virtualWalls.map((item) => item.visible);
+  }
+
   @computed
   public get active(): boolean {
     return this._data === Model2DActive.selection;
@@ -33,6 +52,7 @@ export default class Room2D extends ViewObject {
   private _grp!: PIXI.Graphics;
   private _roomText!: PIXI.Text;
   private _active = false;
+  private _virtualWalls: PIXI.Graphics[] = [];
 
   public customRender() {
     this.visible = this.isVis;
@@ -62,6 +82,24 @@ export default class Room2D extends ViewObject {
     this._roomText.visible = true;
     this._roomText.text = `${this.room.rvtName}\n${this.room.rvtId}`;
     this._roomText.position.set(roomCentroid.x, roomCentroid.y);
+    this.drawVirtualWall();
+  }
+
+  private drawVirtualWall() {
+    let i = 0;
+    while (i < this._virtualWalls.length) {
+      const grp = this._virtualWalls[i];
+      grp.visible = this.wallVisible[i];
+      const wall = this.room.virtualWalls[i];
+      const line = wall.wall;
+      GraphicsTool.drawLine(grp, line.start, line.end, {
+        lineWidth: wall.width,
+        color: 0xff0000,
+        alignment: 1,
+      });
+      // grp.on('');
+      i++;
+    }
   }
 
   private drawEdge() {
@@ -75,5 +113,11 @@ export default class Room2D extends ViewObject {
 
   public destroy() {
     super.destroy();
+  }
+
+  private renderVirtualWall() {
+    for (let i = 0; i < this._virtualWalls.length; i++) {
+      this._virtualWalls[i].visible = this.wallVisible[i];
+    }
   }
 }
