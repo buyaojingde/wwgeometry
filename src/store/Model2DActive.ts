@@ -38,6 +38,8 @@ class Model2DActive {
 
   @observable
   public isEdit = false;
+  @observable
+  public moveItem: any;
 
   constructor() {}
 

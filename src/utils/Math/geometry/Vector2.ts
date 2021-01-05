@@ -108,7 +108,8 @@ export default class Vector2 {
   }
 
   public invert() {
-    return new Vector2(-this.x, -this.y);
+    this.x = -this.x;
+    this.y = -this.y;
   }
 
   public normalized(): this {

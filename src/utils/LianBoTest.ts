@@ -155,7 +155,76 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testStructureMove();
+    this.testGraphicsInteractive();
+  }
+
+  testGraphicsInteractive() {
+    this.gr = new PIXI.Graphics();
+    this.gr.buttonMode = true;
+
+    // var txture = app.renderer.generateTexture(gr);
+    // var circle = new PIXI.Sprite(txture);
+    // circle.anchor.set(0.5);
+    this.gr.interactive = true;
+    this.gr.on('mousedown', (event: any) => {
+      console.log('zzzzzzzzzz');
+    });
+    this.gr.on('mouseover', (event: any) => {
+      console.log('xxxxxxxxx');
+    });
+    this.gr
+      .on('pointerdown', (event: any) => this.onDragStart(event))
+      .on('pointerup', (event: any) => this.onDragEnd())
+      .on('pointerupoutside', (event: any) => this.onDragEnd())
+      .on('pointermove', (event: any) => this.onDragMove());
+    const start = new Point(0, 0);
+    const end = new Point(100, 0);
+    const end1 = new Point(100, 10);
+    const start1 = new Point(0, 10);
+    const polygon = new Polygon([start, end, end1, start1]);
+    GraphicsTool.drawPolygon(this.gr, polygon.vertices, {
+      lineWidth: 10,
+      color: 0xff0000,
+      alignment: 1,
+    });
+    // this.gr.hitArea = {
+    //   contains: (x: any, y: any) => {
+    //     return polygon.containR(new Point(x, y));
+    //   },
+    // };
+    this.container.addChild(this.gr);
+    this.renderTest();
+  }
+  public gr: any;
+  public offset: any = {};
+  public data: any;
+  public alpha: any;
+  public dragging: any;
+  onDragStart(event: any) {
+    // store a reference to the data
+    // the reason for this is because of multitouch
+    // we want to track the movement of this particular touch
+    this.data = event.data;
+    const newPosition = this.data.getLocalPosition(this.gr.parent);
+    this.offset.x = newPosition.x - this.gr.x;
+    this.offset.y = newPosition.y - this.gr.y;
+    this.alpha = 0.5;
+    this.dragging = true;
+  }
+
+  onDragEnd() {
+    this.alpha = 1;
+    this.dragging = false;
+    // set the interaction data to null
+    this.data = null;
+  }
+
+  onDragMove() {
+    if (this.dragging) {
+      const newPosition = this.data.getLocalPosition(this.gr.parent);
+      this.gr.x = newPosition.x - this.offset.x;
+      this.gr.y = newPosition.y - this.offset.y;
+    }
   }
 
   /**

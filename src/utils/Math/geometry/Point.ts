@@ -1,4 +1,5 @@
 import MathUtils from '../math/MathUtils';
+import Polygon from './Polygon';
 import Vector2 from './Vector2';
 
 /**
@@ -106,4 +107,10 @@ export default class Point {
     }
     return this.x < p.x;
   }
+  /**
+   * @author lianbo
+   * @date 2021-01-05 17:08:53
+   * @Description: 点膨胀成一个圆
+   */
+  // public offset(dis: number): Polygon {}
 }

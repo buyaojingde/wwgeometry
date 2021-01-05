@@ -12,6 +12,7 @@ export default class Room2D extends ViewObject {
     while (i < this.room.virtualWalls.length) {
       const wallGrp = new PIXI.Graphics();
       this.addChild(wallGrp);
+      wallGrp.interactive = true;
       this._virtualWalls.push(wallGrp);
       i++;
     }
@@ -66,7 +67,10 @@ export default class Room2D extends ViewObject {
       ? Constant.colorMap.BLUE
       : Constant.colorMap.GRAY;
     this._grp.beginFill(fillColor, 0.2);
-    GraphicsTool.drawPolygon(this._grp, this.room.boundary);
+    GraphicsTool.drawPolygon(this._grp, this.room.boundary, {
+      color: fillColor,
+      alpha: 0.2,
+    });
     this._grp.endFill();
     this._grp.lineStyle(3, Constant.colorMap.GREEN, 1);
     // GraphicsTool.drawPolygon(this._grp, this.room.boundary);

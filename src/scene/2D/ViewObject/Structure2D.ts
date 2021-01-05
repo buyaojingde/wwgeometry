@@ -23,8 +23,8 @@ export default class Structure2D extends ViewObject implements IViewObject {
         () => this.customRender()
       ),
       this._data.once('destroy', this.destroy.bind(this)),
-      this._data.on('render', () => this.customRender()),
-      this._data.on('drawMid', this.drawMid.bind(this))
+      this._data.on('render', () => this.customRender())
+      // this._data.on('drawMid', this.drawMid.bind(this))
     );
     this.customRender();
   }

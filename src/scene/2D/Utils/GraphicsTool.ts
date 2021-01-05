@@ -165,7 +165,19 @@ export default class GraphicsTool {
   //   graphics.endFill();
   // }
 
-  public static drawPolygon(graphicsInst: Graphics, points: any[], len = 1) {
+  public static drawPolygon(
+    graphicsInst: Graphics,
+    points: any[],
+    options: any = {}
+  ) {
+    const lineWidth = options.lineWidth ? options.lineWidth : 1;
+    const color = options.color ? options.color : 0x0000000;
+    const alpha = options.alpha ? options.alpha : 1;
+    const fill = options.fill ? options.fill : true;
+    graphicsInst.lineStyle(lineWidth, color, alpha);
+    if (fill) {
+      graphicsInst.beginFill(color, alpha);
+    }
     const vec = points;
 
     if (!vec.length) {
@@ -174,13 +186,16 @@ export default class GraphicsTool {
 
     vec.forEach((point, key) => {
       if (key === 0) {
-        graphicsInst.moveTo(point.x * len, point.y * len);
+        graphicsInst.moveTo(point.x, point.y);
       } else {
-        graphicsInst.lineTo(point.x * len, point.y * len);
+        graphicsInst.lineTo(point.x, point.y);
       }
     });
 
-    graphicsInst.lineTo(vec[0].x * len, vec[0].y * len);
+    graphicsInst.lineTo(vec[0].x, vec[0].y);
+    if (fill) {
+      graphicsInst.endFill();
+    }
   }
 
   public static drawPolygonDash(

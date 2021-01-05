@@ -29,7 +29,7 @@ class HomeConvert {
   generateHome() {
     const home = new Home();
     this.calcZeroAndBound();
-    const structures = this.findColumn();
+    const structures = this.generateStructure();
     const lvl = new Level();
     lvl.initQuadTree();
     home.levels = [];
@@ -161,7 +161,7 @@ class HomeConvert {
     Model2DActive.subjectVec3.z = 0;
   }
 
-  findColumn(): Structure[] {
+  generateStructure(): Structure[] {
     const columns: Structure[] = [];
     for (const ele of this.elements) {
       if (

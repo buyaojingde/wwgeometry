@@ -27,6 +27,7 @@ import { IScene2D } from '../Interface/IScene';
 import { drawGrid } from '../Math/GraphicsUtils';
 import BaseEvent2D from './Events/Base';
 import Guidelines from './Events/Guidelines';
+import MoveAction from './Events/MoveAction';
 import SelectStructureAction from './Events/SelectStructureAction';
 import HomePlan from './Layer/HomePlan';
 // import { LayerOrder, layerOrderGroups } from "./Layer/LayerOrder";
@@ -740,6 +741,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     new SubjectAction(this);
     new EditEdgeAction(this);
     new Guidelines(this);
+    new MoveAction(this);
     //endregion
   }
 

@@ -10,7 +10,7 @@ export default class RoomLayer extends LayerBase {
     if (!!dataObj && !this.dataViewMap.has(dataObj)) {
       if (dataObj instanceof Room) {
         const room2D: Room2D = new Room2D(dataObj);
-        room2D.zIndex = 0;
+        room2D.zIndex = 1;
         const disposeF = (dataObj as Room).on('destroyLayerData', () => {
           this.remove(dataObj);
         });

@@ -4,6 +4,7 @@ import Box from './Box';
 import Line2 from './Line2';
 import Matrix3x3 from './Matrix3x3';
 import Point from './Point';
+import Polygon from './Polygon';
 import Vector2 from './Vector2';
 
 export default class Segment {
@@ -641,5 +642,27 @@ export default class Segment {
       return [this.start, this.end];
     }
     return [this.end, this.start];
+  }
+
+  public translate(dis: number): Segment {
+    const v = this.dir.ccwNormal.normalize.multiply(dis);
+    const start = this.start.translate(v);
+    const end = this.start.translate(v);
+    return new Segment(start, end);
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-05 16:57:15
+   * @Description: 线段膨胀成一个polygon
+   */
+  public offset(dis: number): Polygon {
+    const v = this.dir.ccwNormal.normalize.multiply(dis);
+    const start = this.start.translate(v);
+    const end = this.start.translate(v);
+    v.invert();
+    const start1 = this.start.translate(v);
+    const end1 = this.start.translate(v);
+    return new Polygon([start, end, end1, start1]);
   }
 }
