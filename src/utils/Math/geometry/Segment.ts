@@ -659,10 +659,10 @@ export default class Segment {
   public offset(dis: number): Polygon {
     const v = this.dir.ccwNormal.normalize.multiply(dis);
     const start = this.start.translate(v);
-    const end = this.start.translate(v);
+    const end = this.end.translate(v);
     v.invert();
     const start1 = this.start.translate(v);
-    const end1 = this.start.translate(v);
+    const end1 = this.end.translate(v);
     return new Polygon([start, end, end1, start1]);
   }
 }

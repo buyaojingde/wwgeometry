@@ -6,6 +6,7 @@ import Box from '../../../utils/Math/geometry/Box';
 import Point from '../../../utils/Math/geometry/Point';
 import Segment from '../../../utils/Math/geometry/Segment';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
+import MathUtils from '../../../utils/Math/math/MathUtils';
 import GeometryTool from '../../../utils/Math/tool/GeometryTool';
 import { Graphics } from 'pixi.js';
 
@@ -45,9 +46,8 @@ export default class GraphicsTool {
     point2: any,
     options: any = {}
   ) {
-    const lineWidth = options.lineWidth ? options.lineWidth : 1;
-    const color = options.color ? options.color : 0x0000000;
-    const alpha = options.alpha ? options.alpha : 1;
+    const { lineWidth, color, alpha } = GraphicsTool.extractOptions(options);
+
     const alignment = options.alignment ? options.alignment : 0.5;
     graphicsInst.lineStyle(lineWidth, color, alpha, alignment);
     graphicsInst.beginFill(color);
@@ -80,9 +80,8 @@ export default class GraphicsTool {
     gap: number,
     options: any = {}
   ): void {
-    const lineWidth = options.lineWidth ? options.lineWidth : 1;
-    const color = options.color ? options.color : 0x0000000;
-    const alpha = options.alpha ? options.alpha : 1;
+    const { lineWidth, color, alpha } = GraphicsTool.extractOptions(options);
+
     let v2d1: Vector2;
     let v2d2: Vector2;
     const distance: number = point1.distanceToPoint(point2);
@@ -166,9 +165,11 @@ export default class GraphicsTool {
   // }
 
   public static extractOptions(options: any = {}): any {
-    const lineWidth = options.lineWidth ? options.lineWidth : 1;
-    const color = options.color ? options.color : 0x0000000;
-    const alpha = options.alpha ? options.alpha : 1;
+    const lineWidth = MathUtils.isNum(options.lineWidth)
+      ? options.lineWidth
+      : 1;
+    const color = MathUtils.isNum(options.color) ? options.color : 0x0000000;
+    const alpha = MathUtils.isNum(options.alpha) ? options.alpha : 1;
     return { lineWidth, color, alpha };
   }
 
@@ -177,9 +178,7 @@ export default class GraphicsTool {
     points: any[],
     options: any = {}
   ) {
-    const lineWidth = options.lineWidth ? options.lineWidth : 1;
-    const color = options.color ? options.color : 0x0000000;
-    const alpha = options.alpha ? options.alpha : 1;
+    const { lineWidth, color, alpha } = GraphicsTool.extractOptions(options);
     const fill = options.fill ? options.fill : true;
     !fill && graphicsInst.lineStyle(lineWidth, color, alpha);
     if (fill) {

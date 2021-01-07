@@ -1,4 +1,4 @@
-import { autorun, reaction } from 'mobx';
+import { autorun, computed, reaction } from 'mobx';
 import Point from '../../../utils/Math/geometry/Point';
 import Segment from '../../../utils/Math/geometry/Segment';
 import BasicItem from '../../Model/Home/BasicItem';
@@ -14,6 +14,19 @@ export default class Edge2D extends DragContainer {
     autorun(() => {
       this.refreshEdge();
     });
+    reaction(
+      () => {
+        return this.isHover;
+      },
+      (status) => {
+        this.refreshEdge();
+      }
+    );
+  }
+
+  @computed
+  public get alphaValue(): number {
+    return this.isHover ? 1 : 0.01;
   }
 
   /**
@@ -36,13 +49,13 @@ export default class Edge2D extends DragContainer {
 
   public refreshEdge() {
     this.clear();
-    this.renderEdge();
+    // this.renderEdge();
     this.detectArea();
   }
 
   public detectArea() {
     const ps = this.calcDetect();
-    GraphicsTool.drawPolygon(this, ps, { alpha: 0 });
+    GraphicsTool.drawPolygon(this, ps, { alpha: this.alphaValue });
   }
 
   public renderEdge() {
@@ -54,13 +67,13 @@ export default class Edge2D extends DragContainer {
         color: 0xff0000,
       }
     );
-    this.moveTo(
-      this.dragModel.observerGeo[0].x,
-      this.dragModel.observerGeo[0].y
-    );
-    this.lineTo(
-      this.dragModel.observerGeo[1].x,
-      this.dragModel.observerGeo[1].y
-    );
+    // this.moveTo(
+    //   this.dragModel.observerGeo[0].x,
+    //   this.dragModel.observerGeo[0].y
+    // );
+    // this.lineTo(
+    //   this.dragModel.observerGeo[1].x,
+    //   this.dragModel.observerGeo[1].y
+    // );
   }
 }

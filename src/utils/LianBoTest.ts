@@ -235,8 +235,9 @@ class LianBoTest {
     const start1 = new Point(0, 10);
     const polygon = new Polygon([start, end, end1, start1]);
     GraphicsTool.drawPolygon(this.gr, polygon.vertices, {
+      alpha: 0.01,
       lineWidth: 10,
-      color: 0xff0000,
+      color: 0xffffff,
       alignment: 1,
     });
     // this.gr.hitArea = {
