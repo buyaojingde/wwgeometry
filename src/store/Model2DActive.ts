@@ -44,6 +44,11 @@ class Model2DActive {
   constructor() {}
 
   @action
+  public setMoveItem(val: any) {
+    this.moveItem = val;
+  }
+
+  @action
   public setGuidelines(val: boolean) {
     this.reset();
     this.clearAll();

@@ -9,6 +9,9 @@ import ConfigStructure from '../../../utils/ConfigStructure';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import { getRootObject } from '../Utils';
 import BaseScene from '../Utils/BaseScene';
+import Edge2D from '../ViewObject/Edge2D';
+import Polygon2D from '../ViewObject/Polygon2D';
+import Spot2D from '../ViewObject/Spot2D';
 import Structure2D from '../ViewObject/Structure2D';
 import BaseController from './BaseController';
 import DisplayObject = PIXI.DisplayObject;
@@ -77,6 +80,13 @@ export default class PickupController extends BaseController {
         Model2DActive.reset();
         if (object instanceof Structure2D) {
           Model2DActive.setDragStructure(object.strct);
+        }
+        if (
+          object instanceof Spot2D ||
+          object instanceof Edge2D ||
+          object instanceof Polygon2D
+        ) {
+          Model2DActive.setMoveItem(object.dragModel);
         }
       })();
     });

@@ -165,6 +165,13 @@ export default class GraphicsTool {
   //   graphics.endFill();
   // }
 
+  public static extractOptions(options: any = {}): any {
+    const lineWidth = options.lineWidth ? options.lineWidth : 1;
+    const color = options.color ? options.color : 0x0000000;
+    const alpha = options.alpha ? options.alpha : 1;
+    return { lineWidth, color, alpha };
+  }
+
   public static drawPolygon(
     graphicsInst: Graphics,
     points: any[],
@@ -174,7 +181,7 @@ export default class GraphicsTool {
     const color = options.color ? options.color : 0x0000000;
     const alpha = options.alpha ? options.alpha : 1;
     const fill = options.fill ? options.fill : true;
-    graphicsInst.lineStyle(lineWidth, color, alpha);
+    !fill && graphicsInst.lineStyle(lineWidth, color, alpha);
     if (fill) {
       graphicsInst.beginFill(color, alpha);
     }
@@ -220,8 +227,16 @@ export default class GraphicsTool {
     // graphicsInst.lineTo(vec[0].x * len, vec[0].y * len);
   }
 
-  public static drawCircle(graphics: Graphics, point: Point, radius: number) {
+  public static drawCircle(
+    graphics: Graphics,
+    point: any,
+    radius: number,
+    options: any = {}
+  ) {
+    const { lineWidth, color, alpha } = GraphicsTool.extractOptions(options);
+    graphics.beginFill(color, alpha);
     graphics.drawCircle(point.x, point.y, radius);
+    graphics.endFill();
   }
 
   // 销毁子对象
@@ -274,9 +289,7 @@ export default class GraphicsTool {
     grap.lineStyle(0, color);
     grap.beginFill(color, 1);
     grap.endFill();
-    grap.beginFill(color, 1);
-    GraphicsTool.drawPolygon(grap, trianglePoints2);
-    grap.endFill();
+    GraphicsTool.drawPolygon(grap, trianglePoints2, { color: color, alpha: 1 });
     return grap;
   }
 

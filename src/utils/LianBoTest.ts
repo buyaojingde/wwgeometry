@@ -1,5 +1,6 @@
 import * as isect from 'isect';
 import maxBy from 'lodash/maxBy';
+import { autorun, reaction } from 'mobx';
 import { Graphics } from 'pixi.js';
 import SplayTree from 'splaytree';
 import {
@@ -17,8 +18,12 @@ import {
 import Scene2D from '../scene/2D';
 import GraphicsTool from '../scene/2D/Utils/GraphicsTool';
 import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
+import Edge2D from '../scene/2D/ViewObject/Edge2D';
+import Polygon2D from '../scene/2D/ViewObject/Polygon2D';
+import Spot2D from '../scene/2D/ViewObject/Spot2D';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Structure, { StType } from '../scene/Model/Home/Structure';
+import ObserveVector2D from '../scene/Model/ObserveMath/ObserveVector2D';
 import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
 import ConfigStructure from './ConfigStructure';
 import Constant from './Math/contanst/constant';
@@ -75,7 +80,17 @@ class LianBoTest {
     //     console.log("[this.v3.x, this.v3.y, this.v3.z]");
     //   }
     // );
+    this.testReactionObserveVector2D();
     return;
+  }
+
+  public obv2 = new ObserveVector2D();
+
+  public testReactionObserveVector2D() {
+    autorun(() => {
+      console.log(this.obv2.x);
+      console.log(this.obv2.y);
+    });
   }
 
   testFindOutFace() {
@@ -155,7 +170,44 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testGraphicsInteractive();
+    this.exampleEditEdgeAndPoint();
+  }
+
+  modifyObv2() {
+    this.obv2.x = 3;
+  }
+
+  exampleEditEdgeAndPoint() {
+    const p = new Point(0, 0);
+    const p1 = new Point(100, 0);
+    const p2 = new Point(100, 100);
+    const p3 = new Point(0, 100);
+    const polygon = new Polygon([p, p1, p2, p3]);
+    this.drawEditablePolygon(polygon);
+  }
+
+  drawEditablePolygon(polygon: Polygon) {
+    const polyPs = polygon.vertices.map(
+      (item) => new ObserveVector2D(item.x, item.y)
+    );
+    const poly = new Polygon2D(polyPs);
+    this.container.addChild(poly);
+    for (const p of polyPs) {
+      const spot = new Spot2D([p]);
+      this.container.addChild(spot);
+    }
+    const edges: any[] = [];
+    const lastV = polyPs[polyPs.length - 1];
+    polyPs.reduce((prev, current, index) => {
+      const seg = [prev, current];
+      edges.push(seg);
+      return current;
+    }, lastV);
+    for (const edge of edges) {
+      const edge2d = new Edge2D(edge);
+      this.container.addChild(edge2d);
+    }
+    this.renderTest();
   }
 
   testGraphicsInteractive() {

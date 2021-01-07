@@ -159,18 +159,22 @@ export default class Structure2D extends ViewObject implements IViewObject {
 
   public customFill(fillColor: number = this.fillColor): void {
     this.clear();
-    this.beginFill(fillColor, this.opacity);
-    const p0: any = this.strct.boundary[0];
-    this.moveTo(p0.x, p0.y);
-
-    this.strct.boundary.forEach((point) => {
-      if (!point) {
-        console.log('stop');
-      }
-      this.lineTo(point.x, point.y);
+    GraphicsTool.drawPolygon(this, this.strct.boundary, {
+      color: fillColor,
+      alpha: this.opacity,
     });
-
-    this.endFill();
+    // this.beginFill(fillColor, this.opacity);
+    // const p0: any = this.strct.boundary[0];
+    // this.moveTo(p0.x, p0.y);
+    //
+    // this.strct.boundary.forEach((point) => {
+    //   if (!point) {
+    //     console.log('stop');
+    //   }
+    //   this.lineTo(point.x, point.y);
+    // });
+    //
+    // this.endFill();
   }
 
   public drawEdges(borderColor: number = this.borderColor) {
