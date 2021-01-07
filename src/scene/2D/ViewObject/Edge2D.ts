@@ -1,4 +1,4 @@
-import { reaction } from 'mobx';
+import { autorun, reaction } from 'mobx';
 import Point from '../../../utils/Math/geometry/Point';
 import Segment from '../../../utils/Math/geometry/Segment';
 import BasicItem from '../../Model/Home/BasicItem';
@@ -11,13 +11,9 @@ export default class Edge2D extends DragContainer {
   public constructor(data: any) {
     super();
     this.dragModel = new BasicItem(data);
-    reaction(
-      () => this.dragModel,
-      (edge) => {
-        this.renderEdge();
-        this.detectArea();
-      }
-    );
+    autorun(() => {
+      this.refreshEdge();
+    });
   }
 
   /**
@@ -36,6 +32,12 @@ export default class Edge2D extends DragContainer {
     );
     const edge = new Segment(start, end);
     return edge.offset(2).vertices;
+  }
+
+  public refreshEdge() {
+    this.clear();
+    this.renderEdge();
+    this.detectArea();
   }
 
   public detectArea() {

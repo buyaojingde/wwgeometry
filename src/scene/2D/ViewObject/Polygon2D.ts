@@ -9,7 +9,7 @@ export default class Polygon2D extends DragContainer {
   public constructor(data: any) {
     super();
     this.dragModel = new BasicItem(data);
-    autorun((edge) => {
+    autorun(() => {
       this.detectArea();
     });
   }
