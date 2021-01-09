@@ -9,6 +9,7 @@ import ConfigStructure from '../../../utils/ConfigStructure';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import { getRootObject } from '../Utils';
 import BaseScene from '../Utils/BaseScene';
+import BimElement2D from '../ViewObject/BimElement2D';
 import Edge2D from '../ViewObject/Edge2D';
 import Polygon2D from '../ViewObject/Polygon2D';
 import Spot2D from '../ViewObject/Spot2D';
@@ -81,11 +82,13 @@ export default class PickupController extends BaseController {
         if (object instanceof Structure2D) {
           Model2DActive.setDragStructure(object.strct);
         }
-        if (
-          object instanceof Spot2D ||
-          object instanceof Edge2D ||
-          object instanceof Polygon2D
-        ) {
+        if (object instanceof BimElement2D) {
+          Model2DActive.setMoveItem(object.dragModel);
+        }
+        if (object instanceof Edge2D) {
+          Model2DActive.setMoveItem(object.dragModel);
+        }
+        if (object instanceof Spot2D) {
           Model2DActive.setMoveItem(object.dragModel);
         }
       })();
@@ -256,7 +259,11 @@ export default class PickupController extends BaseController {
    */
   // @ts-ignore
   protected pickUpIn2D(object) {
-    if (object instanceof Structure2D || object instanceof Room2D) {
+    if (
+      object instanceof Structure2D ||
+      object instanceof Room2D ||
+      object instanceof BimElement2D
+    ) {
       Model2DActive.setSelection(object.model);
     } else {
       Model2DActive.clearSelection();

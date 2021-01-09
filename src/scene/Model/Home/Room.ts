@@ -29,6 +29,8 @@ class VirtualWall {
 }
 
 export default class Room extends ObjectNamed {
+  @observable
+  public isEdit = false;
   get virtualWalls(): VirtualWall[] {
     return this._virtualWalls;
   }

@@ -1,3 +1,4 @@
+import { reaction } from 'mobx';
 import Constant from '../../../utils/Math/contanst/constant';
 import Room from '../../Model/Home/Room';
 import Structure, { StType } from '../../Model/Home/Structure';
@@ -6,40 +7,60 @@ import Edge2D from './Edge2D';
 import Polygon2D from './Polygon2D';
 import Spot2D from './Spot2D';
 
-export default class BimElement2D {
+export default class BimElement2D extends PIXI.Container {
   public polygon!: Polygon2D;
   public edges: Edge2D[] = [];
   public spots: Spot2D[] = [];
   public model: Structure | Room;
-  private _solidContainer: PIXI.Container;
   private polyPs: ObserveVector2D[];
 
   public renderWith(parent: PIXI.Container) {
-    parent.addChild(this._solidContainer);
+    parent.addChild(this);
   }
 
+  public get dragModel() {
+    return this.polygon.dragModel;
+  }
   /**
    * @author lianbo
    * @date 2021-01-07 19:44:28
    * @Description: 一个bim的体在平面上是一个多边形，由一个Polygon2D和几条线，几个点组成
    */
   public constructor(model: Structure | Room) {
-    this._solidContainer = new PIXI.Container();
+    super();
+    this.interactive = true;
     this.model = model;
     const polygon = this.model.polygon;
     this.polyPs = polygon.vertices.map(
       (item) => new ObserveVector2D(item.x, item.y)
     );
-    this.createPolygon2D(this.polyPs);
+    this.createPolygon2D();
     // this.createEdgesAndSpot();
+    reaction(
+      () => {
+        return this.model.isEdit;
+      },
+      (able) => {
+        if (able) {
+          this.createPolygon2D();
+          this.createEdgesAndSpot();
+        } else {
+          this.createPolygon2D();
+        }
+      }
+    );
   }
 
-  private createPolygon2D(polyPs: ObserveVector2D[]) {
-    this.polygon = new Polygon2D(polyPs, {
+  private createPolygon2D() {
+    if (this.polygon) {
+      this.polygon.detectArea();
+    }
+    this.polygon = new Polygon2D(this.polyPs, {
       color: this.colorAlpha[0],
       alpha: this.colorAlpha[1],
     });
-    this._solidContainer.addChild(this.polygon);
+    this.polygon.interactive = false;
+    this.addChild(this.polygon);
   }
 
   get cType(): string {
@@ -50,6 +71,9 @@ export default class BimElement2D {
   }
 
   public get colorAlpha() {
+    if (this.model.isEdit) {
+      return [0xff0000, 1];
+    }
     let ca = [Constant.colorHexNumber('#8a8a8a'), 0.2];
     switch (this.cType) {
       case StType.Wall:
@@ -75,10 +99,26 @@ export default class BimElement2D {
   }
 
   private createEdgesAndSpot() {
+    this.createSpots();
+    this.createEdges();
+  }
+
+  private createSpots() {
+    if (this.spots.length > 0) {
+      this.spots.forEach((item) => item.detectArea());
+      return;
+    }
     for (const p of this.polyPs) {
       const spot = new Spot2D([p]);
-      this._solidContainer.addChild(spot);
+      this.addChild(spot);
       this.spots.push(spot);
+    }
+  }
+
+  private createEdges() {
+    if (this.edges.length > 0) {
+      this.edges.forEach((edge) => edge.refreshEdge());
+      return;
     }
     const tmpEdges: any[] = [];
     const lastV = this.polyPs[this.polyPs.length - 1];
@@ -89,7 +129,7 @@ export default class BimElement2D {
     }, lastV);
     for (const edge of tmpEdges) {
       const edge2d = new Edge2D(edge);
-      this._solidContainer.addChild(edge2d);
+      this.addChild(edge2d);
       this.edges.push(edge2d);
     }
   }
