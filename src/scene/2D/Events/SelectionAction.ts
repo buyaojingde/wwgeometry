@@ -7,7 +7,6 @@ import Scene2D from '../index';
 
 export default class SelectionAction extends BaseEvent {
   private _scene: Scene2D;
-  private bim!: Room | Structure;
   public constructor(scene: Scene2D) {
     super(scene.DOMEventListener);
     this._scene = scene;
@@ -16,14 +15,17 @@ export default class SelectionAction extends BaseEvent {
         return Model2DActive.selection;
       },
       (select) => {
-        this.enable = select instanceof Structure;
+        this.enable = select instanceof Structure || select instanceof Room;
         if (this.enable) {
-          this.bim = select;
-          this.bim.isEdit = true;
+          if (Model2DActive.editStructure) {
+            Model2DActive.editStructure.isEdit = false;
+          }
+          Model2DActive.editStructure = select;
+          Model2DActive.editStructure.isEdit = true;
         } else {
-          if (this.bim) {
-            this.bim.isEdit = false;
-            this.bim = select;
+          if (Model2DActive.editStructure) {
+            Model2DActive.editStructure.isEdit = false;
+            Model2DActive.editStructure = null;
           }
         }
       }

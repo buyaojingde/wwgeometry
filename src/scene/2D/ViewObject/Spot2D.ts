@@ -32,4 +32,12 @@ export default class Spot2D extends DragContainer {
       alpha: this.alphaValue,
     });
   }
+
+  public get draggable() {
+    return this.dragModel.draggable;
+  }
+
+  public set draggable(val: boolean) {
+    this.dragModel.draggable = val;
+  }
 }

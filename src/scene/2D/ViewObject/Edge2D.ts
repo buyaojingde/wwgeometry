@@ -77,4 +77,12 @@ export default class Edge2D extends DragContainer {
     //   this.dragModel.observerGeo[1].y
     // );
   }
+
+  public get draggable() {
+    return this.dragModel.draggable;
+  }
+
+  public set draggable(val: boolean) {
+    this.dragModel.draggable = val;
+  }
 }

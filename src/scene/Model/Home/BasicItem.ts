@@ -4,6 +4,7 @@ import ObserveVector2D from '../ObserveMath/ObserveVector2D';
 
 export default class BasicItem {
   public observerGeo!: ObserveVector2D[];
+  public draggable = false;
 
   public constructor(obs: ObserveVector2D[]) {
     this.observerGeo = obs;

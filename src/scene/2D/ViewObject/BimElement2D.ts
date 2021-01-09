@@ -47,13 +47,19 @@ export default class BimElement2D extends PIXI.Container {
         } else {
           this.createPolygon2D();
         }
+        this.setEditable(this.model.isEdit);
       }
     );
   }
 
   private createPolygon2D() {
     if (this.polygon) {
+      this.polygon.setColorAlpha({
+        color: this.colorAlpha[0],
+        alpha: this.colorAlpha[1],
+      });
       this.polygon.detectArea();
+      return;
     }
     this.polygon = new Polygon2D(this.polyPs, {
       color: this.colorAlpha[0],
@@ -132,5 +138,11 @@ export default class BimElement2D extends PIXI.Container {
       this.addChild(edge2d);
       this.edges.push(edge2d);
     }
+  }
+
+  private setEditable(val: boolean) {
+    this.polygon.draggable = val;
+    this.edges.forEach((edge) => (edge.draggable = val));
+    this.spots.forEach((spot) => (spot.draggable = val));
   }
 }

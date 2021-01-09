@@ -27,4 +27,18 @@ export default class Polygon2D extends DragContainer {
       color: this.renderColor,
     });
   }
+
+  public setColorAlpha(options?: any) {
+    if (!options) return;
+    this.renderAlpha = options.alpha;
+    this.renderColor = options.color;
+  }
+
+  public get draggable() {
+    return this.dragModel.draggable;
+  }
+
+  public set draggable(val: boolean) {
+    this.dragModel.draggable = val;
+  }
 }

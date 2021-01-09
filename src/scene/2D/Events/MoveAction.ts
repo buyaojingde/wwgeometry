@@ -34,6 +34,7 @@ export default class MoveAction extends BaseEvent {
   }
 
   private moveAction(event: any) {
+    if (!this._moveObj.draggable) return;
     const { pageX, pageY } = event;
     const position = this._scene.pickupController.getPoint(pageX, pageY);
 

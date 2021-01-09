@@ -29,7 +29,7 @@ class Model2DActive {
   public subjectVec3: ObserveVector3 = new ObserveVector3(); // 屏幕坐标轴的位置
   public structureVec3: ObserveVector3 = new ObserveVector3(); // 构建的相对位置
 
-  public editStructure!: Structure; // 当前正在编辑的构建
+  public editStructure!: any; // 当前正在编辑的构建
   @observable
   public editAxisNet = false;
 
@@ -100,7 +100,7 @@ class Model2DActive {
   @action
   public reset() {
     this.draggingStructure = null;
-    this.selection = null;
+    // this.selection = null;
   }
 
   @action
