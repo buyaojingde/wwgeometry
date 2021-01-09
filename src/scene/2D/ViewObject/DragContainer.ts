@@ -63,10 +63,9 @@ export default class DragContainer extends PIXI.Graphics {
   }
 
   public interactive = true;
-  @observable
+  // @observable
   // @ts-ignore
-  public _parentSelf: Container = null; // 用于事件响应的parent,不能与原有parent重叠，会出现问题
-
+  // public _parentSelf: Container = null; // 用于事件响应的parent,不能与原有parent重叠，会出现问题
   @observable
   public isHover = false;
   protected _disposeArr: Array<() => void> = [];
@@ -74,55 +73,54 @@ export default class DragContainer extends PIXI.Graphics {
   public constructor() {
     super();
 
-    this.on('added', () => {
-      setTimeout(() => {
-        this._parentSelf = this.parent;
-      });
-    });
-    this.on('removed', () => {
-      setTimeout(() => {
-        this._parentSelf = this.parent;
-        !this.parent && this.destroy();
-      });
-    });
+    // this.on('added', () => {
+    //   setTimeout(() => {
+    //     this._parentSelf = this.parent;
+    //   });
+    // });
+    // this.on('removed', () => {
+    //   setTimeout(() => {
+    //     this._parentSelf = this.parent;
+    //     !this.parent && this.destroy();
+    //   });
+    // });
 
     this.on('mouseover', () => {
       this.isHover = true;
-    })
-      .on('mouseout', () => (this.isHover = false))
-      .on('mousedown', onDrag.start)
-      .on('touchstart', onDrag.start)
-      .on('mouseup', onDrag.end)
-      .on('mouseupoutside', onDrag.end)
-      .on('touchend', onDrag.end)
-      .on('touchendoutside', onDrag.end)
-      .on(
-        'mousemove',
-        // @ts-ignore
-        onDrag.move((...args) => {
-          this.emit('drag', ...args);
-        })
-      )
-      .on(
-        'touchmove',
-        // @ts-ignore
-        onDrag.move((...args) => {
-          this.emit('drag', ...args);
-        })
-      );
+    }).on('mouseout', () => (this.isHover = false));
+    // .on('mousedown', onDrag.start)
+    // .on('touchstart', onDrag.start)
+    // .on('mouseup', onDrag.end)
+    // .on('mouseupoutside', onDrag.end)
+    // .on('touchend', onDrag.end)
+    // .on('touchendoutside', onDrag.end)
+    // .on(
+    //   'mousemove',
+    //   // @ts-ignore
+    //   onDrag.move((...args) => {
+    //     this.emit('drag', ...args);
+    //   })
+    // )
+    // .on(
+    //   'touchmove',
+    //   // @ts-ignore
+    //   onDrag.move((...args) => {
+    //     this.emit('drag', ...args);
+    //   })
+    // );
   }
 
-  public get scene2D(): IScene2D {
-    // @ts-ignore
-    const getScene = (instance) => {
-      if (!instance) {
-        return null;
-      }
-      return instance.name === 'scene2D'
-        ? instance
-        : getScene(instance._parentSelf || instance.parent);
-    };
-
-    return getScene(this._parentSelf);
-  }
+  // public get scene2D(): IScene2D {
+  //   // @ts-ignore
+  //   const getScene = (instance) => {
+  //     if (!instance) {
+  //       return null;
+  //     }
+  //     return instance.name === 'scene2D'
+  //       ? instance
+  //       : getScene(instance._parentSelf || instance.parent);
+  //   };
+  //
+  //   return getScene(this._parentSelf);
+  // }
 }

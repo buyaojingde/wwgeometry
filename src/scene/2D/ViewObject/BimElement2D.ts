@@ -12,6 +12,7 @@ export default class BimElement2D {
   public spots: Spot2D[] = [];
   public model: Structure | Room;
   private _solidContainer: PIXI.Container;
+  private polyPs: ObserveVector2D[];
 
   public renderWith(parent: PIXI.Container) {
     parent.addChild(this._solidContainer);
@@ -26,27 +27,11 @@ export default class BimElement2D {
     this._solidContainer = new PIXI.Container();
     this.model = model;
     const polygon = this.model.polygon;
-    const polyPs = polygon.vertices.map(
+    this.polyPs = polygon.vertices.map(
       (item) => new ObserveVector2D(item.x, item.y)
     );
-    this.createPolygon2D(polyPs);
-    for (const p of polyPs) {
-      const spot = new Spot2D([p]);
-      this._solidContainer.addChild(spot);
-      this.spots.push(spot);
-    }
-    const tmpEdges: any[] = [];
-    const lastV = polyPs[polyPs.length - 1];
-    polyPs.reduce((prev, current, index) => {
-      const seg = [prev, current];
-      tmpEdges.push(seg);
-      return current;
-    }, lastV);
-    for (const edge of tmpEdges) {
-      const edge2d = new Edge2D(edge);
-      this._solidContainer.addChild(edge2d);
-      this.edges.push(edge2d);
-    }
+    this.createPolygon2D(this.polyPs);
+    // this.createEdgesAndSpot();
   }
 
   private createPolygon2D(polyPs: ObserveVector2D[]) {
@@ -87,5 +72,25 @@ export default class BimElement2D {
         break;
     }
     return ca;
+  }
+
+  private createEdgesAndSpot() {
+    for (const p of this.polyPs) {
+      const spot = new Spot2D([p]);
+      this._solidContainer.addChild(spot);
+      this.spots.push(spot);
+    }
+    const tmpEdges: any[] = [];
+    const lastV = this.polyPs[this.polyPs.length - 1];
+    this.polyPs.reduce((prev, current, index) => {
+      const seg = [prev, current];
+      tmpEdges.push(seg);
+      return current;
+    }, lastV);
+    for (const edge of tmpEdges) {
+      const edge2d = new Edge2D(edge);
+      this._solidContainer.addChild(edge2d);
+      this.edges.push(edge2d);
+    }
   }
 }
