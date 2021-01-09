@@ -169,4 +169,8 @@ export default class Room extends ObjectNamed {
   }
 
   private _level!: Level;
+
+  blurred() {
+    this.emit('blurred');
+  }
 }

@@ -3,6 +3,7 @@ import Model2DActive from '../../../store/Model2DActive';
 import Constant from '../../../utils/Math/contanst/constant';
 import Room from '../../Model/Home/Room';
 import GraphicsTool from '../Utils/GraphicsTool';
+import DrawUtils from './DrawUtils';
 import ViewObject from './ViewObject';
 
 export default class Room2D extends ViewObject {
@@ -86,7 +87,7 @@ export default class Room2D extends ViewObject {
     this._roomText.visible = true;
     this._roomText.text = `${this.room.rvtName}\n${this.room.rvtId}`;
     this._roomText.position.set(roomCentroid.x, roomCentroid.y);
-    this.drawVirtualWall();
+    // this.drawVirtualWall();
   }
 
   private drawVirtualWall() {
@@ -123,5 +124,9 @@ export default class Room2D extends ViewObject {
     for (let i = 0; i < this._virtualWalls.length; i++) {
       this._virtualWalls[i].visible = this.wallVisible[i];
     }
+  }
+
+  private drawEditEdge() {
+    DrawUtils.drawEdgeAndSpot(this.room, this._grp);
   }
 }

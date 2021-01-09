@@ -181,7 +181,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.scene.renderer.plugins.interaction.resolution = this.resolution;
     this.getStage().addChild(this._assistContanier);
 
-    this.refreshHomePlan();
+    // this.refreshHomePlan();
 
     this.drawBaseInfo();
 
@@ -407,8 +407,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
 
   public refreshHomePlan() {
     this.setHomePlan(new HomePlan(this));
-
-    Model2DActive.reset();
   }
 
   public getHomeContainer() {
@@ -701,6 +699,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
       // 计算墙的中线
       this.home.curLevel.preprocess();
       this.home.curLevel.preprocessRooms();
+      this.refreshHomePlan();
       this.homePlan.render();
       this.resetView();
       this.afterLoadHome();

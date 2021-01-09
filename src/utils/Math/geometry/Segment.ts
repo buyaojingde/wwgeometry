@@ -665,4 +665,12 @@ export default class Segment {
     const end1 = this.end.translate(v);
     return new Polygon([start, end, end1, start1]);
   }
+
+  public shorten(dis: number): Segment {
+    const v = this.dir.normalize.multiply(dis);
+    const newStart = this.start.translate(v);
+    v.invert();
+    const newEnd = this.end.translate(v);
+    return new Segment(newStart, newEnd);
+  }
 }

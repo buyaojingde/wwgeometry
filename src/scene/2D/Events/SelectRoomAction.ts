@@ -8,6 +8,7 @@ import { reaction } from 'mobx';
 import Model2DActive from '../../../store/Model2DActive';
 import BaseEvent from '../../Base/BaseEvent';
 import Scene2D from '../index';
+import BimElement2D from '../ViewObject/BimElement2D';
 import Container = PIXI.Container;
 
 export default class SelectRoomAction extends BaseEvent {
@@ -63,11 +64,13 @@ export default class SelectRoomAction extends BaseEvent {
     // this.room.relStructures.forEach((st) => st.setEdit(true));
     // this.drawOffsetRoom();
     // this.drawSeg();
-    this.visitableWall(true);
+    // this.visitableWall(true);
   }
 
   private visitableWall(b: boolean) {
-    this.room.virtualWalls.forEach((item) => (item.visible = b));
+    if (this.room) {
+      this.room.virtualWalls.forEach((item) => (item.visible = b));
+    }
   }
 
   private drawSeg() {

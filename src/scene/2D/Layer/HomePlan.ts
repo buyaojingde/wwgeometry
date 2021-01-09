@@ -1,4 +1,5 @@
 import View2DData from '../../../store/View2DData';
+import BimElementLayer from './BimElementLayer';
 import RoomLayer from './RoomLayer';
 import StructureLayer from './StructureLayer';
 
@@ -12,7 +13,8 @@ export default class HomePlan2D {
   // private container: any;
   public container: PIXI.Container;
   private scene: any;
-  private _roomLayer: RoomLayer;
+  private _roomLayer!: RoomLayer;
+  private _bimEleLayer!: BimElementLayer;
 
   public constructor(scene: any) {
     console.log('new HomePlan');
@@ -31,19 +33,33 @@ export default class HomePlan2D {
     Object.defineProperty(homePlanScene, 'home', {
       get: () => scene.home,
     });
+    // this.createStructureLayer(homePlanScene);
+    // this.createRoomLayer(homePlanScene);
 
-    this._structureLayer = new StructureLayer(homePlanScene);
-    this._roomLayer = new RoomLayer(homePlanScene);
-    this.init();
+    // this._structureLayer = new StructureLayer(homePlanScene);
+    // this._roomLayer = new RoomLayer(homePlanScene);
+    this.createBimLayer();
+    // this.init();
   }
 
-  private _structureLayer: StructureLayer;
+  private createBimLayer() {
+    this._bimEleLayer = new BimElementLayer(
+      this.scene.home.curLevel.allElements
+    );
+    Object.defineProperty(this._layers, 'bimEles', {
+      value: this._bimEleLayer,
+      enumerable: true,
+    });
+    this._bimEleLayer.attachContainer(this.container);
+  }
+
+  private _structureLayer!: StructureLayer;
 
   public get structureLayer(): StructureLayer {
     return this._structureLayer;
   }
 
-  private _layers!: object;
+  private _layers: object = {};
 
   public get layers() {
     return this._layers;
@@ -148,5 +164,27 @@ export default class HomePlan2D {
       [HomeLayers.Structure]: this._structureLayer,
       [HomeLayers.Room]: this._roomLayer,
     };
+  }
+
+  private createStructureLayer(homePlanScene: {
+    getStage: () => PIXI.Container;
+    getScene: () => any;
+  }) {
+    this._structureLayer = new StructureLayer(homePlanScene);
+    Object.defineProperty(this._layers, 'structure', {
+      value: this._structureLayer,
+      enumerable: true,
+    });
+  }
+
+  private createRoomLayer(homePlanScene: {
+    getStage: () => PIXI.Container;
+    getScene: () => any;
+  }) {
+    this._roomLayer = new RoomLayer(homePlanScene);
+    Object.defineProperty(this._layers, 'room', {
+      value: this._roomLayer,
+      enumerable: true,
+    });
   }
 }

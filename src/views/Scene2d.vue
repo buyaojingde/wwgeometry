@@ -154,7 +154,7 @@ export default observer({
       }
     },
     handleNodeClick(data) {
-      // console.log(data);
+      if(!data.buildData) return;
       // console.log(this.$refs.mapTree.getCheckedKeys());
       Model2DActive.selection = data.buildData;
       this.scene2d.resetViewForStructure(data.buildData);

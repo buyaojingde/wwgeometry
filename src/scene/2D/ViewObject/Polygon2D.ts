@@ -1,14 +1,20 @@
 import { autorun, reaction } from 'mobx';
+import Constant from '../../../utils/Math/contanst/constant';
 import BasicItem from '../../Model/Home/BasicItem';
+import { StType } from '../../Model/Home/Structure';
 import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
 import GraphicsTool from '../Utils/GraphicsTool';
 import DragContainer from './DragContainer';
 
 export default class Polygon2D extends DragContainer {
   public dragModel!: BasicItem;
-  public constructor(data: any) {
+  private renderColor: number;
+  private renderAlpha: number;
+  public constructor(data: any, options: any = {}) {
     super();
     this.dragModel = new BasicItem(data);
+    this.renderColor = options.color;
+    this.renderAlpha = options.alpha;
     autorun(() => {
       this.detectArea();
     });
@@ -16,6 +22,9 @@ export default class Polygon2D extends DragContainer {
 
   public detectArea() {
     this.clear();
-    GraphicsTool.drawPolygon(this, this.dragModel.observerGeo, { alpha: 0.5 });
+    GraphicsTool.drawPolygon(this, this.dragModel.observerGeo, {
+      alpha: this.renderAlpha,
+      color: this.renderColor,
+    });
   }
 }

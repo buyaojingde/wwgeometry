@@ -43,8 +43,9 @@ export default class Edge2D extends DragContainer {
       this.dragModel.observerGeo[1].x,
       this.dragModel.observerGeo[1].y
     );
-    const edge = new Segment(start, end);
-    return edge.offset(2).vertices;
+    let edge = new Segment(start, end);
+    edge = edge.shorten(1);
+    return edge.offset(1).vertices;
   }
 
   public refreshEdge() {

@@ -179,10 +179,14 @@ export default class GraphicsTool {
     options: any = {}
   ) {
     const { lineWidth, color, alpha } = GraphicsTool.extractOptions(options);
-    const fill = options.fill ? options.fill : true;
+    const fill = !(options.fill === undefined || options.fill === null)
+      ? options.fill
+      : true;
     !fill && graphicsInst.lineStyle(lineWidth, color, alpha);
     if (fill) {
       graphicsInst.beginFill(color, alpha);
+    } else {
+      graphicsInst.lineStyle(lineWidth, color, alpha);
     }
     const vec = points;
 

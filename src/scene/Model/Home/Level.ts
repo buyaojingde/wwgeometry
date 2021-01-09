@@ -194,4 +194,8 @@ export default class Level extends ObjectNamed implements IBuildable {
     );
     return result;
   }
+
+  public get allElements(): any[] {
+    return [...this._rooms, ...this._structures];
+  }
 }
