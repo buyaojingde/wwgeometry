@@ -427,4 +427,23 @@ export default class Structure
     if (!this.midSeg) return true;
     return this.midSeg.parallel(seg);
   }
+
+  public updateGeoData(): any {
+    this.boundary = this.observeGeo.map((item) => new Point(item.x, item.y));
+    return this.buildToData();
+  }
+
+  public observeGeo!: any[];
+  /**
+   * @author lianbo
+   * @date 2021-01-10 14:59:15
+   * @Description: 编辑完成后，保存的空间几何数据
+   */
+  public buildToData(): object {
+    const worldPs: any[] = this.boundary.map((item) =>
+      ConfigStructure.computeGeo(item)
+    );
+    // 一个立方体怎么根据一个面的改变，同步整个solid的数据
+    return worldPs;
+  }
 }

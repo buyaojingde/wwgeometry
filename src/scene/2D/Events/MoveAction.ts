@@ -58,5 +58,6 @@ export default class MoveAction extends BaseEvent {
   private moveDone(event: any) {
     console.log('done');
     this.lastPosition = null;
+    this._moveObj.model.updateGeoData();
   }
 }

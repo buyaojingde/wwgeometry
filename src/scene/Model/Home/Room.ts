@@ -175,4 +175,6 @@ export default class Room extends ObjectNamed {
   blurred() {
     this.emit('blurred');
   }
+
+  public observeGeo!: any[];
 }
