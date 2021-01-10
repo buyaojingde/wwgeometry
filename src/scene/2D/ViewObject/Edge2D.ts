@@ -1,16 +1,14 @@
 import { autorun, computed, reaction } from 'mobx';
 import Point from '../../../utils/Math/geometry/Point';
 import Segment from '../../../utils/Math/geometry/Segment';
-import BasicItem from '../../Model/Home/BasicItem';
-import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
 import GraphicsTool from '../Utils/GraphicsTool';
 import DragContainer from './DragContainer';
 
 export default class Edge2D extends DragContainer {
-  public dragModel!: BasicItem;
+  public dragModel!: any;
   public constructor(data: any) {
     super();
-    this.dragModel = new BasicItem(data);
+    this.dragModel = data;
     autorun(() => {
       this.refreshEdge();
     });
@@ -36,12 +34,12 @@ export default class Edge2D extends DragContainer {
    */
   public calcDetect(): Point[] {
     const start = new Point(
-      this.dragModel.observerGeo[0].x,
-      this.dragModel.observerGeo[0].y
+      this.dragModel.og.observerGeo[0].x,
+      this.dragModel.og.observerGeo[0].y
     );
     const end = new Point(
-      this.dragModel.observerGeo[1].x,
-      this.dragModel.observerGeo[1].y
+      this.dragModel.og.observerGeo[1].x,
+      this.dragModel.og.observerGeo[1].y
     );
     let edge = new Segment(start, end);
     edge = edge.shorten(1);
@@ -62,8 +60,8 @@ export default class Edge2D extends DragContainer {
   public renderEdge() {
     GraphicsTool.drawLine(
       this,
-      this.dragModel.observerGeo[0],
-      this.dragModel.observerGeo[1],
+      this.dragModel.og.observerGeo[0],
+      this.dragModel.og.observerGeo[1],
       {
         color: 0xff0000,
       }
@@ -76,13 +74,5 @@ export default class Edge2D extends DragContainer {
     //   this.dragModel.observerGeo[1].x,
     //   this.dragModel.observerGeo[1].y
     // );
-  }
-
-  public get draggable() {
-    return this.dragModel.draggable;
-  }
-
-  public set draggable(val: boolean) {
-    this.dragModel.draggable = val;
   }
 }

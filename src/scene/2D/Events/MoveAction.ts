@@ -34,7 +34,7 @@ export default class MoveAction extends BaseEvent {
   }
 
   private moveAction(event: any) {
-    if (!this._moveObj.draggable) return;
+    if (!this._moveObj.model.isEdit) return;
     const { pageX, pageY } = event;
     const position = this._scene.pickupController.getPoint(pageX, pageY);
 
@@ -46,7 +46,7 @@ export default class MoveAction extends BaseEvent {
       position.x - this.lastPosition.x,
       position.y - this.lastPosition.y
     );
-    this._moveObj.translate(v);
+    this._moveObj.og.translate(v);
     this.lastPosition = position;
   }
 

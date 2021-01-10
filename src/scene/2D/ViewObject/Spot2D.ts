@@ -1,13 +1,12 @@
 import { autorun, computed, reaction } from 'mobx';
-import BasicItem from '../../Model/Home/BasicItem';
 import GraphicsTool from '../Utils/GraphicsTool';
 import DragContainer from './DragContainer';
 
 export default class Spot2D extends DragContainer {
-  public dragModel!: BasicItem;
+  public dragModel!: any;
   public constructor(data: any) {
     super();
-    this.dragModel = new BasicItem(data);
+    this.dragModel = data;
     autorun(() => {
       this.detectArea();
     });
@@ -28,16 +27,8 @@ export default class Spot2D extends DragContainer {
 
   public detectArea() {
     this.clear();
-    GraphicsTool.drawCircle(this, this.dragModel.position, 2, {
+    GraphicsTool.drawCircle(this, this.dragModel.og.position, 2, {
       alpha: this.alphaValue,
     });
-  }
-
-  public get draggable() {
-    return this.dragModel.draggable;
-  }
-
-  public set draggable(val: boolean) {
-    this.dragModel.draggable = val;
   }
 }

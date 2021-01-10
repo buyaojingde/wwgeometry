@@ -2,9 +2,8 @@ import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
 import ObserveVector2D from '../ObserveMath/ObserveVector2D';
 
-export default class BasicItem {
+export default class ObservableGeometry {
   public observerGeo!: ObserveVector2D[];
-  public draggable = false;
 
   public constructor(obs: ObserveVector2D[]) {
     this.observerGeo = obs;

@@ -1,5 +1,6 @@
 import { reaction } from 'mobx';
 import Constant from '../../../utils/Math/contanst/constant';
+import ObservableGeometry from '../../Model/Home/ObservableGeometry';
 import Room from '../../Model/Home/Room';
 import Structure, { StType } from '../../Model/Home/Structure';
 import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
@@ -47,7 +48,6 @@ export default class BimElement2D extends PIXI.Container {
         } else {
           this.createPolygon2D();
         }
-        this.setEditable(this.model.isEdit);
       }
     );
   }
@@ -61,10 +61,13 @@ export default class BimElement2D extends PIXI.Container {
       this.polygon.detectArea();
       return;
     }
-    this.polygon = new Polygon2D(this.polyPs, {
-      color: this.colorAlpha[0],
-      alpha: this.colorAlpha[1],
-    });
+    this.polygon = new Polygon2D(
+      { model: this.model, og: new ObservableGeometry(this.polyPs) }, // 一个数据模型和一个可观察的几何数据模型的接口
+      {
+        color: this.colorAlpha[0],
+        alpha: this.colorAlpha[1],
+      }
+    );
     this.polygon.interactive = false;
     this.addChild(this.polygon);
   }
@@ -115,7 +118,10 @@ export default class BimElement2D extends PIXI.Container {
       return;
     }
     for (const p of this.polyPs) {
-      const spot = new Spot2D([p]);
+      const spot = new Spot2D({
+        model: this.model,
+        og: new ObservableGeometry([p]),
+      });
       this.addChild(spot);
       this.spots.push(spot);
     }
@@ -134,15 +140,12 @@ export default class BimElement2D extends PIXI.Container {
       return current;
     }, lastV);
     for (const edge of tmpEdges) {
-      const edge2d = new Edge2D(edge);
+      const edge2d = new Edge2D({
+        model: this.model,
+        og: new ObservableGeometry(edge),
+      });
       this.addChild(edge2d);
       this.edges.push(edge2d);
     }
-  }
-
-  private setEditable(val: boolean) {
-    this.polygon.draggable = val;
-    this.edges.forEach((edge) => (edge.draggable = val));
-    this.spots.forEach((spot) => (spot.draggable = val));
   }
 }
