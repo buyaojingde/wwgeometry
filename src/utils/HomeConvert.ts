@@ -249,6 +249,8 @@ class HomeConvert {
     }
     if (!solid) return null;
     let topFace!: GeoSurface;
+    let topFaceGeo: any;
+    const mirrorHorizontal: any[] = [];
     let maxHeight = Number.NEGATIVE_INFINITY;
     const structure: Structure = new Structure();
     for (const face of solid.faces) {
@@ -263,7 +265,8 @@ class HomeConvert {
         if (surface.height > maxHeight) {
           maxHeight = surface.height;
           topFace = surface;
-          structure.topFaceGeo = face.outLoop[0]; // 取到顶面的原始数据
+          topFaceGeo = face.outLoop[0]; // 取到顶面的原始数据
+          mirrorHorizontal.push(topFaceGeo);
         }
       }
     }
@@ -272,8 +275,9 @@ class HomeConvert {
       GeometryTool.vector3toVector2(item)
     );
     structure.boundary = v2ds.map((item) => new Point(item.x, -item.y));
-    structure.geo = geo;
-    structure.ele = ele;
+    const mirrorFaces = this.filterMirrorFace(mirrorHorizontal, topFaceGeo);
+    structure.setGeoEle({ ele, geo, solid, topFaceGeo, mirrorFaces });
+    this.cleanUpFaces(structure);
     structure.rvtId = ele.revitId.toString();
     return structure;
   }
@@ -287,6 +291,76 @@ class HomeConvert {
     this.spaces = data.roomNOs;
     this.hiddenElement = data.hiddenElement;
     return this.generateHome();
+  }
+
+  private filterMirrorFace(mirrorHorizontal: any[], topFaceGeo: any): any[] {
+    const mirrorFaces: any[] = [];
+    for (const element of mirrorHorizontal) {
+      if (element === topFaceGeo) continue;
+      if (topFaceGeo.length !== element.length) continue;
+      const mirrorIndices: any[] = [];
+      for (let i = 0; i < topFaceGeo.length; i++) {
+        let mirrorIndex = -1;
+        const topVertex = topFaceGeo[i];
+        for (let j = 0; j < element.length; j++) {
+          const mirror = element[j];
+          if (topVertex.x === mirror.x && topVertex.y === mirror.y) {
+            mirrorIndex = j;
+          }
+        }
+        if (mirrorIndex !== -1) {
+          mirrorIndices.push({ topIndex: i, mirrorIndex: mirrorIndex });
+        } else {
+          break;
+        }
+      }
+      if (mirrorIndices.length === topFaceGeo.length) {
+        mirrorFaces.push({ mirrorFace: element, mirrorIndices: mirrorIndices });
+      }
+    }
+    return mirrorFaces;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 19:28:31
+   * @Description: 为了改变顶点数据的方便，将face上重复的顶点都指向同一份数据，这里用顶面数据和底面数据描述
+   */
+  private cleanUpFaces(structure: Structure) {
+    const topFace = structure.geoEle.topFaceGeo;
+    const mirrorFaces = structure.geoEle.mirrorFaces.map(
+      (item: any) => item.mirrorFace
+    );
+
+    const remainderFaces = [];
+    for (const face of structure.geoEle.solid.faces) {
+      const cleanUpFace = face.outLoop[0];
+      if (cleanUpFace === topFace) continue;
+      if (mirrorFaces.includes(cleanUpFace)) continue;
+      remainderFaces.push(face.outLoop[0]);
+    }
+
+    for (const remainderFace of remainderFaces) {
+      for (let i = 0; i < remainderFace.length; i++) {
+        const vertex = remainderFace[i];
+        const find = topFace.find(
+          (item: any) =>
+            item.x === vertex.x && item.y === vertex.y && item.z === vertex.z
+        );
+        if (find) {
+          remainderFace[i] = find;
+        }
+        for (const mirr of mirrorFaces) {
+          const find = mirr.find(
+            (item: any) =>
+              item.x === vertex.x && item.y === vertex.y && item.z === vertex.z
+          );
+          if (find) {
+            remainderFace[i] = find;
+          }
+        }
+      }
+    }
   }
 }
 

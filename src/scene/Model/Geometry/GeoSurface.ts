@@ -1,4 +1,6 @@
 import { Matrix4, Vector3 } from 'three';
+import Point from '../../../utils/Math/geometry/Point';
+import Polygon from '../../../utils/Math/geometry/Polygon';
 import MathUtils from '../../../utils/Math/math/MathUtils';
 
 export default class GeoSurface {
@@ -65,5 +67,21 @@ export default class GeoSurface {
     mat.setPosition(this.points[0]);
     mat.lookAt(this.points[0], this.points[1], this.normal);
     return mat;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 17:31:11
+   * @Description: 在XZ平面上的投影完全重叠
+   */
+  overlapXZ(face: GeoSurface) {
+    const polygon = this.projectXZ();
+    const polygon1 = face.projectXZ();
+    return polygon.completeOverlap(polygon1);
+  }
+
+  private projectXZ(): Polygon {
+    const vertices = this.points.map((item) => new Point(item.x, item.z));
+    return new Polygon(vertices);
   }
 }

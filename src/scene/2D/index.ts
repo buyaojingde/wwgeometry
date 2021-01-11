@@ -471,7 +471,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     };
 
     for (const st of strs) {
-      const ele: any = st.ele;
+      const ele: any = st.geoEle.ele;
       const existData: any = data.find(
         (item) => ele.professional === item.label
       );

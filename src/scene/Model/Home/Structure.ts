@@ -33,6 +33,28 @@ class RelRoom {
   }
 }
 
+class GeometryElement {
+  ele: any;
+  geo: any;
+  solid: any;
+  topFaceGeo: any;
+  mirrorFaces: any;
+
+  public constructor(
+    ele: any,
+    geo: any,
+    solid: any,
+    topFace: any,
+    mirrorFaces: any
+  ) {
+    this.ele = ele;
+    this.geo = geo;
+    this.solid = solid;
+    this.topFaceGeo = topFace;
+    this.mirrorFaces = mirrorFaces;
+  }
+}
+
 export default class Structure
   extends ObjectIndex
   implements IBuildable, IDataObject {
@@ -73,17 +95,7 @@ export default class Structure
   }
 
   get stType() {
-    return this.ele.builtInCategory;
-  }
-
-  private _ele: any;
-
-  get ele(): any {
-    return this._ele;
-  }
-
-  set ele(value: any) {
-    this._ele = value;
+    return this.geoEle.ele.builtInCategory;
   }
 
   private _boundary!: Point[];
@@ -102,24 +114,20 @@ export default class Structure
     this._polygon = new Polygon(this._boundary);
   }
 
-  private _geo: any;
+  private _geoEle!: GeometryElement;
 
-  get geo(): any {
-    return this._geo;
+  get geoEle(): any {
+    return this._geoEle;
   }
 
-  set geo(value: any) {
-    this._geo = value;
-  }
-
-  private _topFaceGeo: any;
-
-  get topFaceGeo(): any {
-    return this._topFaceGeo;
-  }
-
-  set topFaceGeo(value: any) {
-    this._topFaceGeo = value;
+  public setGeoEle(value: any) {
+    this._geoEle = new GeometryElement(
+      value.ele,
+      value.geo,
+      value.solid,
+      value.topFaceGeo,
+      value.mirrorFaces
+    );
   }
 
   @observable
@@ -219,7 +227,7 @@ export default class Structure
   public getFaceP(p: Point): any {
     const index = this.boundary.indexOf(p);
     if (index !== -1) {
-      return this.topFaceGeo[index];
+      return this.geoEle.topFaceGeo[index];
     }
     throw new Error('输入参数不是构建的顶点！');
   }
@@ -438,8 +446,8 @@ export default class Structure
     );
     for (let i = 0; i < worldPs.length; i++) {
       console.log(
-        worldPs[i].x === this.topFaceGeo[i].x &&
-          worldPs[i].y === this.topFaceGeo[i].y
+        worldPs[i].x === this.geoEle.topFaceGeo[i].x &&
+          worldPs[i].y === this.geoEle.topFaceGeo[i].y
       );
     }
   }
@@ -454,13 +462,16 @@ export default class Structure
       ConfigStructure.computeGeo(item)
     );
 
-    const allFace: any[] = this._geo.solids[0].faces.map(
+    const allFace: any[] = this._geoEle.solid.faces.map(
       (item: any) => item.outLoop[0]
     );
-    const topFaceIndex = allFace.indexOf(this.topFaceGeo);
+    const topFaceIndex = allFace.indexOf(this.geoEle.topFaceGeo);
     for (let j = 0; j < allFace.length; j++) {
       if (j === topFaceIndex) continue;
-      const connects = GeometryTool.faceConnect(this.topFaceGeo, allFace[j]);
+      const connects = GeometryTool.faceConnect(
+        this.geoEle.topFaceGeo,
+        allFace[j]
+      );
       if (connects.length > 0) {
         console.log(connects);
       }

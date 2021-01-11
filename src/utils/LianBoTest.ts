@@ -170,7 +170,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.exampleEditEdgeAndPoint();
+    this.testVertexEdit();
   }
 
   modifyObv2() {
@@ -1056,6 +1056,24 @@ class LianBoTest {
 
   private localToWorld(v: Vector3, matrixWorld: Matrix4): Vector3 {
     return v.applyMatrix4(matrixWorld);
+  }
+
+  private testVertexEdit() {
+    const st = this.lvl.findByRvtId('2029429');
+    const a = 0,
+      b = 0,
+      c = 0;
+    st.geoEle.mirrorFaces[0].mirrorFace[0].x = a;
+    st.geoEle.mirrorFaces[0].mirrorFace[0].y = b;
+    st.geoEle.mirrorFaces[0].mirrorFace[0].z = c;
+    for (const face of st.geoEle.solid.faces) {
+      const faceLoop = face.outLoop[0];
+      for (const vertex of faceLoop) {
+        if (vertex.x === a && vertex.y === b && vertex.z === c) {
+          console.log(face); // 应该是三个面，一个点关联三个面
+        }
+      }
+    }
   }
 }
 

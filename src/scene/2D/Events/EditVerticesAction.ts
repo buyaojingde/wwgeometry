@@ -130,7 +130,7 @@ export default class EditVerticesAction extends BaseEvent {
       const structure = this.currentP.structure;
       const idx = structure.boundary.indexOf(this.currentP.vertex);
       if (idx !== -1) {
-        geoV = structure.topFaceGeo[idx];
+        geoV = structure.geoEle.topFaceGeo[idx];
         Model2DActive.setStructureVec(geoV);
         this.activeStructure(structure, idx);
       } else {
