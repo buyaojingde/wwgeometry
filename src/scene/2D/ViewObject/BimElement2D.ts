@@ -119,9 +119,11 @@ export default class BimElement2D extends PIXI.Container {
       this.spots.forEach((item) => item.detectArea());
       return;
     }
+    let index = 0;
     for (const p of this.polyPs) {
       const spot = new Spot2D({
         model: this.model,
+        index: index++,
         og: new ObservableGeometry([p]),
       });
       this.addChild(spot);
@@ -141,11 +143,17 @@ export default class BimElement2D extends PIXI.Container {
       tmpEdges.push(seg);
       return current;
     }, lastV);
+
+    let index = 0;
+    let prev = this.polyPs.length - 1;
     for (const edge of tmpEdges) {
       const edge2d = new Edge2D({
         model: this.model,
+        indices: [prev, index],
         og: new ObservableGeometry(edge),
       });
+      index++;
+      prev = index - 1;
       this.addChild(edge2d);
       this.edges.push(edge2d);
     }

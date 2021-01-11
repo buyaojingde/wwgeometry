@@ -28,7 +28,7 @@ class SolidGeometryUtils {
     }
   }
 
-  private translateVertex(vertex: any, offsetV: any) {
+  public translateVertex(vertex: any, offsetV: any) {
     vertex.x = vertex.x + offsetV.x;
     vertex.y = vertex.y + offsetV.y;
     vertex.z = vertex.z + offsetV.z;

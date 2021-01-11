@@ -479,4 +479,12 @@ export default class Structure
     // 一个立方体怎么根据一个面的改变，同步整个solid的数据
     return worldPs;
   }
+
+  public get topFaceGeo(): any {
+    return this.geoEle.topFaceGeo;
+  }
+
+  public get mirrorFaces(): any {
+    return this.geoEle.mirrorFaces;
+  }
 }
