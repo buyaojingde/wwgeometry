@@ -83,13 +83,22 @@ export default class PickupController extends BaseController {
           Model2DActive.setDragStructure(object.strct);
         }
         if (object instanceof BimElement2D) {
-          Model2DActive.setMoveItem(object.dragModel);
+          Model2DActive.setMoveItem({
+            dragModel: object.dragModel,
+            moveType: 'polygon2D',
+          });
         }
         if (object instanceof Edge2D) {
-          Model2DActive.setMoveItem(object.dragModel);
+          Model2DActive.setMoveItem({
+            dragModel: object.dragModel,
+            moveType: 'edge2D',
+          });
         }
         if (object instanceof Spot2D) {
-          Model2DActive.setMoveItem(object.dragModel);
+          Model2DActive.setMoveItem({
+            dragModel: object.dragModel,
+            moveType: 'spot2D',
+          });
         }
       })();
     });

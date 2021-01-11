@@ -50,10 +50,10 @@ export default class Polygon {
   public constructor(vcs: any[]) {
     this.vertices = [];
     vcs.forEach((item) => this.vertices.push(new Point(item.x, item.y)));
-    if (this.isClockwise()) {
-      // 按逆时针排序
-      this.reverseVertex();
-    }
+    // if (this.isClockwise()) {
+    // 按逆时针排序
+    // this.reverseVertex();
+    // }
     this.updateEdges();
   }
 

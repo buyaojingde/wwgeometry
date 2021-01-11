@@ -35,7 +35,6 @@ export default class BimElement2D extends PIXI.Container {
     this.polyPs = polygon.vertices.map(
       (item) => new ObserveVector2D(item.x, item.y)
     );
-    this.model.observeGeo = this.polyPs;
     this.createPolygon2D();
     // this.createEdgesAndSpot();
     reaction(
@@ -49,6 +48,8 @@ export default class BimElement2D extends PIXI.Container {
         } else {
           this.createPolygon2D();
         }
+        this.edges.forEach((item) => (item.interactive = able));
+        this.spots.forEach((item) => (item.interactive = able));
       }
     );
   }

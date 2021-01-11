@@ -156,7 +156,7 @@ export default class GeometryTool {
   /**
    * @author lianbo
    * @date 2020-12-25 17:48:02
-   * @Description: 三个点按顺序，以p1p2 p1p2线段的对角点
+   * @Description: 三个点按顺序，以p1p0 p1p2线段的对角点
    *
    *            *p0           x?
    *
@@ -165,5 +165,76 @@ export default class GeometryTool {
    */
   public static diagonal(p0: any, p1: any, p2: any): any {
     return { x: p2.x + p0.x - p1.x, y: p2.y + p0.y - p1.y };
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 10:33:59
+   * @Description: 面和面是否相连，并输出相应的边
+   */
+  public static faceConnect(face: any, face1: any) {
+    const edges = GeometryTool.face2Edges(face);
+    const edges1 = GeometryTool.face2Edges(face1);
+    const connectEdges = [];
+    for (let i = 0; i < edges.length; i++) {
+      for (let j = 0; j < edges1.length; j++) {
+        if (GeometryTool.edgeEqual(edges[i], edges1[j])) {
+          connectEdges.push({ i, j });
+        }
+      }
+    }
+    return connectEdges;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 10:51:17
+   * @Description: face转成边
+   */
+  private static face2Edges(face: any): any[] {
+    const edges: any[] = [];
+    let prev = face[face.length - 1];
+    for (let i = 0; i < face.length; i++) {
+      const current = face[i];
+      const seg = { prev, current };
+      edges.push(seg);
+      prev = current;
+    }
+    return edges;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 10:51:01
+   * @Description: 两个边相等
+   */
+  private static edgeEqual(edge: any, edges1Element: any) {
+    if (GeometryTool.edgePointEqual(edge.prev, edges1Element.prev)) {
+      if (GeometryTool.edgePointEqual(edge.current, edges1Element.current)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (GeometryTool.edgePointEqual(edge.prev, edges1Element.current)) {
+        if (GeometryTool.edgePointEqual(edge.current, edges1Element.prev)) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-01-11 10:50:36
+   * @Description: 明显是两个点相等
+   */
+  private static edgePointEqual(prev: any, prev2: any): boolean {
+    return prev.x === prev2.x && prev.y === prev2.y && prev.z === prev2.z;
   }
 }

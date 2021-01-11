@@ -1,12 +1,16 @@
 import { reaction } from 'mobx';
 import Model2DActive from '../../../store/Model2DActive';
+import ConfigStructure from '../../../utils/ConfigStructure';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import BaseEvent from '../../Base/BaseEvent';
+import SolidGeometryUtils from '../../Model/Geometry/SolidGeometryUtils';
 import Scene2D from '../index';
 
 export default class MoveAction extends BaseEvent {
   private _scene: Scene2D;
   private _moveObj: any;
+  private _moveType: any;
+  private _originPosition: any;
   private lastPosition: any;
   public constructor(scene: Scene2D) {
     super(scene.DOMEventListener);
@@ -15,9 +19,16 @@ export default class MoveAction extends BaseEvent {
     reaction(
       () => Model2DActive.moveItem,
       (data) => {
-        this._moveObj = data;
+        if (data) {
+          this._moveObj = data.dragModel;
+          this._moveType = data.moveType;
+          this._originPosition = data.dragModel.og.position;
+        } else {
+          this._moveObj = null;
+          this._moveType = null;
+        }
         if (data !== null) {
-          this.enable = true;
+          this.enable = data.dragModel.model.isEdit;
         } else {
           this.enable = false;
         }
@@ -57,7 +68,16 @@ export default class MoveAction extends BaseEvent {
    */
   private moveDone(event: any) {
     console.log('done');
+    const currentOgPosition = this._moveObj.og.position;
+    const translateV = {
+      x: currentOgPosition.x - this._originPosition.x,
+      y: currentOgPosition.y - this._originPosition.y,
+    };
+    const bimV = ConfigStructure.computeOffsetV(translateV);
     this.lastPosition = null;
-    this._moveObj.model.updateGeoData();
+    if (this._moveType === 'polygon2D') {
+      SolidGeometryUtils.translateGeo(this._moveObj.model.geo, bimV);
+      this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
+    }
   }
 }

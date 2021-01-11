@@ -9,6 +9,7 @@ import Segments from '../../../utils/Math/geometry/Segments';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import { action, observable } from 'mobx';
 import Point from '../../../utils/Math/geometry/Point';
+import GeometryTool from '../../../utils/Math/tool/GeometryTool';
 import JSTSUtils from '../../2D/Utils/JSTSUtils';
 import { IDataObject } from '../../Interface/IDataObject';
 import IBuildable from '../BaseInterface/IBuildable';
@@ -428,12 +429,21 @@ export default class Structure
     return this.midSeg.parallel(seg);
   }
 
-  public updateGeoData(): any {
-    this.boundary = this.observeGeo.map((item) => new Point(item.x, item.y));
-    return this.buildToData();
+  public updateBoundary(og: any[]) {
+    this.boundary = og.map((item) => new Point(item.x, item.y));
+    return;
+    // 以下为正确性验证
+    const worldPs: any[] = this.boundary.map((item) =>
+      ConfigStructure.computeGeo(item)
+    );
+    for (let i = 0; i < worldPs.length; i++) {
+      console.log(
+        worldPs[i].x === this.topFaceGeo[i].x &&
+          worldPs[i].y === this.topFaceGeo[i].y
+      );
+    }
   }
 
-  public observeGeo!: any[];
   /**
    * @author lianbo
    * @date 2021-01-10 14:59:15
@@ -443,6 +453,18 @@ export default class Structure
     const worldPs: any[] = this.boundary.map((item) =>
       ConfigStructure.computeGeo(item)
     );
+
+    const allFace: any[] = this._geo.solids[0].faces.map(
+      (item: any) => item.outLoop[0]
+    );
+    const topFaceIndex = allFace.indexOf(this.topFaceGeo);
+    for (let j = 0; j < allFace.length; j++) {
+      if (j === topFaceIndex) continue;
+      const connects = GeometryTool.faceConnect(this.topFaceGeo, allFace[j]);
+      if (connects.length > 0) {
+        console.log(connects);
+      }
+    }
     // 一个立方体怎么根据一个面的改变，同步整个solid的数据
     return worldPs;
   }

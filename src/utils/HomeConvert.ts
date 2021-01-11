@@ -16,7 +16,7 @@ class HomeConvert {
   eleGeo!: any[];
   eles!: any[];
   spaces!: any[];
-  itemCount = 2000; //最大渲染数量
+  itemCount = 1; //最大渲染数量
   convert(obj: any): Home {
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;
@@ -45,7 +45,7 @@ class HomeConvert {
       lvl.addRoom(room);
       stCount++;
     }
-    console.log('构建数量' + stCount);
+    console.log('构建数量' + (stCount - 1));
     home.levels.push(lvl);
     this.gc();
     return home;

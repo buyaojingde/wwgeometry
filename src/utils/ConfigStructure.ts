@@ -114,6 +114,19 @@ class ConfigStructure {
 
   /**
    * @author lianbo
+   * @date 2021-01-11 15:46:04
+   * @Description: 2dCanvas偏移值 转Bim下的偏移值
+   */
+  public computeOffsetV(offsetV: any): any {
+    const bimOffsetV: any = {};
+    bimOffsetV.x = offsetV.x * 10;
+    bimOffsetV.y = offsetV.y * -10;
+    bimOffsetV.z = 0;
+    return bimOffsetV;
+  }
+
+  /**
+   * @author lianbo
    * @date 2020-11-11 15:12:26
    * @Description: 几何坐标转Canvas坐标
    */
