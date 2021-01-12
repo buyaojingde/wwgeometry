@@ -35,7 +35,7 @@ class HomeConvert {
     home.levels = [];
     let stCount = 1;
     for (const st of structures) {
-      if (stCount > 0) break;
+      if (stCount > this.itemCount) break;
       lvl.addStructure(st);
       stCount++;
     }

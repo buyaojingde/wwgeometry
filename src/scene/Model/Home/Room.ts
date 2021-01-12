@@ -90,7 +90,6 @@ export default class Room extends ObjectNamed {
   }
   private _spaceData: any;
 
-  @observable
   private _visible = true;
   private _active = true;
 
@@ -102,6 +101,7 @@ export default class Room extends ObjectNamed {
   }
   set visible(value: boolean) {
     this._visible = value;
+    this.emit('visibleEvent');
   }
 
   private _boundary!: Point[];

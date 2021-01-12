@@ -52,6 +52,7 @@ export default class BimElement2D extends PIXI.Container {
         this.spots.forEach((item) => (item.interactive = able));
       }
     );
+    this.model.on('visibleEvent', () => (this.visible = this.model.visible));
   }
 
   private createPolygon2D() {

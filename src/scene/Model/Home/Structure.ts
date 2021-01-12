@@ -131,7 +131,6 @@ export default class Structure
     );
   }
 
-  @observable
   private _visible = true;
 
   get visible(): boolean {
@@ -140,6 +139,7 @@ export default class Structure
 
   set visible(value: boolean) {
     this._visible = value;
+    this.emit('visibleEvent');
   }
 
   private _editedVertex!: Point;
