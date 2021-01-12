@@ -35,7 +35,7 @@ class HomeConvert {
     home.levels = [];
     let stCount = 1;
     for (const st of structures) {
-      if (stCount > this.itemCount) break;
+      if (stCount > 0) break;
       lvl.addStructure(st);
       stCount++;
     }
@@ -85,9 +85,8 @@ class HomeConvert {
             roomBoundary.push(ConfigStructure.computePoint(item))
           );
           const roomData = new Room(roomBoundary);
-          roomData.rvtName = room.name;
           roomData.rvtId = room.code.split('-').pop();
-          roomData.topFaceGeo = room.boundary;
+          roomData.setSpaceData(room);
           rooms.push(roomData);
         }
       }

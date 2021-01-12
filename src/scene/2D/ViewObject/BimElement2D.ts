@@ -123,9 +123,10 @@ export default class BimElement2D extends PIXI.Container {
     for (const p of this.polyPs) {
       const spot = new Spot2D({
         model: this.model,
-        index: index++,
+        indices: [index],
         og: new ObservableGeometry([p]),
       });
+      index++;
       this.addChild(spot);
       this.spots.push(spot);
     }

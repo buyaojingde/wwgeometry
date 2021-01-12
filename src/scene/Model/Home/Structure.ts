@@ -14,6 +14,7 @@ import JSTSUtils from '../../2D/Utils/JSTSUtils';
 import { IDataObject } from '../../Interface/IDataObject';
 import IBuildable from '../BaseInterface/IBuildable';
 import ObjectIndex from '../BaseInterface/ObjectIndex';
+import SolidGeometryUtils from '../Geometry/SolidGeometryUtils';
 
 export const StType = {
   Wall: 'OST_Walls',
@@ -486,5 +487,34 @@ export default class Structure
 
   public get mirrorFaces(): any {
     return this.geoEle.mirrorFaces;
+  }
+
+  public translateGeoEle(bimV: any, moveType: any, indices: number[]) {
+    const movePs = (index: number) => {
+      const vs: any[] = [];
+      const p0 = this.topFaceGeo[index];
+      vs.push(p0);
+      for (const mirror of this.mirrorFaces) {
+        for (const indices of mirror.mirrorIndices) {
+          if (indices.topIndex === index) {
+            const mirrorIndex = indices.mirrorIndex;
+            vs.push(mirror.mirrorFace[mirrorIndex]);
+          }
+        }
+      }
+      return vs;
+    };
+    if (moveType === 'polygon2D') {
+      SolidGeometryUtils.translateGeo(this.geoEle.geo, bimV);
+    }
+    if (moveType === 'edge2D' || moveType === 'spot2D') {
+      const vs: any[] = [];
+      for (const index of indices) {
+        vs.push(...movePs(index));
+      }
+      for (const v of vs) {
+        SolidGeometryUtils.translateVertex(v, bimV);
+      }
+    }
   }
 }

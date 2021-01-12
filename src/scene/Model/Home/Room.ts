@@ -3,6 +3,7 @@ import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
 import Segment from '../../../utils/Math/geometry/Segment';
 import ObjectNamed from '../BaseInterface/ObjectNamed';
+import SolidGeometryUtils from '../Geometry/SolidGeometryUtils';
 import Level from './Level';
 import Structure from './Structure';
 
@@ -28,6 +29,12 @@ class VirtualWall {
   }
 }
 
+class SpaceData {
+  boundary: any;
+  space: any;
+  rvtName!: string;
+}
+
 export default class Room extends ObjectNamed {
   @observable
   public isEdit = false;
@@ -50,12 +57,15 @@ export default class Room extends ObjectNamed {
   set level(value: Level) {
     this._level = value;
   }
-  get topFaceGeo(): any {
-    return this._topFaceGeo;
+  get spaceData(): any {
+    return this._spaceData;
   }
 
-  set topFaceGeo(value: any) {
-    this._topFaceGeo = value;
+  setSpaceData(space: any) {
+    this._spaceData = new SpaceData();
+    this._spaceData.boundary = space.boundary;
+    this._spaceData.space = space;
+    this._spaceData.rvtName = space.name;
   }
   get active(): boolean {
     return this._active;
@@ -66,11 +76,7 @@ export default class Room extends ObjectNamed {
   }
 
   get rvtName(): string {
-    return this._rvtName;
-  }
-
-  set rvtName(value: string) {
-    this._rvtName = value;
+    return this._spaceData.rvtName;
   }
   public destroyed = false;
 
@@ -82,7 +88,7 @@ export default class Room extends ObjectNamed {
       this.addWall(new VirtualWall([], edge));
     }
   }
-  private _topFaceGeo: any;
+  private _spaceData: any;
 
   @observable
   private _visible = true;
@@ -176,5 +182,23 @@ export default class Room extends ObjectNamed {
     this.emit('blurred');
   }
 
-  public observeGeo!: any[];
+  public updateBoundary(og: any[]) {
+    this.boundary = og.map((item) => new Point(item.x, item.y));
+    return;
+  }
+  public translateGeoEle(bimV: any, moveType: any, indices: number[]) {
+    if (moveType === 'polygon2D') {
+      SolidGeometryUtils.translateLoop(this.spaceData.boundary, bimV);
+    }
+    if (moveType === 'edge2D' || moveType === 'spot2D') {
+      const vs: any[] = [];
+      for (const index of indices) {
+        vs.push(this.spaceData.boundary[index]);
+      }
+      for (const v of vs) {
+        SolidGeometryUtils.translateVertex(v, bimV);
+      }
+    }
+    console.log(this.spaceData);
+  }
 }

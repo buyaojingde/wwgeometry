@@ -22,7 +22,7 @@ class SolidGeometryUtils {
     }
   }
 
-  private translateLoop(loop: any, offsetV: any) {
+  public translateLoop(loop: any, offsetV: any) {
     for (const vertex of loop) {
       this.translateVertex(vertex, offsetV);
     }

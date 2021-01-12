@@ -70,46 +70,17 @@ export default class MoveAction extends BaseEvent {
     this.lastPosition = null;
     console.log('done');
 
-    const movePs = (index: number) => {
-      const vs: any[] = [];
-      const p0 = this._moveObj.model.topFaceGeo[index];
-      vs.push(p0);
-      for (const mirror of this._moveObj.model.mirrorFaces) {
-        for (const indices of mirror.mirrorIndices) {
-          if (indices.topIndex === index) {
-            const mirrorIndex = indices.mirrorIndex;
-            vs.push(mirror.mirrorFace[mirrorIndex]);
-          }
-        }
-      }
-      return vs;
-    };
     const currentOgPosition = this._moveObj.og.position;
     const translateV = {
       x: currentOgPosition.x - this._originPosition.x,
       y: currentOgPosition.y - this._originPosition.y,
     };
     const bimV = ConfigStructure.computeOffsetV(translateV);
-    if (this._moveType === 'polygon2D') {
-      SolidGeometryUtils.translateGeo(this._moveObj.model.geo, bimV);
-      this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
-    }
-    if (this._moveType === 'edge2D') {
-      const vs: any[] = [];
-      for (const index of this._moveObj.indices) {
-        vs.push(...movePs(index));
-      }
-      for (const v of vs) {
-        SolidGeometryUtils.translateVertex(v, bimV);
-      }
-      this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
-    }
-    if (this._moveType === 'spot2D') {
-      const vs = movePs(this._moveObj.index);
-      for (const v of vs) {
-        SolidGeometryUtils.translateVertex(v, bimV);
-      }
-      this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
-    }
+    this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
+    this._moveObj.model.translateGeoEle(
+      bimV,
+      this._moveType,
+      this._moveObj.indices
+    );
   }
 }
