@@ -3,7 +3,6 @@ import Model2DActive from '../../../store/Model2DActive';
 import ConfigStructure from '../../../utils/ConfigStructure';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
 import BaseEvent from '../../Base/BaseEvent';
-import SolidGeometryUtils from '../../Model/Geometry/SolidGeometryUtils';
 import Scene2D from '../index';
 
 export default class MoveAction extends BaseEvent {

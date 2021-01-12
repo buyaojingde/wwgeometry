@@ -2,7 +2,7 @@
   <div id="container2d" class="container2d">
     <div class="map-edit-menu">
       <div class="map-edit-button">
-        <el-button @click="startEdit"> edit </el-button>
+        <el-button @click="obstacle"> OBSTACLE </el-button>
         <el-button @click="endEdit"> end-edit </el-button>
       </div>
 
@@ -13,17 +13,22 @@
             @change="syncSt"
             v-model="vm.structureVec3.x"
             type="number"
-            style="width:200px"
+            style="width: 200px"
           />
           y:
           <el-input
             @change="syncSt"
             v-model="vm.structureVec3.y"
             type="number"
-            style="width:200px"
+            style="width: 200px"
           />
           radians:
-          <el-input @change="syncSt" v-model="vm.radians" type="number" style="width:200px" />
+          <el-input
+            @change="syncSt"
+            v-model="vm.radians"
+            type="number"
+            style="width: 200px"
+          />
         </div>
         <el-button @click="changeV"> submit </el-button>
         <el-button @click="reRender"> render </el-button>
@@ -68,6 +73,7 @@ import Scene2D from '../scene/2D';
 import Model2DActive from '../store/Model2DActive';
 import VueStoreData from '../store/VueStoreData';
 import { EventMgr, EventEnum } from '../utils/EventManager';
+import Obstacle from '@/scene/Model/Home/Obstacle';
 
 /**
  * @author lianbo
@@ -154,7 +160,7 @@ export default observer({
       }
     },
     handleNodeClick(data) {
-      if(!data.buildData) return;
+      if (!data.buildData) return;
       // console.log(this.$refs.mapTree.getCheckedKeys());
       Model2DActive.selection = data.buildData;
       this.scene2d.resetViewForStructure(data.buildData);
@@ -227,6 +233,9 @@ export default observer({
     async loadBuild(buildData) {
       await this.scene2d.loadHomeData(buildData);
       // console.log(buildData);
+    },
+    obstacle() {
+      Model2DActive.setNewStructure(new Obstacle());
     },
   },
 });

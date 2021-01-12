@@ -1,3 +1,5 @@
+import Obstacle from '../scene/Model/Home/Obstacle';
+import Room from '../scene/Model/Home/Room';
 import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
 import ConfigStructure from '../utils/ConfigStructure';
 import { EventEnum, EventMgr } from '../utils/EventManager';
@@ -40,6 +42,14 @@ class Model2DActive {
   public isEdit = false;
   @observable
   public moveItem: any;
+
+  @observable
+  public newStructure!: Structure | Room | Obstacle | null;
+
+  @action
+  public setNewStructure(val: Structure | Room | Obstacle | null) {
+    this.newStructure = val;
+  }
 
   constructor() {}
 

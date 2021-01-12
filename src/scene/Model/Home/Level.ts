@@ -4,6 +4,7 @@ import Segment from '../../../utils/Math/geometry/Segment';
 import Quadtree from '../../../utils/Math/math/Quadtree';
 import IBuildable from '../BaseInterface/IBuildable';
 import ObjectNamed from '../BaseInterface/ObjectNamed';
+import Obstacle from './Obstacle';
 import Room from './Room';
 import Structure, { StType } from './Structure';
 
@@ -14,6 +15,8 @@ export default class Level extends ObjectNamed implements IBuildable {
   }
 
   private _rooms: Room[] = [];
+
+  private _obstacles: Obstacle[] = [];
 
   get rooms(): Room[] {
     return this._rooms;
@@ -196,6 +199,26 @@ export default class Level extends ObjectNamed implements IBuildable {
   }
 
   public get allElements(): any[] {
-    return [...this._rooms, ...this._structures];
+    return [...this._rooms, ...this._structures, ...this._obstacles];
+  }
+
+  public exportObstacles() {
+    const obstacles: any[] = [];
+    let index = 0;
+    for (const obstacle of this._obstacles) {
+      const data = obstacle.buildData();
+      data.code = `${ConfigStructure.bimMapCode}-Obstacle-${index}`;
+      data.id = index;
+      index++;
+      obstacles.push(data);
+    }
+    return obstacles;
+  }
+
+  addObstacle(newModel: Obstacle) {
+    if (this._obstacles.includes(newModel)) return;
+    newModel.level = this;
+    this._obstacles.push(newModel);
+    this._quadTree.insert(newModel.quadData);
   }
 }

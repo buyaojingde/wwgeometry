@@ -1,6 +1,7 @@
-import { reaction } from 'mobx';
+import { autorun, reaction } from 'mobx';
 import Constant from '../../../utils/Math/contanst/constant';
 import ObservableGeometry from '../../Model/Home/ObservableGeometry';
+import Obstacle from '../../Model/Home/Obstacle';
 import Room from '../../Model/Home/Room';
 import Structure, { StType } from '../../Model/Home/Structure';
 import ObserveVector2D from '../../Model/ObserveMath/ObserveVector2D';
@@ -12,8 +13,10 @@ export default class BimElement2D extends PIXI.Container {
   public polygon!: Polygon2D;
   public edges: Edge2D[] = [];
   public spots: Spot2D[] = [];
-  public model: Structure | Room;
+  public model: Structure | Room | Obstacle;
   private polyPs: ObserveVector2D[];
+
+  private _disposeArr: Array<() => void> = [];
 
   public renderWith(parent: PIXI.Container) {
     parent.addChild(this);
@@ -27,7 +30,7 @@ export default class BimElement2D extends PIXI.Container {
    * @date 2021-01-07 19:44:28
    * @Description: 一个bim的体在平面上是一个多边形，由一个Polygon2D和几条线，几个点组成
    */
-  public constructor(model: Structure | Room) {
+  public constructor(model: Structure | Room | Obstacle) {
     super();
     this.interactive = true;
     this.model = model;
@@ -35,24 +38,33 @@ export default class BimElement2D extends PIXI.Container {
     this.polyPs = polygon.vertices.map(
       (item) => new ObserveVector2D(item.x, item.y)
     );
+    if (model instanceof Obstacle) {
+      model.obPoints = this.polyPs;
+    }
     this.createPolygon2D();
+
     // this.createEdgesAndSpot();
-    reaction(
-      () => {
-        return this.model.isEdit;
-      },
-      (able) => {
-        if (able) {
-          this.createPolygon2D();
-          this.createEdgesAndSpot();
-        } else {
-          this.createPolygon2D();
+    this._disposeArr.push(
+      reaction(
+        () => {
+          return this.model.isEdit;
+        },
+        (able) => {
+          if (able) {
+            this.createPolygon2D();
+            this.createEdgesAndSpot();
+          } else {
+            this.createPolygon2D();
+          }
+          this.edges.forEach((item) => (item.interactive = able));
+          this.spots.forEach((item) => (item.interactive = able));
         }
-        this.edges.forEach((item) => (item.interactive = able));
-        this.spots.forEach((item) => (item.interactive = able));
-      }
+      ),
+
+      this.model.on('visibleEvent', () => (this.visible = this.model.visible)),
+      this.model.once('destroy', this.destroy.bind(this))
     );
-    this.model.on('visibleEvent', () => (this.visible = this.model.visible));
+    this.positionAutorun();
   }
 
   private createPolygon2D() {
@@ -85,6 +97,9 @@ export default class BimElement2D extends PIXI.Container {
   public get colorAlpha() {
     if (this.model.isEdit) {
       return [0xff0000, 1];
+    }
+    if (this.model instanceof Obstacle) {
+      return [0xffffff, 1];
     }
     let ca = [Constant.colorHexNumber('#8a8a8a'), 0.2];
     switch (this.cType) {
@@ -158,6 +173,22 @@ export default class BimElement2D extends PIXI.Container {
       prev = index - 1;
       this.addChild(edge2d);
       this.edges.push(edge2d);
+    }
+  }
+
+  public destroy(...args: any[]) {
+    super.destroy(...args);
+    this._disposeArr.forEach((dispose) => dispose());
+    this._disposeArr = [];
+  }
+
+  private positionAutorun() {
+    if (this.model instanceof Obstacle) {
+      this._disposeArr.push(
+        autorun(() => {
+          this.position.copyFrom(this.model.position);
+        })
+      );
     }
   }
 }

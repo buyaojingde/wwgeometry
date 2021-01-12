@@ -28,6 +28,7 @@ import { drawGrid } from '../Math/GraphicsUtils';
 import BaseEvent2D from './Events/Base';
 import Guidelines from './Events/Guidelines';
 import MoveAction from './Events/MoveAction';
+import NewStructureAction from './Events/NewStructureAction';
 import SelectionAction from './Events/SelectionAction';
 import SelectStructureAction from './Events/SelectStructureAction';
 import HomePlan from './Layer/HomePlan';
@@ -743,6 +744,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     new Guidelines(this);
     new MoveAction(this);
     new SelectionAction(this);
+    new NewStructureAction(this);
     //endregion
   }
 

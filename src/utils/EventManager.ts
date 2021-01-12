@@ -7,4 +7,6 @@ export const EventMgr = new EventManager();
 export const EventEnum = {
   selectNode: Symbol(),
   initHome: Symbol(),
+  layerAdd: Symbol(),
+  layerRemove: Symbol(),
 };
