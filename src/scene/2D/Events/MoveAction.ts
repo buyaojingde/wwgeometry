@@ -67,6 +67,7 @@ export default class MoveAction extends BaseEvent {
    * @Description: 移动完成后的，同步
    */
   private moveDone(event: any) {
+    this.lastPosition = null;
     console.log('done');
 
     const movePs = (index: number) => {
@@ -74,9 +75,11 @@ export default class MoveAction extends BaseEvent {
       const p0 = this._moveObj.model.topFaceGeo[index];
       vs.push(p0);
       for (const mirror of this._moveObj.model.mirrorFaces) {
-        if (mirror.mirrorIndices.topIndex === index) {
-          const mirrorIndex = mirror.mirrorIndices.mirrorIndex;
-          vs.push(mirror.mirrorFace[mirrorIndex]);
+        for (const indices of mirror.mirrorIndices) {
+          if (indices.topIndex === index) {
+            const mirrorIndex = indices.mirrorIndex;
+            vs.push(mirror.mirrorFace[mirrorIndex]);
+          }
         }
       }
       return vs;
@@ -87,7 +90,6 @@ export default class MoveAction extends BaseEvent {
       y: currentOgPosition.y - this._originPosition.y,
     };
     const bimV = ConfigStructure.computeOffsetV(translateV);
-    this.lastPosition = null;
     if (this._moveType === 'polygon2D') {
       SolidGeometryUtils.translateGeo(this._moveObj.model.geo, bimV);
       this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
