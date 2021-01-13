@@ -38,9 +38,7 @@ export default class BimElement2D extends PIXI.Container {
     this.polyPs = polygon.vertices.map(
       (item) => new ObserveVector2D(item.x, item.y)
     );
-    if (model instanceof Obstacle) {
-      model.obPoints = this.polyPs;
-    }
+    model.obPoints = this.polyPs;
     this.createPolygon2D();
 
     // this.createEdgesAndSpot();

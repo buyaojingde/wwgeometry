@@ -4,6 +4,7 @@ import Polygon from '../../../utils/Math/geometry/Polygon';
 import Segment from '../../../utils/Math/geometry/Segment';
 import ObjectNamed from '../BaseInterface/ObjectNamed';
 import SolidGeometryUtils from '../Geometry/SolidGeometryUtils';
+import ObserveVector2D from '../ObserveMath/ObserveVector2D';
 import Level from './Level';
 import Structure from './Structure';
 
@@ -103,7 +104,7 @@ export default class Room extends ObjectNamed {
     this._visible = value;
     this.emit('visibleEvent');
   }
-
+  public obPoints!: ObserveVector2D[];
   private _boundary!: Point[];
 
   get boundary(): Point[] {
@@ -182,8 +183,8 @@ export default class Room extends ObjectNamed {
     this.emit('blurred');
   }
 
-  public updateBoundary(og: any[]) {
-    this.boundary = og.map((item) => new Point(item.x, item.y));
+  public updateBoundary() {
+    this.boundary = this.obPoints.map((item) => new Point(item.x, item.y));
     return;
   }
   public translateGeoEle(bimV: any, moveType: any, indices: number[]) {

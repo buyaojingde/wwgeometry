@@ -15,6 +15,7 @@ import { IDataObject } from '../../Interface/IDataObject';
 import IBuildable from '../BaseInterface/IBuildable';
 import ObjectIndex from '../BaseInterface/ObjectIndex';
 import SolidGeometryUtils from '../Geometry/SolidGeometryUtils';
+import ObserveVector2D from '../ObserveMath/ObserveVector2D';
 
 export const StType = {
   Wall: 'OST_Walls',
@@ -100,6 +101,7 @@ export default class Structure
   }
 
   private _boundary!: Point[];
+  public obPoints!: ObserveVector2D[];
 
   get boundary(): Point[] {
     return this._boundary;
@@ -438,8 +440,8 @@ export default class Structure
     return this.midSeg.parallel(seg);
   }
 
-  public updateBoundary(og: any[]) {
-    this.boundary = og.map((item) => new Point(item.x, item.y));
+  public updateBoundary() {
+    this.boundary = this.obPoints.map((item) => new Point(item.x, item.y));
     return;
     // 以下为正确性验证
     const worldPs: any[] = this.boundary.map((item) =>

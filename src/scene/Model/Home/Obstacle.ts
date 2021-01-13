@@ -115,8 +115,8 @@ export default class Obstacle
     this.emit('destroy');
   }
 
-  public updateBoundary(og: any[]) {
-    this.boundary = og.map((item) => new Point(item.x, item.y));
+  public updateBoundary() {
+    this.boundary = this.obPoints.map((item) => new Point(item.x, item.y));
   }
 
   public translateGeoEle(bimV: any, moveType: any, indices: number[]) {}

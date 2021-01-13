@@ -75,7 +75,7 @@ export default class MoveAction extends BaseEvent {
       y: currentOgPosition.y - this._originPosition.y,
     };
     const bimV = ConfigStructure.computeOffsetV(translateV);
-    this._moveObj.model.updateBoundary(this._moveObj.og.observerGeo);
+    this._moveObj.model.updateBoundary();
     this._moveObj.model.translateGeoEle(
       bimV,
       this._moveType,

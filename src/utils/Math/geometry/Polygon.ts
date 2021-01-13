@@ -48,6 +48,9 @@ export default class Polygon {
   public edges!: Segment[];
 
   public constructor(vcs: any[]) {
+    if (vcs.length < 3) {
+      throw new Error('顶点不到三个！');
+    }
     this.vertices = [];
     vcs.forEach((item) => this.vertices.push(new Point(item.x, item.y)));
     // if (this.isClockwise()) {
