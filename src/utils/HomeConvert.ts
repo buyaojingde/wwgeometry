@@ -16,7 +16,7 @@ class HomeConvert {
   eleGeo!: any[];
   eles!: any[];
   spaces!: any[];
-  itemCount = 0; //最大渲染数量
+  itemCount = 2000; //最大渲染数量
   convert(obj: any): Home {
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;

@@ -43,7 +43,7 @@ export default class Edge2D extends DragContainer {
     );
     let edge = new Segment(start, end);
     edge = edge.shorten(1);
-    return edge.offset(1).vertices;
+    return edge.offset(1.5).vertices;
   }
 
   public refreshEdge() {

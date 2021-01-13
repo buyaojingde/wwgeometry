@@ -447,99 +447,17 @@ export default class Scene2D extends SceneBase implements IScene2D {
    * @Description: 梳理场景下构建的树状结构
    */
   homeToTreeData(): any {
-    const data: any[] = [];
-    const strs = this.home.curLevel.structures;
-    const dataLvl4 = (ele: any, st: Structure) => {
-      const data4: any = {};
-      data4.id = ele.revitId;
-      data4.label = ele.revitId;
-      data4.buildData = st;
-      return data4;
-    };
-
-    const dataLvl3 = (ele: any) => {
-      const data3: any = {};
-      data3.label = ele.typeName;
-      data3.children = [];
-      return data3;
-    };
-
-    const dataLvl2 = (ele: any) => {
-      const data2: any = {};
-      data2.label = ele.categoryName;
-      data2.children = [];
-      return data2;
-    };
-
-    for (const st of strs) {
-      const ele: any = st.geoEle.ele;
-      const existData: any = data.find(
-        (item) => ele.professional === item.label
-      );
-      if (!existData) {
-        const data1: any = {};
-        data1.label = ele.professional;
-        data1.id = ele.professional;
-        data.push(data1);
-        data1.children = [];
-
-        const data2: any = dataLvl2(ele);
-        data1.children.push(data2);
-
-        const data3: any = dataLvl3(ele);
-        data2.children.push(data3);
-
-        const data4: any = dataLvl4(ele, st);
-        data3.children.push(data4);
-      } else {
-        const existData2 = existData.children.find(
-          (item: any) => ele.categoryName === item.label
-        );
-        if (!existData2) {
-          const data2: any = dataLvl2(ele);
-          existData.children.push(data2);
-
-          const data3: any = dataLvl3(ele);
-          data2.children.push(data3);
-
-          const data4: any = dataLvl4(ele, st);
-          data3.children.push(data4);
-        } else {
-          const existData3 = existData2.children.find(
-            (item: any) => ele.typeName === item.label
-          );
-          if (!existData3) {
-            const data3: any = dataLvl3(ele);
-            existData2.children.push(data3);
-
-            const data4: any = dataLvl4(ele, st);
-            data3.children.push(data4);
-          } else {
-            const data4: any = dataLvl4(ele, st);
-            existData3.children.push(data4);
-          }
-        }
-      }
-    }
-
-    const rooms = this.home.curLevel.rooms;
-    const dataRoom: any = {};
-    dataRoom.label = 'room';
-    dataRoom.id = 'room';
-    data.push(dataRoom);
-    dataRoom.children = [];
-    for (const room of rooms) {
-      const roomTree: any = {};
-      // roomTree.label = room.rvtName + " " + room.rvtId;
-      roomTree.label = room.rvtId;
-      roomTree.id = room.rvtId;
-      roomTree.buildData = room;
-      dataRoom.children.push(roomTree);
-    }
     const allData: any = {};
     allData.label = 'build';
     allData.id = '0';
+    const data: any[] = [];
     allData.children = data;
+    data.push(this.home.curLevel.structuresTree);
+    data.push(this.home.curLevel.roomsTree);
+    data.push(this.home.curLevel.obstaclesTree);
+    this.home.curLevel.updateStructuresTree();
+    this.home.curLevel.updateRoomsTree();
+    this.home.curLevel.updateObstaclesTree();
     const dd = [];
     dd.push(allData);
     return dd;

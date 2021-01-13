@@ -9,4 +9,5 @@ export const EventEnum = {
   initHome: Symbol(),
   layerAdd: Symbol(),
   layerRemove: Symbol(),
+  updateTree: Symbol(),
 };

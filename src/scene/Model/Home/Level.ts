@@ -1,4 +1,5 @@
 import ConfigStructure from '../../../utils/ConfigStructure';
+import { EventEnum, EventMgr } from '../../../utils/EventManager';
 import Box from '../../../utils/Math/geometry/Box';
 import Segment from '../../../utils/Math/geometry/Segment';
 import Quadtree from '../../../utils/Math/math/Quadtree';
@@ -184,6 +185,10 @@ export default class Level extends ObjectNamed implements IBuildable {
   protected resetData(): void {
     this._structures = [];
     this._rooms = [];
+    this._obstacles = [];
+    this.initStructureTree();
+    this.initRoomTree();
+    this.initObstacleTree();
   }
 
   /**
@@ -220,5 +225,136 @@ export default class Level extends ObjectNamed implements IBuildable {
     newModel.level = this;
     this._obstacles.push(newModel);
     this._quadTree.insert(newModel.quadData);
+  }
+
+  public structuresTree: any = {};
+  updateStructuresTree() {
+    const dataLvl4 = (ele: any, st: Structure) => {
+      const data4: any = {};
+      data4.id = ele.revitId;
+      data4.label = ele.revitId;
+      data4.buildData = st;
+      return data4;
+    };
+
+    const dataLvl3 = (ele: any) => {
+      const data3: any = {};
+      data3.label = ele.typeName;
+      data3.children = [];
+      return data3;
+    };
+
+    const dataLvl2 = (ele: any) => {
+      const data2: any = {};
+      data2.label = ele.categoryName;
+      data2.children = [];
+      return data2;
+    };
+
+    for (const st of this.structures) {
+      const ele: any = st.geoEle.ele;
+      const existData: any = this.structuresTree.children.find(
+        (item: any) => ele.professional === item.label
+      );
+      if (!existData) {
+        const data1: any = {};
+        data1.label = ele.professional;
+        data1.id = ele.professional;
+        this.structuresTree.children.push(data1);
+        data1.children = [];
+
+        const data2: any = dataLvl2(ele);
+        data1.children.push(data2);
+
+        const data3: any = dataLvl3(ele);
+        data2.children.push(data3);
+
+        const data4: any = dataLvl4(ele, st);
+        data3.children.push(data4);
+      } else {
+        const existData2 = existData.children.find(
+          (item: any) => ele.categoryName === item.label
+        );
+        if (!existData2) {
+          const data2: any = dataLvl2(ele);
+          existData.children.push(data2);
+
+          const data3: any = dataLvl3(ele);
+          data2.children.push(data3);
+
+          const data4: any = dataLvl4(ele, st);
+          data3.children.push(data4);
+        } else {
+          const existData3 = existData2.children.find(
+            (item: any) => ele.typeName === item.label
+          );
+          if (!existData3) {
+            const data3: any = dataLvl3(ele);
+            existData2.children.push(data3);
+
+            const data4: any = dataLvl4(ele, st);
+            data3.children.push(data4);
+          } else {
+            const data4: any = dataLvl4(ele, st);
+            existData3.children.push(data4);
+          }
+        }
+      }
+    }
+    return this.structuresTree;
+  }
+  public roomsTree: any = {};
+
+  updateRoomsTree() {
+    const rooms = this.rooms;
+    for (const room of rooms) {
+      const roomTree: any = {};
+      // roomTree.label = room.rvtName + " " + room.rvtId;
+      roomTree.label = room.rvtId;
+      roomTree.id = room.rvtId;
+      roomTree.buildData = room;
+      this.roomsTree.children.push(roomTree);
+    }
+    return this.roomsTree;
+  }
+
+  public obstaclesTree: any = {};
+  updateObstaclesTree() {
+    const obs = this._obstacles;
+
+    for (const ob of obs) {
+      const boTree: any = {};
+      boTree.label = ob.name;
+      boTree.id = ob.rvtId;
+      boTree.buildData = ob;
+      this.obstaclesTree.children.push(boTree);
+    }
+    return this.obstaclesTree;
+  }
+
+  private initStructureTree() {
+    this.structuresTree.label = '构建';
+    this.structuresTree.id = 'structure';
+    this.structuresTree.children = [];
+  }
+
+  private initRoomTree() {
+    this.roomsTree.label = 'room';
+    this.roomsTree.id = 'room';
+    this.roomsTree.children = [];
+  }
+
+  private initObstacleTree() {
+    this.obstaclesTree.label = 'obstacle';
+    this.obstaclesTree.id = 'obstacle';
+    this.obstaclesTree.children = [];
+  }
+
+  public addObstacleTree(ob: Obstacle) {
+    const boTree: any = {};
+    boTree.label = ob.name;
+    boTree.id = ob.rvtId;
+    boTree.buildData = ob;
+    this.obstaclesTree.children.push(boTree);
   }
 }

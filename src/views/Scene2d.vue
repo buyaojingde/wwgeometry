@@ -73,7 +73,7 @@ import Scene2D from '../scene/2D';
 import Model2DActive from '../store/Model2DActive';
 import VueStoreData from '../store/VueStoreData';
 import { EventMgr, EventEnum } from '../utils/EventManager';
-import Obstacle from '@/scene/Model/Home/Obstacle';
+import ObstacleFactory from '../scene/Model/Home/ObstacleFactory';
 
 /**
  * @author lianbo
@@ -104,8 +104,9 @@ export default observer({
   computed: {},
   mounted() {
     this.initScene2D();
-    EventMgr.on(EventEnum.selectNode, this.selectNodeMethod);
-    EventMgr.on(EventEnum.initHome, this.initTreeData);
+    EventMgr.on(EventEnum.selectNode, this.selectNodeMethod.bind(this));
+    EventMgr.on(EventEnum.initHome, this.initTreeData.bind(this));
+    EventMgr.on(EventEnum.updateTree, this.updateTreeChecked.bind(this));
   },
   /**
    * 销毁Vue实例之前，删除render动作
@@ -124,34 +125,42 @@ export default observer({
         }
       });
     },
+    updateTreeChecked(val) {
+      this.$nextTick(() => {
+        this.$refs.mapTree.setChecked(val.id,val.checked);
+      });
+    },
     selectNodeMethod(id) {
       // console.log(id);
+      this.expandedKeys.push(id);
       this.$nextTick(() => {
         this.$refs.mapTree && this.$refs.mapTree.setCurrentKey(id);
-        this.expandedKeys.push(id);
-        setTimeout(() => {
-          //TODO: 自动移动scrollview
-          if (this.eleList.length < 1) {
+        setTimeout(
+          function () {
+            //TODO: 自动移动scrollview
+            // if (this.eleList.length < 1) {
             const ele = this.$refs.mapTree.$el;
             if (ele) {
               this.eleList = [
                 ...ele.querySelectorAll('span.el-tree-node__label'),
               ];
             }
-          }
-          const result = this.eleList.find(
-            (item) => item.innerHTML === id.toString()
-          );
-          // console.log(result);
-          if (result) {
-            const exeNode = result.parentNode.parentNode;
-            exeNode.scrollIntoView({
-              behavior: 'auto',
-              block: 'center',
-              inline: 'nearest',
-            });
-          }
-        });
+            // }
+            const result = this.eleList.find(
+              (item) => item.innerHTML === id.toString()
+            );
+            // console.log(result);
+            if (result) {
+              const exeNode = result.parentNode.parentNode;
+              exeNode.scrollIntoView({
+                behavior: 'auto',
+                block: 'center',
+                inline: 'nearest',
+              });
+            }
+          }.bind(this),
+          100
+        );
       });
     },
     handleCheck(data, checked) {
@@ -235,7 +244,7 @@ export default observer({
       // console.log(buildData);
     },
     obstacle() {
-      Model2DActive.setNewStructure(new Obstacle());
+      Model2DActive.setNewStructure(ObstacleFactory.createObstacle());
     },
   },
 });

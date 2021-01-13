@@ -11,6 +11,7 @@ import Level from './Level';
 export default class Obstacle
   extends ObjectIndex
   implements IBuildable, IDataObject {
+  public name!: string;
   get position(): ObserveVector2D {
     return this._position;
   }
@@ -113,4 +114,10 @@ export default class Obstacle
   public destroy() {
     this.emit('destroy');
   }
+
+  public updateBoundary(og: any[]) {
+    this.boundary = og.map((item) => new Point(item.x, item.y));
+  }
+
+  public translateGeoEle(bimV: any, moveType: any, indices: number[]) {}
 }

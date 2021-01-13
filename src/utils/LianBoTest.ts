@@ -170,7 +170,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testVertexEdit();
+    this.testUpdateTree();
   }
 
   modifyObv2() {
@@ -1074,6 +1074,10 @@ class LianBoTest {
         }
       }
     }
+  }
+
+  private testUpdateTree() {
+    this.lvl.updateStructuresTree();
   }
 }
 

@@ -19,7 +19,11 @@ export default class NewStructureAction extends BaseEvent {
     reaction(
       () => Model2DActive.newStructure,
       (data) => {
-        this.enable = data instanceof Obstacle;
+        const isObstacle = data instanceof Obstacle;
+        if (isObstacle) {
+          this._once = false;
+        }
+        this.enable = isObstacle;
         this.newModel = data;
       }
     );
@@ -48,6 +52,11 @@ export default class NewStructureAction extends BaseEvent {
   private onInputEnd(event: any) {
     if (this.newModel instanceof Obstacle) {
       this._scene.home.curLevel.addObstacle(this.newModel);
+      this._scene.home.curLevel.addObstacleTree(this.newModel);
+      EventMgr.emit(EventEnum.updateTree, {
+        id: this.newModel.rvtId,
+        checked: true,
+      });
       Model2DActive.setNewStructure(null);
     }
   }
