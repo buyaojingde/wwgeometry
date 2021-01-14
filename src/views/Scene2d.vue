@@ -3,46 +3,46 @@
     <div class="map-edit-menu">
       <div class="map-edit-button">
         <el-button @click="obstacle"> OBSTACLE </el-button>
-        <el-button @click="endEdit"> end-edit </el-button>
+<!--        <el-button @click="endEdit"> end-edit </el-button>-->
       </div>
 
-      <div class="map-edit-input" style="display: -webkit-flex; display: flex">
-        <div class="edit-input" style="display: -webkit-flex; display: flex">
-          x:
-          <el-input
-            @change="syncSt"
-            v-model="vm.structureVec3.x"
-            type="number"
-            style="width: 200px"
-          />
-          y:
-          <el-input
-            @change="syncSt"
-            v-model="vm.structureVec3.y"
-            type="number"
-            style="width: 200px"
-          />
-          radians:
-          <el-input
-            @change="syncSt"
-            v-model="vm.radians"
-            type="number"
-            style="width: 200px"
-          />
-        </div>
-        <el-button @click="changeV"> submit </el-button>
-        <el-button @click="reRender"> render </el-button>
-        <el-button @click="testClick">
-          {{ testText }}
-        </el-button>
-        <el-input
-          @change="rotateSubject"
-          v-model="vm.subjectVec3.z"
-          type="number"
-        ></el-input>
-        <el-input @change="searchStructure" v-model="searchRvtId"></el-input>
-        <el-checkbox v-model="vm.showAxis">显示轴网</el-checkbox>
-      </div>
+<!--      <div class="map-edit-input" style="display: -webkit-flex; display: flex">-->
+<!--        <div class="edit-input" style="display: -webkit-flex; display: flex">-->
+<!--          x:-->
+<!--          <el-input-->
+<!--            @change="syncSt"-->
+<!--            v-model="vm.structureVec3.x"-->
+<!--            type="number"-->
+<!--            style="width: 200px"-->
+<!--          />-->
+<!--          y:-->
+<!--          <el-input-->
+<!--            @change="syncSt"-->
+<!--            v-model="vm.structureVec3.y"-->
+<!--            type="number"-->
+<!--            style="width: 200px"-->
+<!--          />-->
+<!--          radians:-->
+<!--          <el-input-->
+<!--            @change="syncSt"-->
+<!--            v-model="vm.radians"-->
+<!--            type="number"-->
+<!--            style="width: 200px"-->
+<!--          />-->
+<!--        </div>-->
+<!--        <el-button @click="changeV"> submit </el-button>-->
+<!--        <el-button @click="reRender"> render </el-button>-->
+<!--        <el-button @click="testClick">-->
+<!--          {{ testText }}-->
+<!--        </el-button>-->
+<!--        <el-input-->
+<!--          @change="rotateSubject"-->
+<!--          v-model="vm.subjectVec3.z"-->
+<!--          type="number"-->
+<!--        ></el-input>-->
+<!--        <el-input @change="searchStructure" v-model="searchRvtId"></el-input>-->
+<!--        <el-checkbox v-model="vm.showAxis">显示轴网</el-checkbox>-->
+<!--      </div>-->
     </div>
     <div class="map-tree">
       <el-tree
