@@ -159,7 +159,7 @@ export default observer({
               });
             }
           }.bind(this),
-          100
+          1000
         );
       });
     },

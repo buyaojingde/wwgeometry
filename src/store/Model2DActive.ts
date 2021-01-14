@@ -1,3 +1,4 @@
+import IDragObject from '../scene/Model/BaseInterface/IDragObject';
 import Obstacle from '../scene/Model/Home/Obstacle';
 import Room from '../scene/Model/Home/Room';
 import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
@@ -45,6 +46,8 @@ class Model2DActive {
 
   @observable
   public newStructure!: Structure | Room | Obstacle | null;
+  @observable
+  public dragModel!: IDragObject;
 
   @action
   public setNewStructure(val: Structure | Room | Obstacle | null) {
