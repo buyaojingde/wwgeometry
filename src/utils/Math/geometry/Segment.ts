@@ -669,6 +669,7 @@ export default class Segment {
   public shorten(dis: number): Segment {
     const v = this.dir.normalize.multiply(dis);
     const newStart = this.start.translate(v);
+    if (dis >= this.length) return new Segment(newStart, newStart);
     v.invert();
     const newEnd = this.end.translate(v);
     return new Segment(newStart, newEnd);
