@@ -1,13 +1,12 @@
-import Point from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Point';
-import Polygon from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Polygon';
-import Segment from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Segment';
-import MathUtils from '@/views/map/spaceInformation/mapEditor/utils/Math/math/MathUtils';
-import { AdsorptionTool } from '@/views/map/spaceInformation/mapEditor/utils/Math/tool/AdsorptionTool';
-import GeometryTool from '@/views/map/spaceInformation/mapEditor/utils/Math/tool/GeometryTool';
 import { reaction } from 'mobx';
 import Model2DActive from '../../../store/Model2DActive';
 import ConfigStructure from '../../../utils/ConfigStructure';
+import Point from '../../../utils/Math/geometry/Point';
+import Segment from '../../../utils/Math/geometry/Segment';
 import Vector2 from '../../../utils/Math/geometry/Vector2';
+import MathUtils from '../../../utils/Math/math/MathUtils';
+import { AdsorptionTool } from '../../../utils/Math/tool/AdsorptionTool';
+import GeometryTool from '../../../utils/Math/tool/GeometryTool';
 import BaseEvent from '../../Base/BaseEvent';
 import Scene2D from '../index';
 

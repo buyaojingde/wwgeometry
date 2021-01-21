@@ -1,4 +1,4 @@
-import LevelData from '@/views/map/spaceInformation/mapEditor/BimData/LevelData';
+import LevelData from '../../BimData/LevelData';
 import EditEdgeAction from '../../scene/2D/Events/EditEdgeAction';
 import EditVerticesAction from '../../scene/2D/Events/EditVerticesAction';
 import SelectRoomAction from '../../scene/2D/Events/SelectRoomAction';

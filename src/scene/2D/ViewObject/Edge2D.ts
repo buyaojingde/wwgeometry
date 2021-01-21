@@ -6,8 +6,8 @@ import DragContainer from './DragContainer';
 
 export default class Edge2D extends DragContainer {
   public dragModel!: any;
-  private renderColor: number = 0x000000;
-  private renderAlpha: number = 1;
+  private renderColor = 0x000000;
+  private renderAlpha = 1;
   public constructor(data: any) {
     super();
     this.dragModel = data;

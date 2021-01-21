@@ -1,4 +1,4 @@
-import { AdsorptionTool } from '@/views/map/spaceInformation/mapEditor/utils/Math/tool/AdsorptionTool';
+import isect from 'isect';
 import maxBy from 'lodash/maxBy';
 import { autorun, reaction } from 'mobx';
 import { Graphics } from 'pixi.js';
@@ -35,6 +35,7 @@ import Segment from './Math/geometry/Segment';
 import Vector2 from './Math/geometry/Vector2';
 import MathUtils from './Math/math/MathUtils';
 import Quadtree from './Math/math/Quadtree';
+import { AdsorptionTool } from './Math/tool/AdsorptionTool';
 import PolygonClipper from './PolygonClipper';
 import GeometryFactory = jsts.geom.GeometryFactory;
 import Geometry = jsts.geom.Geometry;

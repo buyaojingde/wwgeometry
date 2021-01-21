@@ -1,6 +1,6 @@
-import Room from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/Room';
-import Structure from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/Structure';
 import Level from '../scene/Model/Home/Level';
+import Room from '../scene/Model/Home/Room';
+import Structure from '../scene/Model/Home/Structure';
 
 export default class LevelData {
   public constructor(lvl: Level) {

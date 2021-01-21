@@ -1,10 +1,9 @@
-import Obstacle from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/Obstacle';
-import ObstacleFactory from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/ObstacleFactory';
-import Matrix3x3 from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Matrix3x3';
 import { Vector3 } from 'three';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Home from '../scene/Model/Home/Home';
 import Level from '../scene/Model/Home/Level';
+import Obstacle from '../scene/Model/Home/Obstacle';
+import ObstacleFactory from '../scene/Model/Home/ObstacleFactory';
 import Room from '../scene/Model/Home/Room';
 import Structure from '../scene/Model/Home/Structure';
 import Model2DActive from '../store/Model2DActive';
@@ -15,7 +14,7 @@ import MathUtils from './Math/math/MathUtils';
 import GeometryTool from './Math/tool/GeometryTool';
 
 class HomeConvert {
-  bimMapCode: string = '';
+  bimMapCode = '';
   geo!: any[];
   eleGeo!: any[];
   eles!: any[];

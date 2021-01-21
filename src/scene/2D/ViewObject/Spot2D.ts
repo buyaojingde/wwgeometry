@@ -4,8 +4,8 @@ import DragContainer from './DragContainer';
 
 export default class Spot2D extends DragContainer {
   public dragModel!: any;
-  private renderColor: number = 0x000000;
-  private renderAlpha: number = 1;
+  private renderColor = 0x000000;
+  private renderAlpha = 1;
 
   get index(): number {
     return this.dragModel.indices[0];

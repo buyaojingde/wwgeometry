@@ -3,7 +3,6 @@
  * @date 2020-10-20 17:07:35
  * @Description: 计算吸附的工具
  */
-import Segment from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Segment';
 import MathUtils from '../math/MathUtils';
 
 export class AdsorptionTool {
@@ -13,7 +12,12 @@ export class AdsorptionTool {
    * @accuracy 精度
    * @date 2018/11/05 14:52:16
    */
-  public static findAdsorptionPoint(p: any, vs: any[], fn: any, accuracy = 10): any {
+  public static findAdsorptionPoint(
+    p: any,
+    vs: any[],
+    fn: any,
+    accuracy = 10
+  ): any {
     const allowanceSquared = accuracy * accuracy;
     let min: number = Number.MAX_VALUE;
     let minPos: any = null;
@@ -34,7 +38,12 @@ export class AdsorptionTool {
    * @date 2020-11-13 09:11:36
    * @Description: 寻找吸附的线段
    */
-  public static findAdsorptionSeg(p: any, segs: any[], fn: any, accuracy = 10): any {
+  public static findAdsorptionSeg(
+    p: any,
+    segs: any[],
+    fn: any,
+    accuracy = 10
+  ): any {
     let min: number = Number.MAX_VALUE;
     let closestP: any = null;
     let closestSeg: any = null;
@@ -56,7 +65,13 @@ export class AdsorptionTool {
    * @date 2021-01-18 16:07:59
    * @Description: 以ps为顶点的多边形和边的吸附
    */
-  static findAdsorptionPolygon(p: any, ps: any[], segs: any[], fn: any, accuracy = 10): any {
+  static findAdsorptionPolygon(
+    p: any,
+    ps: any[],
+    segs: any[],
+    fn: any,
+    accuracy = 10
+  ): any {
     let minX: number = Number.MAX_VALUE;
     let minY: number = Number.MAX_VALUE;
     let closestPX: any = null;
@@ -102,7 +117,11 @@ export class AdsorptionTool {
     return { x: x, y: y };
   }
 
-  static findHorizontalAndVertical(position: any, points: any, accuracy = 10): any {
+  static findHorizontalAndVertical(
+    position: any,
+    points: any,
+    accuracy = 10
+  ): any {
     let minX = Number.MAX_VALUE;
     let pX;
     let minY = Number.MAX_VALUE;

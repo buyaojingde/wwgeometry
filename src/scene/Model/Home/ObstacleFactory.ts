@@ -1,4 +1,4 @@
-import ConfigStructure from '@/views/map/spaceInformation/mapEditor/utils/ConfigStructure';
+import ConfigStructure from '../../../utils/ConfigStructure';
 import Obstacle from './Obstacle';
 
 class ObstacleFactory {

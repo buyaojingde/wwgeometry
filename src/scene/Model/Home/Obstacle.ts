@@ -1,6 +1,6 @@
-import Matrix3x3 from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Matrix3x3';
 import { observable } from 'mobx';
 import ConfigStructure from '../../../utils/ConfigStructure';
+import Matrix3x3 from '../../../utils/Math/geometry/Matrix3x3';
 import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
 import { IDataObject } from '../../Interface/IDataObject';
