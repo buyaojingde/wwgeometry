@@ -89,12 +89,16 @@ export default class PickupController extends BaseController {
           });
         }
         if (object instanceof Edge2D) {
+          object.dragModel.model.switchInteractive(false);
+          object.setDragState(true);
           Model2DActive.setMoveItem({
             dragModel: object.dragModel,
             moveType: 'edge2D',
           });
         }
         if (object instanceof Spot2D) {
+          object.dragModel.model.switchInteractive(false);
+          object.setDragState(true);
           Model2DActive.setMoveItem({
             dragModel: object.dragModel,
             moveType: 'spot2D',
@@ -231,7 +235,7 @@ export default class PickupController extends BaseController {
    */
   // @ts-ignore
   public mapPointToPosition(x, y, isScreenOffset = true) {
-    let rect = void 0;
+    let rect: any;
     const point = new Point();
 
     // IE 11 fix
@@ -246,11 +250,10 @@ export default class PickupController extends BaseController {
       ? this.interactionManager.resolution
       : 1.0 / this.interactionManager.resolution;
 
-    // @ts-ignore
     point.x = x / ((this.renderDom.width / rect.width) * resolutionMultiplier);
 
-    point.y = // @ts-ignore
-      y / ((this.renderDom.height / rect.height) * resolutionMultiplier);
+    point.y =
+      y / ((this.renderDom.height / rect.height) * resolutionMultiplier); // @ts-ignore
 
     if (isScreenOffset) {
       // @ts-ignore
@@ -274,6 +277,8 @@ export default class PickupController extends BaseController {
       object instanceof BimElement2D
     ) {
       Model2DActive.setSelection(object.model);
+    } else if (object instanceof Edge2D || object instanceof Spot2D) {
+      Model2DActive.setSelection(object.dragModel.model);
     } else {
       Model2DActive.clearSelection();
     }

@@ -10,6 +10,9 @@ import Room from './Room';
 import Structure, { StType } from './Structure';
 
 export default class Level extends ObjectNamed implements IBuildable {
+  bimMapCode!: string;
+  hiddenElementCodeList: string[] = [];
+  public editGeometries: any[] = [];
   constructor() {
     super();
     this.resetData();
@@ -18,6 +21,8 @@ export default class Level extends ObjectNamed implements IBuildable {
   private _rooms: Room[] = [];
 
   private _obstacles: Obstacle[] = [];
+
+  private _hiddenList = [];
 
   get rooms(): Room[] {
     return this._rooms;
@@ -146,7 +151,11 @@ export default class Level extends ObjectNamed implements IBuildable {
         const selectEdges = selectBox.edges;
         const res: any[] = [];
         const others = this._quadTree.retrieve(st.quadData).filter((item) => {
-          return !(item.data instanceof Room) && item.data !== st;
+          return (
+            !(item.data instanceof Room) &&
+            item.data !== st &&
+            !(item.data instanceof Obstacle)
+          );
         });
         for (const other of others) {
           const result = selectBox.outsideTouch(other.data.box);
@@ -209,12 +218,8 @@ export default class Level extends ObjectNamed implements IBuildable {
 
   public exportObstacles() {
     const obstacles: any[] = [];
-    let index = 0;
     for (const obstacle of this._obstacles) {
       const data = obstacle.buildData();
-      data.code = `${ConfigStructure.bimMapCode}-Obstacle-${index}`;
-      data.id = index;
-      index++;
       obstacles.push(data);
     }
     return obstacles;
@@ -356,5 +361,61 @@ export default class Level extends ObjectNamed implements IBuildable {
     boTree.id = ob.rvtId;
     boTree.buildData = ob;
     this.obstaclesTree.children.push(boTree);
+  }
+
+  buildData() {}
+
+  hideElement() {
+    const list: any[] = [];
+    for (const room of this.rooms) {
+      if (this.hiddenElementCodeList.includes(room.code)) {
+        room.visible = false;
+        list.push({ id: room.rvtId, checked: false });
+      }
+    }
+
+    for (const st of this.structures) {
+      if (this.hiddenElementCodeList.includes(st.code)) {
+        st.visible = false;
+        list.push({ id: st.rvtId, checked: false });
+      }
+    }
+    EventMgr.emit(EventEnum.updateTree, list);
+  }
+
+  addEditGeometryItem(param: Structure | Room) {
+    if (this.editGeometries.includes(param)) return;
+    this.editGeometries.push(param);
+  }
+
+  public findAdsorption(model: any) {
+    const models = this.quadTree
+      .retrieve(model.quadData)
+      .map((item) => item.data)
+      .filter((item) => item.visible);
+    const otherSegs: any[] = [];
+    const otherSegHorizontal: any[] = [];
+    const otherSegVertical: any[] = [];
+    const ps: any = [];
+    for (const m of models) {
+      if (m !== model) {
+        for (const otherSeg of m.polygon.edges) {
+          if (otherSeg.isHorizontal()) {
+            otherSegHorizontal.push(otherSeg);
+          } else if (otherSeg.isVertical()) {
+            otherSegVertical.push(otherSeg);
+          } else {
+            otherSegs.push(otherSeg);
+          }
+        }
+      }
+      ps.push(...m.polygon.vertices);
+    }
+    return {
+      horizontal: otherSegHorizontal,
+      vertical: otherSegVertical,
+      segs: otherSegs,
+      points: ps,
+    };
   }
 }

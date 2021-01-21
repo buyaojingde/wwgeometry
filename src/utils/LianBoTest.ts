@@ -1,8 +1,7 @@
-import * as isect from 'isect';
+import { AdsorptionTool } from '@/views/map/spaceInformation/mapEditor/utils/Math/tool/AdsorptionTool';
 import maxBy from 'lodash/maxBy';
 import { autorun, reaction } from 'mobx';
 import { Graphics } from 'pixi.js';
-import SplayTree from 'splaytree';
 import {
   Color,
   DoubleSide,
@@ -27,7 +26,6 @@ import ObserveVector2D from '../scene/Model/ObserveMath/ObserveVector2D';
 import ObserveVector3 from '../scene/Model/ObserveMath/ObserveVector3';
 import ConfigStructure from './ConfigStructure';
 import Constant from './Math/contanst/constant';
-import Sweep from './Math/geometry/algorithm/Sweep';
 import Box from './Math/geometry/Box';
 import Matrix3x3 from './Math/geometry/Matrix3x3';
 import Point from './Math/geometry/Point';
@@ -80,7 +78,6 @@ class LianBoTest {
     //     console.log("[this.v3.x, this.v3.y, this.v3.z]");
     //   }
     // );
-    this.testReactionObserveVector2D();
     return;
   }
 
@@ -170,7 +167,36 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testUpdateTree();
+    this.testAdsorption();
+  }
+
+  testAdsorption() {
+    const adsorptionPs = [new Point(114, 300)];
+    const ps = [new Point(5, 1000), new Point(105, 1000)];
+    const position = new Point(55, 1000);
+    let minOffset = Number.MAX_VALUE;
+    let offset: any;
+    for (const obPoint of ps) {
+      const result = AdsorptionTool.findHorizontalAndVertical(
+        obPoint,
+        adsorptionPs
+      );
+      if (result) {
+        const resultPoint = new Point(result.x, result.y);
+        const offsetV = resultPoint.subtract(obPoint);
+        const offsetDis = offsetV.distanceSquared;
+        if (offsetDis < minOffset) {
+          minOffset = offsetDis;
+          offset = offsetV;
+        }
+      }
+    }
+    let result;
+    if (offset) {
+      result = { x: offset.x + position.x, y: offset.y + position.y };
+    }
+    if (result) console.log(result);
+    else console.log(position);
   }
 
   modifyObv2() {
@@ -430,10 +456,10 @@ class LianBoTest {
   }
 
   testSplayTree() {
-    const tree = new SplayTree<number, undefined>();
-    tree.add(1);
-    tree.add(2);
-    console.log(tree);
+    // const tree = new SplayTree<number, undefined>();
+    // tree.add(1);
+    // tree.add(2);
+    // console.log(tree);
   }
 
   testSweep() {
@@ -445,10 +471,10 @@ class LianBoTest {
     // console.log(seg.intersectionY(p));
     // console.log(seg1.intersectionY(p));
     // console.log(seg2.intersectionY(p));
-    const sweep = new Sweep([[seg, seg1, seg2]]);
-    console.log(sweep.eps);
-    const result = sweep.calc();
-    console.log(result);
+    // const sweep = new Sweep([[seg, seg1, seg2]]);
+    // console.log(sweep.eps);
+    // const result = sweep.calc();
+    // console.log(result);
   }
 
   testIsect() {
@@ -1078,6 +1104,17 @@ class LianBoTest {
 
   private testUpdateTree() {
     this.lvl.updateStructuresTree();
+  }
+
+  private TestMat3X3() {
+    const mat = new Matrix3x3();
+    mat.translate(100, 100);
+    const boundary = ConfigStructure.obstacleData.boundary;
+    const world = boundary.map((item: any) => mat.apply(item));
+    console.log(boundary);
+    console.log(world);
+    const local = world.map((item: any) => mat.applyInverse(item));
+    console.log(local);
   }
 }
 

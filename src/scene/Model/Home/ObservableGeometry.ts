@@ -1,3 +1,4 @@
+import Segment from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Segment';
 import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
 import ObserveVector2D from '../ObserveMath/ObserveVector2D';
@@ -27,7 +28,16 @@ export default class ObservableGeometry {
     }
   }
 
-  public translate(v: any) {
+  public translate(vOrigin: any) {
+    let v: any = vOrigin;
+    // if (this.observerGeo.length === 2) {
+    //   const start = new Point(this.observerGeo[0].x, this.observerGeo[0].y);
+    //   const end = new Point(this.observerGeo[1].x, this.observerGeo[1].y);
+    //   const seg = new Segment(start, end);
+    //   const norDir = seg.dir.ccwNormal.normalize;
+    //   const dis = vOrigin.dot(norDir);
+    //   v = norDir.multiply(dis);
+    // }
     for (const vElement of this.observerGeo) {
       vElement.set(vElement.x + v.x, vElement.y + v.y);
     }

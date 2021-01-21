@@ -125,9 +125,11 @@ export default observer({
         }
       });
     },
-    updateTreeChecked(val) {
+    updateTreeChecked(vals) {
       this.$nextTick(() => {
-        this.$refs.mapTree.setChecked(val.id,val.checked);
+        for (const val of vals) {
+          this.$refs.mapTree.setChecked(val.id,val.checked);
+        }
       });
     },
     selectNodeMethod(id) {
@@ -139,7 +141,7 @@ export default observer({
           function () {
             //TODO: 自动移动scrollview
             // if (this.eleList.length < 1) {
-            const ele = this.$refs.mapTree.$el;
+            const ele = this.$refs.mapTree && this.$refs.mapTree.$el;
             if (ele) {
               this.eleList = [
                 ...ele.querySelectorAll('span.el-tree-node__label'),
@@ -240,8 +242,11 @@ export default observer({
       }
     },
     async loadBuild(buildData) {
+      console.log(buildData);
       await this.scene2d.loadHomeData(buildData);
-      // console.log(buildData);
+    },
+    save(){
+      return this.scene2d.save();
     },
     obstacle() {
       Model2DActive.setNewStructure(ObstacleFactory.createObstacle());
@@ -276,10 +281,10 @@ export default observer({
 .map-tree {
   overflow: auto;
   background: #ffffff;
-  height: 93%;
+  height: 80%;
   width: 20%;
   position: fixed;
-  top: 7%;
+  top: 20%;
 }
 
 .scene-container {

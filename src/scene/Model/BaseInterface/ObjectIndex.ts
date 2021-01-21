@@ -1,9 +1,35 @@
+import { observable } from 'mobx';
 import { utils } from 'pixi.js';
 import { IDataObject } from '../../Interface/IDataObject';
 import UniqueIndexGenerator from '../Util/UniqueIndexGenerator';
 
 const { EventEmitter } = utils;
 export default class ObjectIndex extends EventEmitter implements IDataObject {
+  public switchInteractive(b: boolean) {
+    this.emit('viewInteractive', b);
+  }
+
+  setDragState(b: boolean, index: number) {
+    this.isSpotsDrag[index] = b;
+  }
+
+  getDragState(index: number) {
+    return this.isSpotsDrag[index];
+  }
+
+  @observable
+  public isSpotsDrag: any[] = [];
+  @observable
+  public isEdgesDrag: any[] = [];
+
+  setDragEdgeState(b: boolean, index: number) {
+    this.isEdgesDrag[index] = b;
+  }
+
+  getDragEdgeState(index: number) {
+    return this.isEdgesDrag[index];
+  }
+
   get rvtId(): string {
     return this._rvtId;
   }

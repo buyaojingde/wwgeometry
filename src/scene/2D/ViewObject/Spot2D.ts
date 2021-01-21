@@ -1,9 +1,15 @@
-import { autorun, computed, reaction } from 'mobx';
+import { autorun, computed, observable, reaction } from 'mobx';
 import GraphicsTool from '../Utils/GraphicsTool';
 import DragContainer from './DragContainer';
 
 export default class Spot2D extends DragContainer {
   public dragModel!: any;
+  private renderColor: number = 0x000000;
+  private renderAlpha: number = 1;
+
+  get index(): number {
+    return this.dragModel.indices[0];
+  }
   public constructor(data: any) {
     super();
     this.dragModel = data;
@@ -22,13 +28,25 @@ export default class Spot2D extends DragContainer {
 
   @computed
   public get alphaValue(): number {
-    return this.isHover ? 1 : 0.01;
+    return this.isHover || this.dragModel.model.getDragState(this.index)
+      ? this.renderAlpha
+      : 0.01;
   }
 
   public detectArea() {
     this.clear();
-    GraphicsTool.drawCircle(this, this.dragModel.og.position, 2, {
+    GraphicsTool.drawCircle(this, this.dragModel.og.position, 2.5, {
       alpha: this.alphaValue,
+      color: this.renderColor,
     });
+  }
+  public setColorAlpha(options?: any) {
+    if (!options) return;
+    this.renderAlpha = options.alpha;
+    this.renderColor = options.color;
+  }
+
+  setDragState(b: boolean) {
+    this.dragModel.model.setDragState(b, this.index);
   }
 }

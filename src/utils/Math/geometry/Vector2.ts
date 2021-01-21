@@ -9,6 +9,9 @@ export default class Vector2 {
   public static ZERO: Vector2 = new Vector2(0, 0);
   public x!: number;
   public y!: number;
+  get distanceSquared(): number {
+    return this.x * this.x + this.y * this.y;
+  }
 
   public constructor(x = 0, y = 0) {
     this.x = x;

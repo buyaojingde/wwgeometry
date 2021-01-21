@@ -1,3 +1,4 @@
+import LevelData from '@/views/map/spaceInformation/mapEditor/BimData/LevelData';
 import EditEdgeAction from '../../scene/2D/Events/EditEdgeAction';
 import EditVerticesAction from '../../scene/2D/Events/EditVerticesAction';
 import SelectRoomAction from '../../scene/2D/Events/SelectRoomAction';
@@ -192,7 +193,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.initController();
 
     // 从本地加载数据
-    this.selfLoad('local').then((r) => console.log(r));
+    // this.selfLoad('local').then(r => console.log(r));
 
     this.initSyncEvent();
     this.initStats();
@@ -458,6 +459,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     this.home.curLevel.updateStructuresTree();
     this.home.curLevel.updateRoomsTree();
     this.home.curLevel.updateObstaclesTree();
+    this.home.curLevel.hideElement();
     const dd = [];
     dd.push(allData);
     return dd;
@@ -600,7 +602,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
    */
   public async loadHomeData(buildData: any) {
     try {
-      this.home = await HomeConvert.adapt(buildData);
+      this.home = await HomeConvert.convert(buildData);
       // 计算墙的中线
       this.home.curLevel.preprocess();
       this.home.curLevel.preprocessRooms();
@@ -741,5 +743,9 @@ export default class Scene2D extends SceneBase implements IScene2D {
     GraphicsTool.drawDashedLine(this._guidelines, start, end, 5, {
       color: 0xff0000,
     });
+  }
+
+  public save() {
+    return new LevelData(this.home.curLevel).buildData();
   }
 }

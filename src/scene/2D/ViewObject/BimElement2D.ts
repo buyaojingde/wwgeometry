@@ -49,9 +49,11 @@ export default class BimElement2D extends PIXI.Container {
         },
         (able) => {
           if (able) {
+            // this.zIndex = 10;
             this.createPolygon2D();
             this.createEdgesAndSpot();
           } else {
+            // this.zIndex = 0;
             this.createPolygon2D();
           }
           this.edges.forEach((item) => (item.interactive = able));
@@ -60,7 +62,10 @@ export default class BimElement2D extends PIXI.Container {
       ),
 
       this.model.on('visibleEvent', () => (this.visible = this.model.visible)),
-      this.model.once('destroy', this.destroy.bind(this))
+      this.model.once('destroy', this.destroy.bind(this)),
+      this.model.on('viewInteractive', (b: boolean) =>
+        this.setAllViewInteractive(b)
+      )
     );
     this.positionAutorun();
   }
@@ -140,6 +145,10 @@ export default class BimElement2D extends PIXI.Container {
         indices: [index],
         og: new ObservableGeometry([p]),
       });
+      this.model.isSpotsDrag[index] = false;
+      spot.setColorAlpha({
+        color: Constant.colorMap.GREEN,
+      });
       index++;
       this.addChild(spot);
       this.spots.push(spot);
@@ -167,6 +176,10 @@ export default class BimElement2D extends PIXI.Container {
         indices: [prev, index],
         og: new ObservableGeometry(edge),
       });
+      this.model.isEdgesDrag[index] = false;
+      edge2d.setColorAlpha({
+        color: Constant.colorMap.GREEN,
+      });
       index++;
       prev = index - 1;
       this.addChild(edge2d);
@@ -188,5 +201,10 @@ export default class BimElement2D extends PIXI.Container {
         })
       );
     }
+  }
+
+  private setAllViewInteractive(b: boolean) {
+    this.edges.forEach((item) => (item.interactive = b));
+    this.spots.forEach((item) => (item.interactive = b));
   }
 }

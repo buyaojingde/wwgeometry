@@ -39,6 +39,9 @@ class SpaceData {
 export default class Room extends ObjectNamed {
   @observable
   public isEdit = false;
+  get code(): string {
+    return this.spaceData.space.code;
+  }
   get virtualWalls(): VirtualWall[] {
     return this._virtualWalls;
   }
@@ -58,7 +61,7 @@ export default class Room extends ObjectNamed {
   set level(value: Level) {
     this._level = value;
   }
-  get spaceData(): any {
+  get spaceData(): SpaceData {
     return this._spaceData;
   }
 
@@ -89,7 +92,7 @@ export default class Room extends ObjectNamed {
       this.addWall(new VirtualWall([], edge));
     }
   }
-  private _spaceData: any;
+  private _spaceData!: SpaceData;
 
   private _visible = true;
   private _active = true;
@@ -126,6 +129,10 @@ export default class Room extends ObjectNamed {
       }
       this.removeAllListeners();
     }
+  }
+
+  public get height(): number {
+    return this.spaceData.boundary[0].Z;
   }
 
   public get quadData(): any {
@@ -200,6 +207,7 @@ export default class Room extends ObjectNamed {
         SolidGeometryUtils.translateVertex(v, bimV);
       }
     }
-    console.log(this.spaceData);
+    // console.log(this.spaceData);
+    this.level.addEditGeometryItem(this);
   }
 }

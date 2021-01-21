@@ -11,6 +11,7 @@ export default class BimElementLayer {
   private _dataViewMap: Map<IDataObject, BimElement2D>;
   public constructor(elements: any[]) {
     this._container = new PIXI.Container();
+    this._container.sortableChildren = true;
     this._elements = elements;
     this._dataViewMap = new Map<IDataObject, BimElement2D>();
     EventMgr.on(EventEnum.layerAdd, this.add.bind(this));

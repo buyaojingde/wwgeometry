@@ -51,12 +51,23 @@ export default class NewStructureAction extends BaseEvent {
   }
   private onInputEnd(event: any) {
     if (this.newModel instanceof Obstacle) {
+      this.newModel.updateBoundaryToWorld();
+      this.newModel.position.set(0, 0);
       this._scene.home.curLevel.addObstacle(this.newModel);
       this._scene.home.curLevel.addObstacleTree(this.newModel);
-      EventMgr.emit(EventEnum.updateTree, {
-        id: this.newModel.rvtId,
-        checked: true,
-      });
+      const rooms = this._scene.home.curLevel.quadTree
+        .retrieve(this.newModel)
+        .map((item) => item.data)
+        .filter((item) => item instanceof Room);
+      if (rooms.length > 0) {
+        this.newModel.zPlane = rooms[0].height;
+      }
+      EventMgr.emit(EventEnum.updateTree, [
+        {
+          id: this.newModel.rvtId,
+          checked: true,
+        },
+      ]);
       Model2DActive.setNewStructure(null);
     }
   }

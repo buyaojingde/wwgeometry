@@ -28,10 +28,21 @@ class SolidGeometryUtils {
     }
   }
 
+  /**
+   * @author lianbo
+   * @date 2021-01-15 11:08:45
+   * @Description: 一天到晚就是大写小写，真他妈的傻逼
+   */
   public translateVertex(vertex: any, offsetV: any) {
-    vertex.x = vertex.x + offsetV.x;
-    vertex.y = vertex.y + offsetV.y;
-    vertex.z = vertex.z + offsetV.z;
+    if (vertex.X !== undefined && vertex.X !== null) {
+      vertex.X = vertex.X + offsetV.x;
+      vertex.Y = vertex.Y + offsetV.y;
+      vertex.Z = vertex.Z + offsetV.z;
+    } else {
+      vertex.x = vertex.x + offsetV.x;
+      vertex.y = vertex.y + offsetV.y;
+      vertex.z = vertex.z + offsetV.z;
+    }
   }
 }
 export default new SolidGeometryUtils();

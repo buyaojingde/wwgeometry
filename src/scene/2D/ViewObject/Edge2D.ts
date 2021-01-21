@@ -6,6 +6,8 @@ import DragContainer from './DragContainer';
 
 export default class Edge2D extends DragContainer {
   public dragModel!: any;
+  private renderColor: number = 0x000000;
+  private renderAlpha: number = 1;
   public constructor(data: any) {
     super();
     this.dragModel = data;
@@ -24,7 +26,9 @@ export default class Edge2D extends DragContainer {
 
   @computed
   public get alphaValue(): number {
-    return this.isHover ? 1 : 0.01;
+    return this.isHover || this.dragModel.model.getDragEdgeState(this.index)
+      ? this.renderAlpha
+      : 0.01;
   }
 
   /**
@@ -42,8 +46,8 @@ export default class Edge2D extends DragContainer {
       this.dragModel.og.observerGeo[1].y
     );
     let edge = new Segment(start, end);
-    edge = edge.shorten(1);
-    return edge.offset(1.5).vertices;
+    if (edge.length > 2) edge = edge.shorten(1);
+    return edge.offset(2).vertices;
   }
 
   public refreshEdge() {
@@ -54,9 +58,17 @@ export default class Edge2D extends DragContainer {
 
   public detectArea() {
     const ps = this.calcDetect();
-    GraphicsTool.drawPolygon(this, ps, { alpha: this.alphaValue });
+    GraphicsTool.drawPolygon(this, ps, {
+      alpha: this.alphaValue,
+      color: this.renderColor,
+    });
   }
 
+  public setColorAlpha(options?: any) {
+    if (!options) return;
+    this.renderAlpha = options.alpha;
+    this.renderColor = options.color;
+  }
   public renderEdge() {
     GraphicsTool.drawLine(
       this,
@@ -74,5 +86,13 @@ export default class Edge2D extends DragContainer {
     //   this.dragModel.observerGeo[1].x,
     //   this.dragModel.observerGeo[1].y
     // );
+  }
+
+  setDragState(b: boolean) {
+    this.dragModel.model.setDragEdgeState(b, this.index);
+  }
+
+  get index(): number {
+    return this.dragModel.indices[0];
   }
 }

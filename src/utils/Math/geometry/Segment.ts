@@ -666,6 +666,11 @@ export default class Segment {
     return new Polygon([start, end, end1, start1]);
   }
 
+  /**
+   * @author lianbo
+   * @date 2021-01-14 18:33:29
+   * @Description: 如果缩短的长度大于segment的长度的一半，就会返回一个点
+   */
   public shorten(dis: number): Segment {
     const v = this.dir.normalize.multiply(dis);
     const newStart = this.start.translate(v);

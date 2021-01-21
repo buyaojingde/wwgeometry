@@ -1,3 +1,6 @@
+import Obstacle from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/Obstacle';
+import ObstacleFactory from '@/views/map/spaceInformation/mapEditor/scene/Model/Home/ObstacleFactory';
+import Matrix3x3 from '@/views/map/spaceInformation/mapEditor/utils/Math/geometry/Matrix3x3';
 import { Vector3 } from 'three';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Home from '../scene/Model/Home/Home';
@@ -12,16 +15,21 @@ import MathUtils from './Math/math/MathUtils';
 import GeometryTool from './Math/tool/GeometryTool';
 
 class HomeConvert {
+  bimMapCode: string = '';
   geo!: any[];
   eleGeo!: any[];
   eles!: any[];
   spaces!: any[];
   itemCount = 2000; //最大渲染数量
+  obstacles!: any[];
   convert(obj: any): Home {
+    this.bimMapCode = obj.bimMapCode;
+    this.editedHistory = obj.editedHistory;
     this.geo = obj.geometries;
     this.eleGeo = obj.elementGeometryRels;
-    this.eles = obj.elems;
+    this.eles = obj.elements;
     this.spaces = obj.spaces;
+    this.obstacles = this.editedHistory.obstacles;
     this.setElements();
     return this.generateHome();
   }
@@ -31,6 +39,8 @@ class HomeConvert {
     this.calcZeroAndBound();
     const structures = this.generateStructure();
     const lvl = new Level();
+    lvl.bimMapCode = this.bimMapCode;
+    lvl.hiddenElementCodeList = this.editedHistory.hiddenElementCodeList;
     lvl.initQuadTree();
     home.levels = [];
     let stCount = 1;
@@ -45,6 +55,12 @@ class HomeConvert {
       lvl.addRoom(room);
       stCount++;
     }
+
+    const obstacles = this.generateObstacles();
+    for (const obstacle of obstacles) {
+      if (stCount > this.itemCount) break;
+      lvl.addObstacle(obstacle);
+    }
     console.log('构建数量' + (stCount - 1));
     home.levels.push(lvl);
     this.gc();
@@ -57,7 +73,7 @@ class HomeConvert {
     this.eles = [];
     this.eleGeo = [];
     this.geo = [];
-    this.hiddenElement = null;
+    this.editedHistory = null;
   }
 
   /**
@@ -71,6 +87,9 @@ class HomeConvert {
       const wGeoId = this.eleGeo.find((item) => item.elementId === ele.id);
       const wGeo = this.geo.filter((item) => item.id === wGeoId.geomIDs[0]);
       const elementItem = { element: ele, geometrys: wGeo };
+      // if (this.hiddenElement.hiddenElementCodeList.includes(ele.code)) {
+      //   console.log(elementItem);
+      // }
       this.elements.push(elementItem);
     }
   }
@@ -89,6 +108,23 @@ class HomeConvert {
           roomData.setSpaceData(room);
           rooms.push(roomData);
         }
+      }
+    }
+    return rooms;
+  }
+
+  generateRoom2() {
+    const rooms: Room[] = [];
+    for (const room of this.spaces) {
+      if (room.boundary.length > 0) {
+        const roomBoundary: Point[] = [];
+        Array.from(room.boundary).forEach((item) =>
+          roomBoundary.push(ConfigStructure.computePoint(item))
+        );
+        const roomData = new Room(roomBoundary);
+        roomData.rvtId = room.roomNo;
+        roomData.setSpaceData(room);
+        rooms.push(roomData);
       }
     }
     return rooms;
@@ -163,13 +199,13 @@ class HomeConvert {
   generateStructure(): Structure[] {
     const columns: Structure[] = [];
     for (const ele of this.elements) {
-      if (
-        // ele.element.builtInCategory === "OST_Doors" &&
-        // ele.element.builtInCategory === "OST_Windows" &&
-        ele.element.builtInCategory === 'OST_Floors'
-      ) {
-        continue;
-      }
+      // if (
+      // ele.element.builtInCategory === "OST_Doors" &&
+      // ele.element.builtInCategory === "OST_Windows" &&
+      //   ele.element.builtInCategory === 'OST_Floors'
+      // ) {
+      //   continue;
+      // }
       const wGeo = ele.geometrys[0];
       if (wGeo.solids.length > 0) {
         const st = this.convertColumn(wGeo, ele.element);
@@ -281,14 +317,14 @@ class HomeConvert {
     return structure;
   }
 
-  private hiddenElement: any;
+  private editedHistory: any;
   private elements: any[] = [];
 
   public adapt(data: any) {
     this.elements = data.elements;
     this.geo = this.elements.map((item) => item.geometrys[0]);
     this.spaces = data.roomNOs;
-    this.hiddenElement = data.hiddenElement;
+    this.editedHistory = data.hiddenElement;
     return this.generateHome();
   }
 
@@ -360,6 +396,35 @@ class HomeConvert {
         }
       }
     }
+  }
+
+  private generateObstacles() {
+    const obs: Obstacle[] = [];
+    for (const obj of this.obstacles) {
+      const ob = this.generateObstacle(obj);
+      obs.push(ob);
+    }
+    return obs;
+  }
+
+  private generateObstacle(obj: any): Obstacle {
+    const solid = obj.solids[0];
+    const ob: Obstacle = ObstacleFactory.createObstacleFrom(solid);
+    const topFace = solid.faces[0].outLoop[0];
+    const bottomFace = solid.faces[5].outLoop[0];
+    const boxData = topFace.map((item: any) => {
+      return ConfigStructure.computePoint(item);
+    });
+    const boundary = boxData;
+    const zPlane = bottomFace[0].Z;
+    const height = topFace[0].Z - zPlane;
+    const param = {
+      boundary: boundary,
+      height: height,
+      zPlane: zPlane,
+    };
+    ob.setParams(param);
+    return ob;
   }
 }
 

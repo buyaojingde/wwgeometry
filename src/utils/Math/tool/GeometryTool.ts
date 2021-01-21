@@ -237,4 +237,8 @@ export default class GeometryTool {
   private static edgePointEqual(prev: any, prev2: any): boolean {
     return prev.x === prev2.x && prev.y === prev2.y && prev.z === prev2.z;
   }
+
+  static distance(v: any): number {
+    return Math.sqrt(v.x * v.x + v.y * v.y);
+  }
 }

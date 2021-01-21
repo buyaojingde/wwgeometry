@@ -10,19 +10,9 @@ import Coordinate = jsts.geom.Coordinate;
 export default class JSTSUtils {
   public static factory: GeometryFactory = new GeometryFactory();
 
-  private static bufferParams: BufferParameters = new BufferParameters(
-    8,
-    2,
-    2,
-    5.0
-  );
+  private static bufferParams: BufferParameters = new BufferParameters(8, 2, 2, 5.0);
 
-  private static bufferRoundParams: BufferParameters = new BufferParameters(
-    8,
-    1,
-    1,
-    5.0
-  );
+  private static bufferRoundParams: BufferParameters = new BufferParameters(8, 1, 1, 5.0);
 
   /**
    * @author lianbo
@@ -49,7 +39,7 @@ export default class JSTSUtils {
 
   public static i2LineRing(p: any[]): any {
     const closePs: any[] = p.concat(p[0]);
-    const coordinates = closePs.map((item) => this.i2Coordinate(item));
+    const coordinates = closePs.map(item => this.i2Coordinate(item));
     return this.factory.createLinearRing(coordinates);
   }
 
@@ -84,11 +74,7 @@ export default class JSTSUtils {
    * @date 2020-11-26 16:19:00
    * @Description: 减法
    */
-  public static iDifference(
-    plyg: Polygon,
-    plyg1: Polygon,
-    offset = 0
-  ): Polygon {
+  public static iDifference(plyg: Polygon, plyg1: Polygon, offset = 0): Polygon {
     const geo = this.offset(this.i2Polygon(plyg), offset);
     const geo1 = this.offset(this.i2Polygon(plyg1), offset);
     const result = geo.difference(geo1);
@@ -97,7 +83,7 @@ export default class JSTSUtils {
   }
 
   public static iUnionArr(plygs: Polygon[]): Polygon {
-    const geos = plygs.map((item) => this.i2Polygon(item));
+    const geos = plygs.map(item => this.i2Polygon(item));
     const firstGeo = geos[0];
     const result = geos.reduce((prev, current) => {
       return prev.union(current);
@@ -106,10 +92,7 @@ export default class JSTSUtils {
   }
 
   public static i2Line(i: any) {
-    return this.factory.createLineString([
-      this.i2Coordinate(i.start),
-      this.i2Coordinate(i.end),
-    ]);
+    return this.factory.createLineString([this.i2Coordinate(i.start), this.i2Coordinate(i.end)]);
   }
 
   public static point2I(coordinate: any): Point {
@@ -194,9 +177,7 @@ export default class JSTSUtils {
   }
 
   public static i2Lines(ls: any): any {
-    return this.factory.createLineString(
-      ls.map((item: any) => this.i2Coordinate(item))
-    );
+    return this.factory.createLineString(ls.map((item: any) => this.i2Coordinate(item)));
   }
 
   public static line2Segs(ps: any) {}

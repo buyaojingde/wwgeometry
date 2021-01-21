@@ -159,7 +159,7 @@ export default class Matrix3x3 {
    * @date 2020-11-09 15:52:35
    * @Description: 通过逆矩阵从局部坐标转世界坐标
    */
-  public applyInverse(pos: Point): Point {
+  public applyInverse(pos: any): any {
     const newPos = new Point();
 
     const id = 1 / (this.m00 * this.m11 + this.m01 * -this.m10);
@@ -168,13 +168,9 @@ export default class Matrix3x3 {
     const y = pos.y;
 
     newPos.x =
-      this.m11 * id * x +
-      -this.m01 * id * y +
-      (this.m12 * this.m01 - this.m02 * this.m11) * id;
+      this.m11 * id * x + -this.m01 * id * y + (this.m12 * this.m01 - this.m02 * this.m11) * id;
     newPos.y =
-      this.m00 * id * y +
-      -this.m10 * id * x +
-      (-this.m12 * this.m00 + this.m02 * this.m10) * id;
+      this.m00 * id * y + -this.m10 * id * x + (-this.m12 * this.m00 + this.m02 * this.m10) * id;
 
     return newPos;
   }

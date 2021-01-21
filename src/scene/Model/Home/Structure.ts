@@ -64,6 +64,10 @@ export default class Structure
     const item = new RelRoom(r, segs);
     this.roomRels.push(item);
   }
+
+  public get code(): string {
+    return this.geoEle.ele.code;
+  }
   get roomRels(): RelRoom[] {
     return this._roomRels;
   }
@@ -518,5 +522,6 @@ export default class Structure
         SolidGeometryUtils.translateVertex(v, bimV);
       }
     }
+    this.level.addEditGeometryItem(this);
   }
 }

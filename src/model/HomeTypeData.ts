@@ -69,11 +69,11 @@ class HomeTypeData {
   }
 
   private async _getHome(from?: string, path?: any) {
-    if (from == 'local') {
-      const obj = require('../../../Downloads/博智林机器人创研中心6号楼土建6F.json');
-      this.gottenHome = HomeConvert.convert(obj);
-      return this.gottenHome;
-    }
+    // if (from == 'local') {
+    //   const obj = require('../../../Downloads/博智林机器人创研中心6号楼土建6F.json');
+    //   this.gottenHome = HomeConvert.convert(obj);
+    //   return this.gottenHome;
+    // }
   }
 }
 

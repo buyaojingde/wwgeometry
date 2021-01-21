@@ -14,7 +14,6 @@ class ConfigStructure {
   public accuracy = 0.1;
 
   public guidelines: Segment[] = [];
-  public bimMapCode = '';
 
   public get obstacleData(): any {
     return {
