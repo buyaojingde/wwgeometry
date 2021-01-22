@@ -74,6 +74,7 @@ import Model2DActive from '../store/Model2DActive';
 import VueStoreData from '../store/VueStoreData';
 import { EventMgr, EventEnum } from '../utils/EventManager';
 import ObstacleFactory from '../scene/Model/Home/ObstacleFactory';
+import { getSpcaeListInfo } from '@/api/space';
 
 /**
  * @author lianbo
@@ -85,6 +86,7 @@ export default observer({
   components: {},
   data() {
     return {
+      version: '',
       eleList: [],
       searchRvtId: '',
       vm: Model2DActive,
@@ -107,6 +109,8 @@ export default observer({
     EventMgr.on(EventEnum.selectNode, this.selectNodeMethod.bind(this));
     EventMgr.on(EventEnum.initHome, this.initTreeData.bind(this));
     EventMgr.on(EventEnum.updateTree, this.updateTreeChecked.bind(this));
+    console.log(process.env.VUE_APP_BASE_API);
+    this.drawModel('P000001-B0006-F0006');
   },
   /**
    * 销毁Vue实例之前，删除render动作
@@ -250,6 +254,21 @@ export default observer({
     },
     obstacle() {
       Model2DActive.setNewStructure(ObstacleFactory.createObstacle());
+    },
+    async drawModel(bimMapCode) {
+      try {
+        const res = await getSpcaeListInfo(bimMapCode);
+        if (res.data) {
+          this.version = res.data.editedHistory
+            ? res.data.editedHistory.version
+            : null;
+          this.$nextTick(() => {
+            this.loadBuild(res.data);
+          });
+        }
+      } catch (error) {
+        this.$message.error(error || '加载几何信息模型异常');
+      }
     },
   },
 });
