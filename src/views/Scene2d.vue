@@ -109,8 +109,11 @@ export default observer({
     EventMgr.on(EventEnum.selectNode, this.selectNodeMethod.bind(this));
     EventMgr.on(EventEnum.initHome, this.initTreeData.bind(this));
     EventMgr.on(EventEnum.updateTree, this.updateTreeChecked.bind(this));
-    console.log(process.env.VUE_APP_BASE_API);
-    this.drawModel('P000001-B0006-F0006');
+    // console.log(process.env.VUE_APP_BASE_API);
+    if (!this.scene2d.home.curLevel) {
+      this.drawModel('P000001-B0006-F0006');
+    } else {
+    }
   },
   /**
    * 销毁Vue实例之前，删除render动作
@@ -289,7 +292,8 @@ export default observer({
   position: absolute;
   background: #ffffff;
   width: 100%;
-  height: 40px;
+  height: 10%;
+  left: 20%;
 }
 
 .map-edit-button {
@@ -300,17 +304,17 @@ export default observer({
 .map-tree {
   overflow: auto;
   background: #ffffff;
-  height: 80%;
+  height: 100%;
   width: 20%;
   position: fixed;
-  top: 20%;
+  bottom: 1px;
 }
 
 .scene-container {
   height: 100%;
   width: 100%;
   position: absolute;
-  top: 40px;
+  top: 5%;
   left: 20%;
 }
 

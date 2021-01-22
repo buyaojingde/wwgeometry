@@ -24,7 +24,11 @@ body,
 }
 
 .main-view {
-  height: 100%;
+  height: 93%;
+  width: 100%;
+}
+#nav {
+  height: 2%;
   width: 100%;
 }
 </style>
