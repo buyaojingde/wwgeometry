@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js';
+window.PIXI = PIXI;
 import HomePlan2D from '../2D/Layer/HomePlan';
 import Home from '../Model/Home/Home';
 import EventEmitter = PIXI.utils.EventEmitter;

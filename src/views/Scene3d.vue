@@ -1,21 +1,30 @@
 <template>
-  <div class="hello">{{ testText }}</div>
+  <div class="container3d">
+    <div ref="container3d" class="canvas3d"></div>
+  </div>
 </template>
 
-<script lang="ts">
+<script>
 import { observer } from 'mobx-vue';
-
+import Scene3D from '../scene/3D/scene3d';
 export default observer({
   name: 'Scene3d',
   components: {},
   data() {
     return {
       testText: 'test',
+      scene: null,
     };
   },
   computed: {},
   mounted() {
-    console.log('3d hello');
+    this.initScene3d();
+  },
+  methods: {
+    initScene3d() {
+      this.scene = Scene3D.getInstance();
+      console.log('init');
+    },
   },
 });
 </script>

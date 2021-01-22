@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js';
-window.PIXI = PIXI;
 // require("pixi-layers");
 import Vue from 'vue';
 import App from './App.vue';
