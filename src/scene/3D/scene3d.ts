@@ -13,4 +13,10 @@ export default class Scene3D extends SceneBase {
   public init() {
     console.log('init');
   }
+
+  clear(): void {}
+
+  destroy(): void {}
+
+  save(): void {}
 }

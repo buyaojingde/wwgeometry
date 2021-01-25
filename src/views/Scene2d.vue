@@ -261,16 +261,21 @@ export default observer({
     async drawModel(bimMapCode) {
       try {
         const res = await getSpcaeListInfo(bimMapCode);
-        if (res.data) {
-          this.version = res.data.editedHistory
-            ? res.data.editedHistory.version
-            : null;
-          this.$nextTick(() => {
-            this.loadBuild(res.data);
-          });
-        }
+        this.processData(res);
       } catch (error) {
-        this.$message.error(error || '加载几何信息模型异常');
+        console.error(error || '加载几何信息模型异常');
+        const res = require('../../devTools/P000001-B0006-F0006.json');
+        this.processData(res);
+      }
+    },
+    processData(res) {
+      if (res.data) {
+        this.version = res.data.editedHistory
+          ? res.data.editedHistory.version
+          : null;
+        this.$nextTick(() => {
+          this.loadBuild(res.data);
+        });
       }
     },
   },

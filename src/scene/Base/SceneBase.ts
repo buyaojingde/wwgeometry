@@ -13,8 +13,7 @@ export default abstract class SceneBase extends EventEmitter {
     }
   }
 
-  // @ts-ignore
-  protected _homePlan: HomePlan2D;
+  protected _homePlan!: HomePlan2D;
 
   public get homePlan(): HomePlan2D {
     return this._homePlan;
@@ -30,13 +29,13 @@ export default abstract class SceneBase extends EventEmitter {
     SceneBase._home = value;
   }
 
-  public init() {}
+  public abstract init(): void;
 
-  public clear() {}
+  public abstract clear(): void;
 
-  public save() {}
+  public abstract save(): void;
 
-  public destroy() {}
+  public abstract destroy(): void;
 
   public load() {
     if (this._homePlan) {

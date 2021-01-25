@@ -748,4 +748,6 @@ export default class Scene2D extends SceneBase implements IScene2D {
   public save() {
     return new LevelData(this.home.curLevel).buildData();
   }
+
+  destroy(): void {}
 }
