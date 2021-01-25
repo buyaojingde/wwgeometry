@@ -2,7 +2,7 @@ import isect from 'isect';
 import maxBy from 'lodash/maxBy';
 import { autorun, reaction } from 'mobx';
 // @ts-ignore
-import { createPolygon } from '../scene/2D/Utils/JSTSTool';
+import { createPolygon, validate } from '../scene/2D/Utils/JSTSTool';
 
 import { Graphics } from 'pixi.js';
 import {
@@ -532,9 +532,12 @@ class LianBoTest {
     const p2 = new Point(100, 100);
     const p3 = new Point(0, 100);
     const polygon = new Polygon([p0, p1, p2, p3]);
-    const geo = createPolygon(polygon.vertices);
+    const st = this.lvl.findByRvtId('1178');
+    const geo = createPolygon(st.polygon.vertices);
     // this.drawPolygon(offsetPlyg.vertices);
-    console.log(geo);
+    console.log(geo.isValid());
+    const mgeo = validate(geo);
+    console.log(mgeo);
   }
 
   /**

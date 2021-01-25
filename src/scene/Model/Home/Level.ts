@@ -206,7 +206,7 @@ export default class Level extends ObjectNamed implements IBuildable {
    * @Description: 根据rvtId找到组件
    */
   public findByRvtId(rvtId: string): any {
-    const result = [...this.structures, ...this.rooms].find(
+    const result = [...this.structures, ...this.rooms, ...this._obstacles].find(
       (item: any) => item.rvtId === rvtId
     );
     return result;
