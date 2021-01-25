@@ -1,6 +1,9 @@
 import isect from 'isect';
 import maxBy from 'lodash/maxBy';
 import { autorun, reaction } from 'mobx';
+// @ts-ignore
+import { createPolygon } from '../scene/2D/Utils/JSTSTool';
+
 import { Graphics } from 'pixi.js';
 import {
   Color,
@@ -168,7 +171,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testAdsorption();
+    this.testJSTS();
   }
 
   testAdsorption() {
@@ -524,34 +527,14 @@ class LianBoTest {
   }
 
   testJSTS() {
-    // const w0 = this.lvl.findByRvtId("1647679");
-    // const f0 = this.lvl.findByRvtId("2189472");
-    // const f1 = this.lvl.findByRvtId("2189474");
-    // const f2 = this.lvl.findByRvtId("1647040");
-    // const offsetPlyg = JSTSUtils.iUnion(w0.polygon, f0.polygon);
-    const f0 = this.lvl.findByRvtId('2187670');
-    const s1 = this.lvl.findByRvtId('1647122');
-    const r1 = this.lvl.findByRvtId('1698735');
-    const c1 = this.lvl.findByRvtId('1650976');
-    const sts = Scene2D.getInstance()
-      .home.curLevel.structures.filter((item) => {
-        return (
-          item.visible &&
-          (item.stType === StType.Column ||
-            item.stType === StType.Framing ||
-            item.stType === StType.Wall ||
-            item.stType === StType.Window ||
-            item.stType === StType.Door)
-        );
-      })
-      .map((item) => item.polygon);
-    const offsetPlyg = JSTSUtils.iDifference(f0.polygon, c1.polygon, 0);
-    console.log(offsetPlyg);
-    const syEdges = offsetPlyg.edges.filter(
-      (item) => !s1.polygon.insideSeg(item)
-    );
-    this.drawSegs(syEdges);
+    const p0 = new Point(0, 0);
+    const p1 = new Point(100, 0);
+    const p2 = new Point(100, 100);
+    const p3 = new Point(0, 100);
+    const polygon = new Polygon([p0, p1, p2, p3]);
+    const geo = createPolygon(polygon.vertices);
     // this.drawPolygon(offsetPlyg.vertices);
+    console.log(geo);
   }
 
   /**
