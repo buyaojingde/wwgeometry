@@ -14,6 +14,7 @@ import MathUtils from './Math/math/MathUtils';
 import GeometryTool from './Math/tool/GeometryTool';
 
 class HomeConvert {
+  home: any;
   bimMapCode = '';
   geo!: any[];
   eleGeo!: any[];
@@ -21,7 +22,8 @@ class HomeConvert {
   spaces!: any[];
   itemCount = 2000; //最大渲染数量
   obstacles!: any[];
-  convert(obj: any): Home {
+  extractData(obj: any): Home {
+    if (this.home) return this.home;
     this.bimMapCode = obj.bimMapCode;
     this.editedHistory = obj.editedHistory;
     this.geo = obj.geometries;
@@ -30,7 +32,8 @@ class HomeConvert {
     this.spaces = obj.spaces;
     this.obstacles = this.editedHistory.obstacles;
     this.setElements();
-    return this.generateHome();
+    this.home = this.generateHome();
+    return this.home;
   }
 
   generateHome() {

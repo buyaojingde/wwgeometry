@@ -23,6 +23,7 @@ import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
 import Edge2D from '../scene/2D/ViewObject/Edge2D';
 import Polygon2D from '../scene/2D/ViewObject/Polygon2D';
 import Spot2D from '../scene/2D/ViewObject/Spot2D';
+import Scene3D from '../scene/3D/scene3d';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Structure, { StType } from '../scene/Model/Home/Structure';
 import ObserveVector2D from '../scene/Model/ObserveMath/ObserveVector2D';
@@ -171,7 +172,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testJSTS();
+    this.test3dResize();
   }
 
   testAdsorption() {
@@ -825,20 +826,7 @@ class LianBoTest {
     // return 1.5 / this.Scene2D.scale.x / 2;
   }
 
-  public TestMat(): void {
-    const v0 = new Vector3(400, 400, 10);
-    const v1 = new Vector3(500, 400, 20);
-    const v2 = new Vector3(400, 500, 30);
-    const face = new GeoSurface([v0, v1, v2]);
-    const mat = face.getMat();
-    const invertMat = new Matrix4().getInverse(mat);
-    const r0 = v0.applyMatrix4(invertMat);
-    const r1 = v1.applyMatrix4(invertMat);
-    const r2 = v2.applyMatrix4(invertMat);
-    console.log(r0);
-    console.log(r1);
-    console.log(r2);
-  }
+  public TestMat(): void {}
 
   public drawTest(str: string, pos: any, color = '') {
     const style = {
@@ -1102,6 +1090,10 @@ class LianBoTest {
     console.log(world);
     const local = world.map((item: any) => mat.applyInverse(item));
     console.log(local);
+  }
+
+  private test3dResize() {
+    Scene3D.getInstance().resize();
   }
 }
 

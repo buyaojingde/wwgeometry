@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js';
+window.PIXI = PIXI;
 import GraphicsTool from '../../../scene/2D/Utils/GraphicsTool';
 import Structure from '../../../scene/Model/Home/Structure';
 import ConfigStructure from '../../../utils/ConfigStructure';

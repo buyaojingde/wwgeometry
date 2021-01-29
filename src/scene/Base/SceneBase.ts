@@ -1,6 +1,5 @@
-import * as PIXI from 'pixi.js';
-window.PIXI = PIXI;
 import HomePlan2D from '../2D/Layer/HomePlan';
+import HomePlan3D from '../3D/HomePlan3D';
 import Home from '../Model/Home/Home';
 import EventEmitter = PIXI.utils.EventEmitter;
 
@@ -13,9 +12,9 @@ export default abstract class SceneBase extends EventEmitter {
     }
   }
 
-  protected _homePlan!: HomePlan2D;
+  protected _homePlan!: HomePlan3D | HomePlan2D;
 
-  public get homePlan(): HomePlan2D {
+  public get homePlan(): HomePlan3D | HomePlan2D {
     return this._homePlan;
   }
 

@@ -9,7 +9,12 @@ const Coordinate = jsts.geom.Coordinate;
 const UnaryUnionOp = jsts.operation.union.UnaryUnionOp;
 const Polygonizer = jsts.operation.polygonize.Polygonizer;
 const LinearRing = jsts.geom.LinearRing;
-const bufferRoundParams = new jsts.operation.buffer.BufferParameters(8, 1, 1, 5.0);
+const bufferRoundParams = new jsts.operation.buffer.BufferParameters(
+  8,
+  1,
+  1,
+  5.0
+);
 
 export function coordinate(point) {
   return new Coordinate(point.x, point.y);
@@ -17,10 +22,7 @@ export function coordinate(point) {
 
 export function convertCoordinates(points, isClosed) {
   const coords = [];
-  for (let i = 0;
-       i < points.length;
-       ++i
-  ) {
+  for (let i = 0; i < points.length; ++i) {
     coords.push(coordinate(points[i]));
   }
   if (isClosed) {
@@ -87,7 +89,6 @@ export function toPolygonGeometry(polygons, factory) {
   }
 }
 
-
 /**
  * Add the linestring given to the polygonizer
  *
@@ -95,13 +96,17 @@ export function toPolygonGeometry(polygons, factory) {
  * @param polygonizer polygonizer
  */
 export function addLineString(lineString, polygonizer) {
-
-  if (lineString instanceof LinearRing) { // LinearRings are treated differently to line strings : we need a LineString NOT a LinearRing
-    lineString = lineString.getFactory().createLineString(lineString.getCoordinateSequence());
+  if (lineString instanceof LinearRing) {
+    // LinearRings are treated differently to line strings : we need a LineString NOT a LinearRing
+    lineString = lineString
+      .getFactory()
+      .createLineString(lineString.getCoordinateSequence());
   }
 
   // unioning the linestring with the point makes any self intersections explicit.
-  const point = lineString.getFactory().createPoint(lineString.getCoordinateN(0));
+  const point = lineString
+    .getFactory()
+    .createPoint(lineString.getCoordinateN(0));
   const toAdd = lineString.union(point);
 
   //Add result to polygonizer
@@ -136,10 +141,7 @@ export function validate(geom) {
       return geom; // If the polygon is valid just return it
     }
     const polygonizer = new Polygonizer();
-    addPolygon(
-    geom, polygonizer
-  )
-    ;
+    addPolygon(geom, polygonizer);
     return toPolygonGeometry(polygonizer.getPolygons(), geom.getFactory());
   } else if (geom instanceof MultiPolygon) {
     if (geom.isValid()) {
@@ -155,7 +157,3 @@ export function validate(geom) {
     return geom; // In my case, I only care about polygon / multipolygon geometries
   }
 }
-
-
-
-

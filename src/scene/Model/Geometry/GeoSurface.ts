@@ -1,10 +1,12 @@
-import { Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector2, Vector3 } from 'three';
 import Point from '../../../utils/Math/geometry/Point';
 import Polygon from '../../../utils/Math/geometry/Polygon';
 import MathUtils from '../../../utils/Math/math/MathUtils';
 
 export default class GeoSurface {
   points: Vector3[];
+  public mat: Matrix4;
+  public inverse: Matrix4;
 
   constructor(points: Vector3[]) {
     if (points.length < 3) {
@@ -17,6 +19,8 @@ export default class GeoSurface {
         this._height = this.points[i].y;
       }
     }
+    this.mat = this.getMat();
+    this.inverse = new Matrix4().getInverse(this.mat);
   }
 
   private _height: number = Number.NEGATIVE_INFINITY;
@@ -83,5 +87,10 @@ export default class GeoSurface {
   private projectXZ(): Polygon {
     const vertices = this.points.map((item) => new Point(item.x, item.z));
     return new Polygon(vertices);
+  }
+
+  public toLocalVertices(points: Vector3[]): Vector2[] {
+    const locals = points.map((p) => p.applyMatrix4(this.inverse));
+    return locals.map((item) => new Vector2(item.x, item.z));
   }
 }

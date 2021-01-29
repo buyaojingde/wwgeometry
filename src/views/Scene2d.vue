@@ -109,11 +109,6 @@ export default observer({
     EventMgr.on(EventEnum.selectNode, this.selectNodeMethod.bind(this));
     EventMgr.on(EventEnum.initHome, this.initTreeData.bind(this));
     EventMgr.on(EventEnum.updateTree, this.updateTreeChecked.bind(this));
-    // console.log(process.env.VUE_APP_BASE_API);
-    if (!this.scene2d.home.curLevel) {
-      this.drawModel('P000001-B0006-F0006');
-    } else {
-    }
   },
   /**
    * 销毁Vue实例之前，删除render动作
@@ -257,26 +252,6 @@ export default observer({
     },
     obstacle() {
       Model2DActive.setNewStructure(ObstacleFactory.createObstacle());
-    },
-    async drawModel(bimMapCode) {
-      try {
-        const res = await getSpcaeListInfo(bimMapCode);
-        this.processData(res);
-      } catch (error) {
-        console.error(error || '加载几何信息模型异常');
-        const res = require('../../devTools/P000001-B0006-F0006.json');
-        this.processData(res);
-      }
-    },
-    processData(res) {
-      if (res.data) {
-        this.version = res.data.editedHistory
-          ? res.data.editedHistory.version
-          : null;
-        this.$nextTick(() => {
-          this.loadBuild(res.data);
-        });
-      }
     },
   },
 });

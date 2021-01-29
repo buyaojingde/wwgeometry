@@ -23,11 +23,34 @@ export default observer({
   methods: {
     initScene3d() {
       this.scene = Scene3D.getInstance();
-      console.log('init');
+      setTimeout(() => {
+        this.render = () => {
+          this.scene.render();
+        };
+        this.$Ticker.add(this.render); // 加入渲染关键帧
+
+        this.scene.bindVue(this);
+
+        this.isLoading = false;
+      }, 0);
     },
   },
 });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.container3d {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background: #fff;
+}
+.canvas3d {
+  height: 100%;
+  width: 100%;
+}
+</style>

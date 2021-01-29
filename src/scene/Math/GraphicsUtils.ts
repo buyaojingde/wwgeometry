@@ -573,22 +573,21 @@ const lineSegmentsMaterial = new LineBasicMaterial({
   depthWrite: false,
 });
 
-// @ts-ignore
-export function buildFloorGrid(size, divisions, color1, color2): LineSegments {
-  size = 12000;
-  divisions = 240;
-  size = size || 10;
-  divisions = divisions || 10;
-  color1 = new Color(color1 !== undefined ? color1 : 0x444444);
-  color2 = new Color(color2 !== undefined ? color2 : 0x888888);
+export function buildFloorGrid(
+  size: number,
+  divisions: number,
+  color1: Color,
+  color2: Color
+): LineSegments {
+  color1 = color1 !== undefined ? color1 : new Color(0x444444);
+  color2 = color2 !== undefined ? color2 : new Color(0x888888);
 
   const center = divisions / 2;
   const step = size / divisions;
   const halfSize = size / 2;
 
   const vertices = [];
-  // @ts-ignore
-  const colors = [];
+  const colors: any[] = [];
 
   for (let i = 0, j = 0, k = -halfSize; i <= divisions; i++, k += step) {
     vertices.push(-halfSize, 0, k, halfSize, 0, k);
@@ -596,23 +595,18 @@ export function buildFloorGrid(size, divisions, color1, color2): LineSegments {
 
     const color = i % 10 === 0 ? color1 : color2;
 
-    // @ts-ignore
     color.toArray(colors, j);
     j += 3;
-    // @ts-ignore
     color.toArray(colors, j);
     j += 3;
-    // @ts-ignore
     color.toArray(colors, j);
     j += 3;
-    // @ts-ignore
     color.toArray(colors, j);
     j += 3;
   }
 
   const geometry = new BufferGeometry();
   geometry.addAttribute('position', new Float32BufferAttribute(vertices, 3));
-  // @ts-ignore
   geometry.addAttribute('color', new Float32BufferAttribute(colors, 3));
 
   return new LineSegments(geometry, lineSegmentsMaterial);

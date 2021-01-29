@@ -2,58 +2,19 @@
  * * by lianbo.guo
  **/
 // import { saveAs } from 'file-saver';
-import { computed, observable } from 'mobx';
+import { getSpcaeListInfo } from '../api/space';
 import Home from '../scene/Model/Home/Home';
 import HomeConvert from '../utils/HomeConvert';
 
 const scene2D = require('../scene/2D').default;
 
 class HomeTypeData {
-  @observable.ref
-  // @ts-ignore
-  protected gottenHome: Home;
+  public gottenHome!: Home;
 
-  protected hasRequest = null;
-
-  constructor() {}
-
-  /**
-   * 户型是否已经加载
-   * @returns {boolean}
-   */
-  @computed
-  get isHomeLoaded() {
-    return !!this.gottenHome;
-  }
-
-  public get() {
-    if (!this.gottenHome) {
-      throw new Error('还未获取到Home');
-    }
-    return this.gottenHome;
-  }
-
-  public async getHome(from?: string, path?: any) {
-    if (!this.hasRequest) {
-      // @ts-ignore
-      this.hasRequest = this._getHome(from, path);
-    }
-
-    let res = null;
-    try {
-      res = await this.hasRequest;
-    } catch (e) {
-      throw new Error(e);
-    } finally {
-      this.hasRequest = null;
-    }
-    return res;
-  }
+  private version: any;
 
   public async saveActionBim() {
-    const home = scene2D.getInstance().home;
-    const homeData = null;
-    const str = JSON.stringify(homeData);
+    const str = JSON.stringify(this.gottenHome);
     const file = new File([str], 'pave.json', {
       type: 'text/plain;charset=utf-8',
     });
@@ -68,12 +29,26 @@ class HomeTypeData {
     // console.log(res);
   }
 
-  private async _getHome(from?: string, path?: any) {
-    // if (from == 'local') {
-    //   const obj = require('../../../Downloads/博智林机器人创研中心6号楼土建6F.json');
-    //   this.gottenHome = HomeConvert.convert(obj);
-    //   return this.gottenHome;
-    // }
+  public async getHome(bimMapCode = 'P000001-B0006-F0006') {
+    if (this.gottenHome) return this.gottenHome;
+    try {
+      const res = await getSpcaeListInfo(bimMapCode);
+      return this.processData(res);
+    } catch (error) {
+      console.warn(error || '加载几何信息模型异常');
+      const res = await require('../../devTools/P000001-B0006-F0006.json');
+      return this.processData(res);
+    }
+  }
+  processData(res: any): Home {
+    if (res.data) {
+      this.version = res.data.editedHistory
+        ? res.data.editedHistory.version
+        : null;
+      this.gottenHome = HomeConvert.extractData(res.data);
+      return this.gottenHome;
+    }
+    return this.gottenHome;
   }
 }
 
