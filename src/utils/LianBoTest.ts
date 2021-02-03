@@ -172,7 +172,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.test3dResize();
+    this.testAdsorption();
   }
 
   testAdsorption() {

@@ -10,6 +10,8 @@ class ConfigStructure {
   minGeoV3!: { x: number; y: number; z: number };
   maxCanvasV3!: { x: number; y: number };
   minCanvasV3!: { x: number; y: number };
+  scene3dMax!: { x: number; y: number; z: number };
+  scene3dMin!: { x: number; y: number; z: number };
   debugger = false;
   public accuracy = 0.1;
 
@@ -161,6 +163,33 @@ class ConfigStructure {
       new Point(Model2DActive.structureVec3.x, Model2DActive.structureVec3.y)
     );
     return wGeo;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-02-02 17:25:15
+   * @Description: 3d场景的坐标转换
+   */
+  public toCanvas(p: any): any {
+    const canvas = this.smallVertex(p);
+    return { x: canvas.x, y: canvas.z, z: -canvas.y };
+  }
+
+  public toGeo(p: any): any {
+    const geo = { x: p.x, y: -p.z, z: p.y };
+    return this.enlargeSize(geo);
+  }
+
+  private enlargeSize(p: any) {
+    const large: any = {};
+    large.x = p.x * 10 + this.zeroPoint.x;
+    large.y = p.y * 10 + this.zeroPoint.y;
+    large.z = p.y * 10 + this.zeroPoint.y;
+  }
+
+  public get height(): number {
+    if (!this.maxCanvasV3) return 280;
+    return (this.maxGeoV3.z - this.minGeoV3.z) / 10;
   }
 }
 

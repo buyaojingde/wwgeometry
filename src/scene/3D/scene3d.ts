@@ -1,7 +1,16 @@
 import { Bind, Throttle } from 'lodash-decorators';
 import * as THREE from 'three';
-import { Color, LineSegments, Mesh, WebGLRenderer } from 'three';
+import {
+  Color,
+  LineSegments,
+  Mesh,
+  Object3D,
+  PerspectiveCamera,
+  WebGLRenderer,
+} from 'three';
+import { OrbitControls } from 'three-orbitcontrols-ts';
 import HomeTypeData from '../../model/HomeTypeData';
+import CameraData from '../../store/CameraData';
 import MathUtils from '../../utils/Math/math/MathUtils';
 import DOMEventManager from '../2D/Utils/DOMEventManager';
 import SceneBase from '../Base/SceneBase';
@@ -10,6 +19,13 @@ import CameraControlManager from './CameraControlManager';
 import HomePlan3D from './HomePlan3D';
 
 export default class Scene3D extends SceneBase {
+  get camera(): PerspectiveCamera {
+    return this._camera;
+  }
+
+  set camera(value: PerspectiveCamera) {
+    this._camera = value;
+  }
   private static _instance: Scene3D; // 静态单例
   private _scene!: THREE.Scene;
   private _size = 12000;
@@ -21,6 +37,8 @@ export default class Scene3D extends SceneBase {
   private _cameraCtrlManager!: CameraControlManager;
   private Vue: any = null; // 传进的Vue对象
   private bindNode!: HTMLElement;
+  private _camera!: PerspectiveCamera;
+  // private controls!: OrbitControls;
 
   public get renderDom(): HTMLElement {
     return this._renderer.domElement;
@@ -33,13 +51,16 @@ export default class Scene3D extends SceneBase {
     }
     return this._instance;
   }
-  public render() {}
 
-  @Throttle(200)
-  @Bind
-  public onWindowResize() {
-    this.resize();
+  public constructor() {
+    super();
   }
+
+  // @Throttle(200)
+  // @Bind
+  // public onWindowResize() {
+  //   this.resize();
+  // }
 
   public resize(size: any = null) {
     if (!size) {
@@ -83,6 +104,16 @@ export default class Scene3D extends SceneBase {
   clear(): void {}
 
   destroy(): void {}
+  render() {
+    this._renderer.render(this._scene, this.camera);
+  }
+
+  onWindowResize() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+
+    this._renderer.setSize(window.innerWidth, window.innerHeight);
+  }
 
   public init() {
     console.log('init');
@@ -113,7 +144,9 @@ export default class Scene3D extends SceneBase {
 
     this.DOMEventListener = new DOMEventManager(this._renderer.domElement);
 
-    /** 初始化camera ctrl */
+    const axis = new THREE.AxesHelper(400);
+    this.add(axis);
+
     this._cameraCtrlManager = new CameraControlManager(
       this,
       this._renderer.domElement
@@ -121,6 +154,14 @@ export default class Scene3D extends SceneBase {
 
     /** 加入场景的DOM事件管理 **/
     this.DOMEventListener.on('resize', this.onWindowResize);
+  }
+
+  public getScene(): THREE.Scene {
+    return this._scene;
+  }
+
+  public add(object: Object3D) {
+    this._scene.add(object);
   }
 
   /**
@@ -146,6 +187,7 @@ export default class Scene3D extends SceneBase {
   private async loadHome() {
     await HomeTypeData.getHome();
     this.home = HomeTypeData.gottenHome;
+    CameraData.resetCameraPosition();
     this.refreshHomePlan();
     this.homePlan.render();
   }

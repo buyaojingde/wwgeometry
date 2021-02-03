@@ -1,79 +1,83 @@
+import ModelActiveData from '../../../store/ModelActiveData';
 /**
  * @author mrdoob / http://mrdoob.com/
  * Source: https://github.com/mrdoob/three.js/blob/master/examples/js/controls/PointerLockControls.js
  *
+ * Adopted to common js by Javier Zapata
+ *
+ * Modified from PointerLockControls
+ * Modified by jerry.hu
  *
  */
+import { CAMERA_MIN_HEIGHT } from '../../../global/constants';
 import debounce from 'lodash/debounce';
+import HomeTypeData from '@/model/HomeTypeData';
+import KeyMap, { eventAction } from '../../../global/KeyMap';
 
-const THREE = window.THREE || require('three');
+let THREE = window.THREE || require('three');
 
-const OrbitCtrl = function (camera, element = window.document) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const scope = this;
+let RoamControl = function(camera, element = window.document) {
+  var scope = this;
 
   camera.rotation.set(0, 0, 0);
 
-  const pitchObject = new THREE.Object3D();
+  var pitchObject = new THREE.Object3D();
   pitchObject.add(camera);
 
-  const yawObject = new THREE.Object3D();
+  var yawObject = new THREE.Object3D();
   yawObject.position.y = 10;
   yawObject.add(pitchObject);
 
-  let moveForward = false;
-  let moveBackward = false;
-  let moveLeft = false;
-  let moveRight = false;
-  let moveTop = false;
-  let moveBottom = false;
+  var moveForward = false;
+  var moveBackward = false;
+  var moveLeft = false;
+  var moveRight = false;
+  var moveTop = false;
+  var moveBottom = false;
 
-  let isOnObject = false;
-  let canJump = false;
-  let isMouseDown = false;
-  let isKeyDown = false;
+  var isOnObject = false;
+  var canJump = false;
+  var isMouseDown = false;
+  var isKeyDown = false;
 
-  const changeEvent = { type: 'change' };
+  var changeEvent = { type: 'change' };
 
-  let prevTime = performance.now();
+  var prevTime = performance.now();
 
-  const velocity = new THREE.Vector3();
+  var velocity = new THREE.Vector3();
 
-  const PI_2 = Math.PI / 2;
+  var PI_2 = Math.PI / 2;
 
   /** move speed ratio */
   this.moveSpeedRatio = 1.0;
 
   this.enableUpDown = true;
 
-  const onTouchMove = function (event) {
+  this.addEventListener('start', change => this.enabled && ModelActiveData.setChangingCamera(true));
+  this.addEventListener('end', change => this.enabled && ModelActiveData.setChangingCamera(false));
+
+  var onTouchMove = function(event) {
     console.log(event);
   };
 
-  const onMouseMove = function (event) {
+  var onMouseMove = function(event) {
     if (scope.enabled === false || !isMouseDown) return;
 
-    const movementX = event.deltaX || 0;
-    const movementY = event.deltaY || 0;
+    var movementX = event.deltaX || 0;
+    var movementY = event.deltaY || 0;
 
     if (!scope.startRotation) {
-      scope.startRotation = {
-        y: yawObject.rotation.y,
-        x: pitchObject.rotation.x,
-      };
+      scope.startRotation = { y: yawObject.rotation.y, x: pitchObject.rotation.x };
     }
     yawObject.rotation.y = scope.startRotation.y + movementX * 0.0015;
     pitchObject.rotation.x = scope.startRotation.x + movementY * 0.0015;
 
-    pitchObject.rotation.x = Math.max(
-      -PI_2,
-      Math.min(PI_2, pitchObject.rotation.x)
-    );
+    pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
 
     scope.dispatchEvent({ type: 'changeRotation' });
   };
 
-  const endMouseWheel = debounce(function () {
+  var endMouseWheel = debounce(function() {
     // moveBackward = false
     // moveForward = false
 
@@ -82,7 +86,7 @@ const OrbitCtrl = function (camera, element = window.document) {
     }
   }, 200);
 
-  const endKeyDown = debounce(function () {
+  var endKeyDown = debounce(function() {
     isKeyDown = false;
     endMouseWheel();
     moveForward = false;
@@ -93,7 +97,7 @@ const OrbitCtrl = function (camera, element = window.document) {
     moveBottom = false;
   }, 500);
 
-  const onMouseWheel = function (event) {
+  var onMouseWheel = function(event) {
     if (scope.enabled === false) return;
 
     event.preventDefault();
@@ -112,12 +116,12 @@ const OrbitCtrl = function (camera, element = window.document) {
     endMouseWheel();
   };
 
-  const onKeyDown = function (event) {
+  var onKeyDown = function(event) {
     if (scope.enabled === false) return;
 
     isKeyDown = true;
 
-    const action = null;
+    const action = eventAction(event, KeyMap.viewControl3D);
     if (!action) {
       return;
     }
@@ -155,24 +159,17 @@ const OrbitCtrl = function (camera, element = window.document) {
       //   break;
     }
 
-    if (
-      moveTop ||
-      moveBottom ||
-      moveRight ||
-      moveLeft ||
-      moveBackward ||
-      moveForward
-    ) {
+    if (moveTop || moveBottom || moveRight || moveLeft || moveBackward || moveForward) {
       scope.dispatchEvent({ type: 'start' });
       endKeyDown();
     }
   };
 
-  const onKeyUp = function (event) {
+  var onKeyUp = function(event) {
     endMouseWheel();
     isKeyDown = false;
 
-    const action = null;
+    const action = eventAction(event, KeyMap.viewControl3D);
     if (!action) {
       return;
     }
@@ -204,16 +201,13 @@ const OrbitCtrl = function (camera, element = window.document) {
     }
   };
 
-  const onMouseDown = function (event) {
+  var onMouseDown = function(event) {
     isMouseDown = true;
-    scope.startRotation = {
-      y: yawObject.rotation.y,
-      x: pitchObject.rotation.x,
-    };
+    scope.startRotation = { y: yawObject.rotation.y, x: pitchObject.rotation.x };
     scope.dispatchEvent({ type: 'start' });
   };
 
-  const onMouseUp = function (event) {
+  var onMouseUp = function(event) {
     isMouseDown = false;
     scope.startRotation = null;
     scope.dispatchEvent({ type: 'end' });
@@ -240,11 +234,8 @@ const OrbitCtrl = function (camera, element = window.document) {
   // element.addEventListener('touchstart', onMouseDown, false);
   // element.addEventListener('touchend', onMouseUp, false);
   // element.addEventListener('touchmove', onMouseMove, false);
-  // eslint-disable-next-line no-undef
   const hammer = new Hammer.Manager(element);
-  // eslint-disable-next-line no-undef
   hammer.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
-  // eslint-disable-next-line no-undef
   hammer.add(new Hammer.Pinch());
   hammer.on('panstart', onMouseDown);
   hammer.on('panmove', onMouseMove);
@@ -254,7 +245,7 @@ const OrbitCtrl = function (camera, element = window.document) {
   window.addEventListener('mouseup', onMouseUp, false);
   this.enabled = false;
 
-  this.getObject = function () {
+  this.getObject = function() {
     return yawObject;
   };
 
@@ -262,29 +253,29 @@ const OrbitCtrl = function (camera, element = window.document) {
   //   return { x: 0, y: yawObject.rotation.y, z: pitchObject.rotation.z }
   // }
 
-  this.isOnObject = function (boolean) {
+  this.isOnObject = function(boolean) {
     isOnObject = boolean;
     canJump = boolean;
   };
 
-  this.getRotation = function () {
-    const rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+  this.getRotation = function() {
+    let rotation = new THREE.Euler(0, 0, 0, 'YXZ');
     rotation.set(pitchObject.rotation.x, yawObject.rotation.y, 0);
     return rotation;
   };
 
-  this.setRotation = function (x, y, z) {
+  this.setRotation = function(x, y, z) {
     pitchObject.rotation.x = x;
     yawObject.rotation.y = y;
   };
 
-  this.getDirection = (function () {
+  this.getDirection = (function() {
     // assumes the camera itself is not rotated
 
-    const direction = new THREE.Vector3(0, 0, -1);
-    const rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+    var direction = new THREE.Vector3(0, 0, -1);
+    var rotation = new THREE.Euler(0, 0, 0, 'YXZ');
 
-    return function (v) {
+    return function(v) {
       rotation.set(pitchObject.rotation.x, yawObject.rotation.y, 0);
 
       v.copy(direction).applyEuler(rotation);
@@ -293,24 +284,17 @@ const OrbitCtrl = function (camera, element = window.document) {
     };
   })();
 
-  this.update = function () {
+  this.update = function() {
     if (scope.enabled === false) return;
 
-    const time = performance.now();
-    const delta = (time - prevTime) / 1000;
+    var time = performance.now();
+    var delta = (time - prevTime) / 1000;
 
     velocity.x -= velocity.x * 10.0 * delta;
     velocity.z -= velocity.z * 10.0 * delta;
     velocity.y -= velocity.y * 10.0 * delta;
 
-    if (
-      moveForward ||
-      moveBackward ||
-      moveLeft ||
-      moveRight ||
-      moveTop ||
-      moveBottom
-    ) {
+    if (moveForward || moveBackward || moveLeft || moveRight || moveTop || moveBottom) {
       if (moveForward) velocity.z -= 200.0 * delta * this.moveSpeedRatio;
       if (moveBackward) velocity.z += 200.0 * delta * this.moveSpeedRatio;
 
@@ -328,16 +312,16 @@ const OrbitCtrl = function (camera, element = window.document) {
     yawObject.translateZ(velocity.z * delta * this.moveSpeedRatio);
     yawObject.translateY(velocity.y * delta * this.moveSpeedRatio);
 
-    const yValue = yawObject.position.y;
-    yawObject.position.setY(Math.min(Math.max(yValue, 20), 280));
+    let yValue = yawObject.position.y;
+    yawObject.position.setY(Math.min(Math.max(yValue, CAMERA_MIN_HEIGHT), HomeTypeData.curLevelHeight));
 
     prevTime = time;
   };
 };
 
-OrbitCtrl.prototype = Object.create(THREE.EventDispatcher.prototype);
-OrbitCtrl.prototype.constructor = OrbitCtrl;
+RoamControl.prototype = Object.create(THREE.EventDispatcher.prototype);
+RoamControl.prototype.constructor = RoamControl;
 // return RoamControl
 
 // module.exports = RoamControl
-export default OrbitCtrl;
+export default RoamControl;

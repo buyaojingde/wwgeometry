@@ -1,5 +1,6 @@
 // require("pixi-layers");
-
+import * as PIXI from 'pixi.js';
+window.PIXI = PIXI;
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
@@ -11,7 +12,7 @@ import ticker from 'pixi.js';
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
-PIXI.utils.skipHello();
+// PIXI.utils.skipHello();
 Vue.prototype.$Ticker = PIXI.Ticker.shared;
 
 new Vue({

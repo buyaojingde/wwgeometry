@@ -40,8 +40,14 @@ export default class GeoSurface {
       this.points[this.points.length - 1]
     );
     const v0 = new Vector3().subVectors(this.points[0], this.points[1]);
-    const normal = new Vector3().crossVectors(v0, v1);
-    return MathUtils.equalZero(normal.x) && MathUtils.equalZero(normal.z);
+    const normal = new Vector3().crossVectors(v0, v1).normalize();
+    const offAngle = new Vector3()
+      .crossVectors(new Vector3(0, 1, 0), normal)
+      .length();
+    return (
+      (MathUtils.equalZero(normal.x) && MathUtils.equalZero(normal.z)) ||
+      MathUtils.equalZero(offAngle)
+    );
   }
 
   /**

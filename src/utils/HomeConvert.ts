@@ -187,11 +187,11 @@ class HomeConvert {
       }
     };
     calcSurround();
-    ConfigStructure.maxGeoV3 = { x: maxX, y: minY, z: maxZ }; // Revit的Y轴是向上的
+    ConfigStructure.maxGeoV3 = { x: maxX, y: minY, z: maxZ }; // Revit的Z轴是向上的
     ConfigStructure.minGeoV3 = { x: minX, y: maxY, z: minZ };
     ConfigStructure.zeroPoint.x = (maxX + minX) / 2;
     ConfigStructure.zeroPoint.y = (maxY + minY) / 2;
-    ConfigStructure.zeroPoint.z = (maxZ + minZ) / 2;
+    ConfigStructure.zeroPoint.z = minZ;
 
     Model2DActive.subjectVec3.x = ConfigStructure.zeroPoint.x;
     Model2DActive.subjectVec3.y = ConfigStructure.zeroPoint.y;

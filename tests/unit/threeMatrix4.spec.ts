@@ -22,4 +22,13 @@ describe('threeMatrix4', () => {
         MathUtils.equalZero(r2.y)
     ).toBe(true);
   });
+
+  it('Horizontal', () => {
+    const v0 = new Vector3(-7418.3, 20807.3, -7270.9);
+    const v1 = new Vector3(-7418.3, 20807.3, -7470.9);
+    const v2 = new Vector3(-6739.5, 20790.3, -7470.9);
+    const v3 = new Vector3(-6739.5, 20790.3, -7270.9);
+    const face = new GeoSurface([v0, v1, v2, v3]);
+    expect(face.isHorizontal).toBe(true);
+  });
 });
