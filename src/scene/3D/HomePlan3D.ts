@@ -25,6 +25,9 @@ export default class HomePlan3D {
   }
 
   public load() {}
-  public render() {}
+  public render() {
+    console.log('homeplan render');
+    Object.values(this._layers).forEach((layer) => layer && layer.render());
+  }
   public destroy() {}
 }

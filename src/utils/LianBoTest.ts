@@ -6,7 +6,10 @@ import { createPolygon, validate } from '../scene/2D/Utils/JSTSTool';
 
 import { Graphics } from 'pixi.js';
 import {
+  AmbientLight,
   Color,
+  CylinderBufferGeometry,
+  DirectionalLight,
   DoubleSide,
   Euler,
   Group,
@@ -56,7 +59,7 @@ class LianBoTest {
 
   public constructor() {
     (window as any).TEST = () => {
-      this.testMain();
+      this.testCreateThreeBox();
     };
     (window as any).TEST1 = () => {
       // this.testJSTSSegIntersection();
@@ -1094,6 +1097,31 @@ class LianBoTest {
 
   private test3dResize() {
     Scene3D.getInstance().resize();
+  }
+
+  private testCreateThreeBox() {
+    const geometry = new CylinderBufferGeometry(0, 10, 30, 4, 1);
+    const material = new MeshPhongMaterial({
+      color: 0xff0000,
+      flatShading: true,
+    });
+
+    for (let i = 0; i < 500; i++) {
+      const mesh = new Mesh(geometry, material);
+      mesh.position.x = Math.random() * 1600 - 800;
+      mesh.position.y = 0;
+      mesh.position.z = Math.random() * 1600 - 800;
+      mesh.updateMatrix();
+      mesh.matrixAutoUpdate = false;
+      Scene3D.getInstance().add(mesh);
+    }
+
+    // const light = new DirectionalLight(0xffffff);
+    // light.position.set(1, 1, 1);
+    // Scene3D.getInstance().add(light);
+
+    const light1 = new AmbientLight(0xffffff);
+    Scene3D.getInstance().add(light1);
   }
 }
 

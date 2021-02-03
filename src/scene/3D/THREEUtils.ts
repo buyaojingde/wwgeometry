@@ -8,13 +8,14 @@ import {
   ShapeBufferGeometry,
   Vector3,
 } from 'three';
+import GeometryFactory from '../../utils/Math/geometry/GeometryFactory';
 import GeoSurface from '../Model/Geometry/GeoSurface';
 
 class THREEUtils {
   public buildMesh(loop: any[], innerLoops: any[]): Mesh {
-    const vertices = loop.map((item) => new Vector3(item.x, item.y, item.z));
+    const vertices = loop.map((item) => GeometryFactory.createVector3(item));
     const holes = innerLoops.map((item) =>
-      item.map((vertex: any) => new Vector3(vertex.x, vertex.y, vertex.z))
+      item.map((vertex: any) => GeometryFactory.createVector3(vertex))
     );
     const surface = new GeoSurface(vertices);
     const shape = new Shape(surface.toLocalVertices(vertices));

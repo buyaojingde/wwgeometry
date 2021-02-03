@@ -1,6 +1,6 @@
-import { Bind, Throttle } from 'lodash-decorators';
 import * as THREE from 'three';
 import {
+  AmbientLight,
   Color,
   LineSegments,
   Mesh,
@@ -8,7 +8,6 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
 } from 'three';
-import { OrbitControls } from 'three-orbitcontrols-ts';
 import HomeTypeData from '../../model/HomeTypeData';
 import CameraData from '../../store/CameraData';
 import MathUtils from '../../utils/Math/math/MathUtils';
@@ -154,6 +153,9 @@ export default class Scene3D extends SceneBase {
 
     /** 加入场景的DOM事件管理 **/
     this.DOMEventListener.on('resize', this.onWindowResize);
+
+    const aLight = new AmbientLight(0xffffff);
+    this._scene.add(aLight);
   }
 
   public getScene(): THREE.Scene {
@@ -189,6 +191,5 @@ export default class Scene3D extends SceneBase {
     this.home = HomeTypeData.gottenHome;
     CameraData.resetCameraPosition();
     this.refreshHomePlan();
-    this.homePlan.render();
   }
 }

@@ -337,16 +337,19 @@ class HomeConvert {
       if (topFaceGeo.length !== element.length) continue;
       const mirrorIndices: any[] = [];
       for (let i = 0; i < topFaceGeo.length; i++) {
-        let mirrorIndex = -1;
+        let mirrorVertexIndex = -1;
         const topVertex = topFaceGeo[i];
         for (let j = 0; j < element.length; j++) {
-          const mirror = element[j];
-          if (topVertex.x === mirror.x && topVertex.y === mirror.y) {
-            mirrorIndex = j;
+          const mirrorVertex = element[j];
+          if (
+            topVertex.X === mirrorVertex.X &&
+            topVertex.Y === mirrorVertex.Y
+          ) {
+            mirrorVertexIndex = j;
           }
         }
-        if (mirrorIndex !== -1) {
-          mirrorIndices.push({ topIndex: i, mirrorIndex: mirrorIndex });
+        if (mirrorVertexIndex !== -1) {
+          mirrorIndices.push({ topIndex: i, mirrorIndex: mirrorVertexIndex });
         } else {
           break;
         }
@@ -382,7 +385,7 @@ class HomeConvert {
         const vertex = remainderFace[i];
         const find = topFace.find(
           (item: any) =>
-            item.x === vertex.x && item.y === vertex.y && item.z === vertex.z
+            item.X === vertex.X && item.Y === vertex.Y && item.Z === vertex.Z
         );
         if (find) {
           remainderFace[i] = find;
@@ -390,7 +393,7 @@ class HomeConvert {
         for (const mirr of mirrorFaces) {
           const find = mirr.find(
             (item: any) =>
-              item.x === vertex.x && item.y === vertex.y && item.z === vertex.z
+              item.X === vertex.X && item.Y === vertex.Y && item.Z === vertex.Z
           );
           if (find) {
             remainderFace[i] = find;
