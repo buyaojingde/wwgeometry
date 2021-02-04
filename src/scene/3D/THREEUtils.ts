@@ -4,6 +4,7 @@ import {
   Mesh,
   MeshPhongMaterial,
   Path,
+  Quaternion,
   Shape,
   ShapeBufferGeometry,
   Vector3,
@@ -12,7 +13,8 @@ import GeometryFactory from '../../utils/Math/geometry/GeometryFactory';
 import GeoSurface from '../Model/Geometry/GeoSurface';
 
 class THREEUtils {
-  public buildMesh(loop: any[], innerLoops: any[]): Mesh {
+  public buildMesh(loop: any[], innerLoops: any[], colorStr = '#000000'): Mesh {
+    const color: Color = new Color(colorStr);
     const vertices = loop.map((item) => GeometryFactory.createVector3(item));
     const holes = innerLoops.map((item) =>
       item.map((vertex: any) => GeometryFactory.createVector3(vertex))
@@ -23,9 +25,9 @@ class THREEUtils {
     const paths: Path[] = holesLocal.map((hl) => new Path(hl));
     paths.forEach((path) => shape.holes.push(path));
     const geo = new ShapeBufferGeometry(shape);
-    const matRed: THREE.MeshPhongMaterial = new MeshPhongMaterial({
+    const matRed: MeshPhongMaterial = new MeshPhongMaterial({
       side: DoubleSide,
-      color: new Color(Math.random(), Math.random(), Math.random()),
+      color: color,
     });
     const mesh = new Mesh(geo, matRed);
     mesh.applyMatrix(surface.mat);

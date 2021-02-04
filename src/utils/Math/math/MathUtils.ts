@@ -7,6 +7,14 @@ export default class MathUtils {
     this.Epsilon = 0.000001;
   }
 
+  public static equalV3(v: any, v1: any) {
+    return (
+      MathUtils.equal(v.x, v1.x) &&
+      MathUtils.equal(v.y, v1.y) &&
+      MathUtils.equal(v.z, v1.z)
+    );
+  }
+
   public static equalZero(a: number, epsilon: number = MathUtils.Epsilon) {
     return a <= epsilon && a >= -epsilon;
   }

@@ -85,7 +85,7 @@ export default class Obstacle
       const top: any = {};
       top.x = item.x;
       top.y = item.y;
-      top.z = this._zPlane + this._height;
+      top.z = this._zPlane + this._height * 10;
       return top;
     });
     const topFace = makeFace(topBoundary);

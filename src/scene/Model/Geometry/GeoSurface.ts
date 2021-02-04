@@ -56,13 +56,12 @@ export default class GeoSurface {
    * @Description: 平面的法向量的单位向量
    */
   public get normal(): Vector3 {
-    const v0: Vector3 = this.points[0];
-    const v1: Vector3 = this.points[1];
-    const v2: Vector3 = this.points[2];
-    const normal = new Vector3().crossVectors(
-      v1.clone().sub(v0),
-      v2.clone().sub(v0)
-    );
+    const p0: Vector3 = this.points[0];
+    const p1: Vector3 = this.points[1];
+    const pEnd: Vector3 = this.points[this.points.length - 1];
+    const v0: Vector3 = p1.clone().sub(p0);
+    const vEnd: Vector3 = pEnd.clone().sub(p0);
+    const normal = v0.clone().cross(vEnd);
     return normal.normalize();
   }
 
@@ -75,7 +74,22 @@ export default class GeoSurface {
   public getMat(): Matrix4 {
     const mat = new Matrix4();
     mat.setPosition(this.points[0]);
-    mat.lookAt(this.points[0], this.points[1], this.normal);
+    const up = this.points[1].clone().sub(this.points[0]);
+    /*
+    * 	// vertices, normals, uvs
+        function addShape
+		for ( let i = 0, l = shapeVertices.length; i < l; i ++ ) {
+
+			const vertex = shapeVertices[ i ];
+
+			vertices.push( vertex.x, vertex.y, 0 );
+			normals.push( 0, 0, 1 );
+			uvs.push( vertex.x, vertex.y ); // world uvs
+
+		}
+		* */
+    // 这里选择使用XY面，是因为ShapeGeometry中是用x,y构建几何体
+    mat.lookAt(this.normal, new Vector3(), up);
     return mat;
   }
 
@@ -90,13 +104,13 @@ export default class GeoSurface {
     return polygon.completeOverlap(polygon1);
   }
 
+  public toLocalVertices(points: Vector3[]): Vector2[] {
+    const locals = points.map((p) => p.applyMatrix4(this.inverse));
+    return locals.map((item) => new Vector2(item.x, item.y));
+  }
+
   private projectXZ(): Polygon {
     const vertices = this.points.map((item) => new Point(item.x, item.z));
     return new Polygon(vertices);
-  }
-
-  public toLocalVertices(points: Vector3[]): Vector2[] {
-    const locals = points.map((p) => p.applyMatrix4(this.inverse));
-    return locals.map((item) => new Vector2(item.x, item.z));
   }
 }

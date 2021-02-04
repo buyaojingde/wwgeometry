@@ -2,7 +2,7 @@ import { Group } from 'three';
 import ConfigStructure from '../../utils/ConfigStructure';
 import Obstacle from '../Model/Home/Obstacle';
 import Room from '../Model/Home/Room';
-import Structure from '../Model/Home/Structure';
+import Structure, { StType } from '../Model/Home/Structure';
 import THREEUtils from './THREEUtils';
 
 export default class BimElement3D extends Group {
@@ -42,7 +42,9 @@ export default class BimElement3D extends Group {
           const canvasInner = innerLoop.map((loops: any) => {
             return loops.map((item: any) => ConfigStructure.toCanvas(item));
           });
-          this.add(THREEUtils.buildMesh(canvasLoop, canvasInner));
+          this.add(
+            THREEUtils.buildMesh(canvasLoop, canvasInner, this.colorAlpha)
+          );
         }
       }
     };
@@ -60,5 +62,43 @@ export default class BimElement3D extends Group {
       );
       this.add(THREEUtils.buildMesh(canvasBoundary, []));
     }
+  }
+
+  get cType(): string {
+    if (this.model instanceof Structure) {
+      return this.model.stType;
+    }
+    return '';
+  }
+
+  public get colorAlpha(): string {
+    if (this.model.isEdit) {
+      return '#ff0000';
+    }
+    if (this.model instanceof Obstacle) {
+      return '0xffffff';
+    }
+    let ca = '#8a8a8a';
+    switch (this.cType) {
+      case StType.Wall:
+        ca = '#FFD700';
+        break;
+      case StType.PCWall:
+        ca = '#FF5F12';
+        break;
+      case StType.Framing:
+        ca = '#2e564b';
+        break;
+      case StType.Column:
+        ca = '#000000';
+        break;
+      case StType.Door:
+        ca = '#329908';
+        break;
+      case StType.Window:
+        ca = '#0f719d';
+        break;
+    }
+    return ca;
   }
 }

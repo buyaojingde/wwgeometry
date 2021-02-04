@@ -5,6 +5,7 @@ import { autorun, reaction } from 'mobx';
 import { createPolygon, validate } from '../scene/2D/Utils/JSTSTool';
 
 import { Graphics } from 'pixi.js';
+import * as THREE from 'three';
 import {
   AmbientLight,
   Color,
@@ -27,6 +28,7 @@ import Edge2D from '../scene/2D/ViewObject/Edge2D';
 import Polygon2D from '../scene/2D/ViewObject/Polygon2D';
 import Spot2D from '../scene/2D/ViewObject/Spot2D';
 import Scene3D from '../scene/3D/scene3d';
+import THREEUtils from '../scene/3D/THREEUtils';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Structure, { StType } from '../scene/Model/Home/Structure';
 import ObserveVector2D from '../scene/Model/ObserveMath/ObserveVector2D';
@@ -59,7 +61,7 @@ class LianBoTest {
 
   public constructor() {
     (window as any).TEST = () => {
-      this.testCreateThreeBox();
+      this.testMain();
     };
     (window as any).TEST1 = () => {
       // this.testJSTSSegIntersection();
@@ -175,7 +177,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testAdsorption();
+    this.testRenderStructure();
   }
 
   testAdsorption() {
@@ -1122,6 +1124,84 @@ class LianBoTest {
 
     const light1 = new AmbientLight(0xffffff);
     Scene3D.getInstance().add(light1);
+  }
+
+  private testRenderStructure() {
+    const colors = [
+      '#000000',
+      '#ff0000',
+      '#00ff00',
+      '#0000ff',
+      '#00ffff',
+      '#ffffff',
+    ];
+    const st = this.lvl.findByRvtId('1178');
+    const drawMeshSolid = (solid: any) => {
+      const faces = solid.faces;
+      for (let i = 0; i < faces.length; i++) {
+        // if (i !== 0) continue;
+        const face = faces[i];
+        const outLoop = face.outLoop;
+        const innerLoop = face.innerLoop;
+        for (const loop of outLoop) {
+          const canvasLoop = loop.map((item: any) =>
+            ConfigStructure.toCanvas(item)
+          );
+          const canvasInner = innerLoop.map((loops: any) => {
+            return loops.map((item: any) => ConfigStructure.toCanvas(item));
+          });
+          Scene3D.getInstance().add(
+            THREEUtils.buildMesh(canvasLoop, canvasInner, colors[i])
+          );
+        }
+      }
+    };
+    const solid = st.buildData().solids[0];
+    drawMeshSolid(solid);
+  }
+
+  private testMeshRender() {
+    const vertices = [
+      new Vector3(100, 100, 100),
+      new Vector3(200, 100, 100),
+      new Vector3(200, 100, 200),
+      new Vector3(100, 100, 200),
+    ];
+    const result = this.transformTest(vertices);
+    const matrixWorld = result.mat;
+    const localVertices = result.locals;
+    const shape = new Shape(localVertices);
+    const geometry = new ShapeBufferGeometry(shape);
+    const matRed: THREE.MeshPhongMaterial = new MeshPhongMaterial({
+      side: DoubleSide,
+      color: new Color(Math.random(), Math.random(), Math.random()),
+    });
+    const mesh = new Mesh(geometry, matRed);
+    mesh.applyMatrix(matrixWorld);
+    Scene3D.getInstance().add(mesh);
+  }
+
+  public transformTest(vertices: Vector3[]) {
+    const matrixWorld = new Matrix4();
+    const firstPoint = vertices[0];
+    const v0: Vector3 = vertices[1].clone().sub(firstPoint);
+    const vEnd: Vector3 = vertices[vertices.length - 1].clone().sub(firstPoint);
+    const planeNormal = v0.clone().cross(vEnd);
+    matrixWorld.setPosition(firstPoint);
+    matrixWorld.lookAt(planeNormal, new Vector3(0, 0, 0), v0);
+    const localVertices = [];
+    for (const edgeItem of vertices) {
+      localVertices.push(this.worldToLocal(edgeItem, matrixWorld));
+    }
+    const localVertices2 = localVertices.map((item: any) => {
+      return new THREE.Vector2(item.x, item.y);
+    });
+    return { mat: matrixWorld, locals: localVertices2 };
+  }
+
+  public testGeoSurface(vertices: Vector3[]) {
+    const face = new GeoSurface(vertices);
+    return { mat: face.mat, locals: face.toLocalVertices(vertices) };
   }
 }
 
