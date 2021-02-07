@@ -82,6 +82,7 @@ export default class CameraControlManager {
 
     setTimeout(() => this.update(), 2);
     this._orbitControl.enabled = false;
+    this._orbitControl.addEventListener('change', () => this.renderScene());
     // this._roamContrl.enabled = false;
     this._orthographicCtrl.enable = false;
 
@@ -125,7 +126,7 @@ export default class CameraControlManager {
       10,
       10000
     );
-
+    // this._orbitCamera.matrixAutoUpdate = false;
     this._orbitControl = new OrbitControls(this._orbitCamera, this._canvas);
 
     this._orbitControl.enableDamping = true;
@@ -291,5 +292,9 @@ export default class CameraControlManager {
     const { x, y, z } = param.targetPosition;
     this._orbitControl.floodHeight = y;
     this._orbitControl.target.set(x, y, z);
+  }
+
+  private renderScene() {
+    this._scene3d.render();
   }
 }

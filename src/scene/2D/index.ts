@@ -197,7 +197,7 @@ export default class Scene2D extends SceneBase implements IScene2D {
     });
 
     this.initSyncEvent();
-    this.initStats();
+    // this.initStats();
     LianBoTest.init();
   }
 

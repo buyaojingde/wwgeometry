@@ -27,11 +27,12 @@ export default observer({
         this.render = () => {
           this.scene.render();
         };
-        this.$Ticker.add(this.render); // 加入渲染关键帧
+        // this.$Ticker.add(this.render); // 加入渲染关键帧
 
         this.scene.bindVue(this);
 
         this.isLoading = false;
+        // this.render();
       }, 0);
     },
   },

@@ -1,4 +1,11 @@
-import { Group } from 'three';
+// import * as THREE from 'three';
+import {
+  BufferGeometryUtils,
+  DoubleSide,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+} from 'three';
 import ConfigStructure from '../../utils/ConfigStructure';
 import Obstacle from '../Model/Home/Obstacle';
 import Room from '../Model/Home/Room';
@@ -31,6 +38,7 @@ export default class BimElement3D extends Group {
 
   private drawModel3D() {
     const drawMeshSolid = (solid: any) => {
+      const geoList = [];
       const faces = solid.faces;
       for (const face of faces) {
         const outLoop = face.outLoop;
@@ -42,11 +50,17 @@ export default class BimElement3D extends Group {
           const canvasInner = innerLoop.map((loops: any) => {
             return loops.map((item: any) => ConfigStructure.toCanvas(item));
           });
-          this.add(
-            THREEUtils.buildMesh(canvasLoop, canvasInner, this.colorAlpha)
-          );
+          geoList.push(THREEUtils.buildGeometry(canvasLoop, canvasInner));
         }
       }
+      const mergeGeos = THREEUtils.mergeBufferGeometry(geoList);
+
+      const matRed: MeshBasicMaterial = new MeshBasicMaterial({
+        side: DoubleSide,
+        color: this.colorAlpha,
+      });
+      const mesh = new Mesh(mergeGeos, matRed);
+      this.add(mesh);
     };
     if (this.model instanceof Obstacle) {
       const solid = this.model.buildData().solids[0];
@@ -60,7 +74,7 @@ export default class BimElement3D extends Group {
       const canvasBoundary = this.model.spaceData.boundary.map((item: any) =>
         ConfigStructure.toCanvas(item)
       );
-      this.add(THREEUtils.buildMesh(canvasBoundary, []));
+      this.add(THREEUtils.buildMesh(canvasBoundary, [], this.colorAlpha));
     }
   }
 
@@ -76,7 +90,7 @@ export default class BimElement3D extends Group {
       return '#ff0000';
     }
     if (this.model instanceof Obstacle) {
-      return '0xffffff';
+      return '#ffffff';
     }
     let ca = '#8a8a8a';
     switch (this.cType) {

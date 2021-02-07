@@ -3,19 +3,19 @@ import maxBy from 'lodash/maxBy';
 import { autorun, reaction } from 'mobx';
 // @ts-ignore
 import { createPolygon, validate } from '../scene/2D/Utils/JSTSTool';
-
 import { Graphics } from 'pixi.js';
 import * as THREE from 'three';
+
 import {
   AmbientLight,
   Color,
   CylinderBufferGeometry,
-  DirectionalLight,
   DoubleSide,
   Euler,
   Group,
   Matrix4,
   Mesh,
+  MeshBasicMaterial,
   MeshPhongMaterial,
   Shape,
   ShapeBufferGeometry,
@@ -177,7 +177,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testRenderStructure();
+    this.testRenderSimple();
   }
 
   testAdsorption() {
@@ -1013,30 +1013,17 @@ class LianBoTest {
     return v3;
   }
 
-  private edgesToVector3(edges: any): any {
-    return edges.map((item: any) => {
-      return {
-        startPoint: new Vector3(
-          item.startPoint.X,
-          item.startPoint.Y,
-          item.startPoint.Z
-        ),
-        endPoint: new Vector3(
-          item.endPoint.X,
-          item.endPoint.Y,
-          item.endPoint.Z
-        ),
-      };
+  private edgesToVector3(face: any): any {
+    return face.map((item: any) => {
+      return new Vector3(item.X, item.Y, item.Z);
     });
   }
 
   private edgeMatrix(edges: any): Matrix4 {
     const matrix = new Matrix4();
-    const firstPoint = edges[0].startPoint;
-    const v0: Vector3 = edges[0].endPoint.clone().sub(firstPoint);
-    const vEnd: Vector3 = edges[edges.length - 1].endPoint
-      .clone()
-      .sub(edges[edges.length - 1].startPoint);
+    const firstPoint = edges[0];
+    const v0: Vector3 = edges[1].clone().sub(firstPoint);
+    const vEnd: Vector3 = edges[edges.length - 1].clone().sub(firstPoint);
     const planeNormal = v0.clone().cross(vEnd);
     matrix.setPosition(firstPoint);
     matrix.lookAt(planeNormal, new Vector3(0, 0, 0), v0);
@@ -1126,7 +1113,7 @@ class LianBoTest {
     Scene3D.getInstance().add(light1);
   }
 
-  private testRenderStructure() {
+  private testRenderSimple() {
     const colors = [
       '#000000',
       '#ff0000',
@@ -1138,6 +1125,7 @@ class LianBoTest {
     const st = this.lvl.findByRvtId('1178');
     const drawMeshSolid = (solid: any) => {
       const faces = solid.faces;
+      const geos = [];
       for (let i = 0; i < faces.length; i++) {
         // if (i !== 0) continue;
         const face = faces[i];
@@ -1150,11 +1138,17 @@ class LianBoTest {
           const canvasInner = innerLoop.map((loops: any) => {
             return loops.map((item: any) => ConfigStructure.toCanvas(item));
           });
-          Scene3D.getInstance().add(
-            THREEUtils.buildMesh(canvasLoop, canvasInner, colors[i])
-          );
+          geos.push(THREEUtils.buildGeometry(canvasLoop, canvasInner));
         }
       }
+
+      const mergeGeos = THREEUtils.mergeBufferGeometry(geos);
+      const matRed: MeshBasicMaterial = new MeshBasicMaterial({
+        side: DoubleSide,
+        color: new Color(colors[2]),
+      });
+      const mesh = new Mesh(mergeGeos, matRed);
+      Scene3D.getInstance().add(mesh);
     };
     const solid = st.buildData().solids[0];
     drawMeshSolid(solid);
@@ -1202,6 +1196,121 @@ class LianBoTest {
   public testGeoSurface(vertices: Vector3[]) {
     const face = new GeoSurface(vertices);
     return { mat: face.mat, locals: face.toLocalVertices(vertices) };
+  }
+
+  private testRenderStructure() {
+    console.log('test!');
+    const res = require('../../devTools/P000001-B0006-F0006.json');
+    const revitObj = res.data.geometries;
+    let firstP: any = null;
+    if (revitObj.length > 0) {
+      const geo = revitObj[0];
+      if (geo.solids.length > 0) {
+        const solid = geo.solids[0];
+        if (solid.faces.length > 0) {
+          const face = solid.faces[0];
+          if (face.outLoop.length > 0) {
+            const out = face.outLoop[0];
+            if (out.length > 0) {
+              firstP = { X: out[0].X, Y: out[0].Y, Z: out[0].Z };
+            }
+          }
+        }
+      }
+    }
+    const optimization = () => {
+      for (const geo of revitObj) {
+        for (const solid of geo.solids) {
+          for (const face of solid.faces) {
+            for (const out of face.outLoop) {
+              for (let vertex of out) {
+                vertex = {
+                  X: vertex.X - firstP.X,
+                  Y: vertex.Y - firstP.Y,
+                  Z: vertex.Z - firstP.Z,
+                };
+              }
+            }
+          }
+        }
+      }
+    };
+    // optimization();
+
+    const edgeMatrix = (edges: any) => {
+      const matrix = new Matrix4();
+      const firstPoint = edges[0];
+      const v0: Vector3 = edges[1].clone().sub(firstPoint);
+      const vEnd: Vector3 = edges[edges.length - 1].clone().sub(firstPoint);
+      const planeNormal = v0.clone().cross(vEnd);
+      matrix.setPosition(firstPoint);
+      matrix.lookAt(planeNormal, new Vector3(0, 0, 0), v0);
+      return matrix;
+    };
+
+    const worldToLocal = (v: Vector3, matrixWorld: Matrix4) => {
+      const mat = new Matrix4();
+      const inverse = mat.getInverse(matrixWorld);
+      return v.applyMatrix4(inverse);
+    };
+
+    const edgesToVector3 = (face: any) => {
+      return face.map((item: any) => {
+        return new Vector3(
+          item.X - firstP.X,
+          item.Y - firstP.Y,
+          item.Z - firstP.Z
+        );
+      });
+    };
+
+    const renderEdge = (face: any) => {
+      const result: Vector3[] = [];
+      const faceV3 = edgesToVector3(face);
+      const matrixWorld = edgeMatrix(faceV3);
+      for (const edgeItem of faceV3) {
+        // console.log(edgeItem.startPoint);
+        result.push(worldToLocal(edgeItem, matrixWorld));
+      }
+      result.forEach((item) => {
+        item.x.toFixed(2);
+        item.y.toFixed(2);
+        item.z.toFixed(2);
+      });
+      const shape = new Shape();
+      shape.moveTo(result[0].x, result[0].y);
+      for (let i = 1; i < result.length; i++) {
+        shape.lineTo(result[i].x, result[i].y);
+      }
+      const geometry = new ShapeBufferGeometry(shape);
+      const matRed: THREE.MeshPhongMaterial = new MeshPhongMaterial({
+        color: new Color(Math.random(), Math.random(), Math.random()),
+      });
+      const mesh = new Mesh(geometry, matRed);
+      // mesh.updateMatrixWorld(false);
+      // console.log(mesh.position);
+      // const inverseMat =  new Matrix4().getInverse( matrixWorld);
+      // const matTmp = new Matrix4().makeTranslation( 100, 100, 100 );
+      mesh.applyMatrix(matrixWorld);
+      // mesh.updateMatrix();
+      Scene3D.getInstance().getScene().add(mesh);
+    };
+    // renderEdge(revitObj[0].solids[0].faces[0].edges[0]);
+    // renderEdge(revitObj[0].solids[0].faces[1].edges[0]);
+    // renderEdge(revitObj[0].solids[0].faces[2].edges[0]);
+    for (const geo of revitObj) {
+      for (const solid of geo.solids) {
+        for (const face of solid.faces) {
+          for (const out of face.outLoop) {
+            renderEdge(out);
+          }
+        }
+      }
+    }
+  }
+
+  private scene3dRender() {
+    Scene3D.getInstance().render();
   }
 }
 

@@ -104,7 +104,7 @@ export default class BimElement2D extends PIXI.Container {
     if (this.model instanceof Obstacle) {
       return [0xffffff, 1];
     }
-    let ca = [Constant.colorHexNumber('#8a8a8a'), 0.2];
+    let ca = [Constant.colorHexNumber('#d1c7b7'), 0.2];
     switch (this.cType) {
       case StType.Wall:
         ca = [Constant.colorHexNumber('#FFD700'), 0.8]; // 金色 0xFFD700
