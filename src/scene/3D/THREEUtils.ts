@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 require('../../utils/threeExample/BufferGeometryUtils');
 import {
+  BufferGeometry,
   Color,
   DoubleSide,
   Geometry,
@@ -13,7 +14,6 @@ import {
   ShapeBufferGeometry,
   Vector3,
 } from 'three';
-import { BufferGeometry } from 'three/three-core';
 import GeometryFactory from '../../utils/Math/geometry/GeometryFactory';
 import GeoSurface from '../Model/Geometry/GeoSurface';
 
