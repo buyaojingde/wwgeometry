@@ -6,7 +6,7 @@
 
 <script>
 import { observer } from 'mobx-vue';
-import Scene3D from '../scene/3D/scene3d';
+import Scene3D from '../scene/3D';
 export default observer({
   name: 'Scene3d',
   components: {},

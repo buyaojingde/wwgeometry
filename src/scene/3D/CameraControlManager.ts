@@ -7,11 +7,11 @@ import {
   Vector3,
 } from 'three';
 import CameraData, { ViewType } from '../../store/CameraData';
+import Scene3D from '../3D';
 // @ts-ignore
 import OrbitControls from './OrbitControls';
 // @ts-ignore
 import RoamControls from './RoamControls';
-import Scene3D from './scene3d';
 const CAMERA_MIN_DISTANCE = 50;
 const CAMERA_MAX_DISTANCE = 3500;
 const LEVEL_HEIGHT = 280;

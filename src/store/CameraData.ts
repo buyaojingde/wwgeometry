@@ -10,10 +10,7 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import HomeTypeData from '../model/HomeTypeData';
-import Scene3D from '../scene/3D/scene3d';
 import ConfigStructure from '../utils/ConfigStructure';
-import VueStoreData from './VueStoreData';
 
 const CAMERA_DEFAULT_PARAMS = {
   roam: {

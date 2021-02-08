@@ -8,10 +8,12 @@ import * as THREE from 'three';
 
 import {
   AmbientLight,
+  BackSide,
   Color,
   CylinderBufferGeometry,
   DoubleSide,
   Euler,
+  FrontSide,
   Group,
   Matrix4,
   Mesh,
@@ -27,7 +29,7 @@ import JSTSUtils from '../scene/2D/Utils/JSTSUtils';
 import Edge2D from '../scene/2D/ViewObject/Edge2D';
 import Polygon2D from '../scene/2D/ViewObject/Polygon2D';
 import Spot2D from '../scene/2D/ViewObject/Spot2D';
-import Scene3D from '../scene/3D/scene3d';
+import Scene3D from '../scene/3D';
 import THREEUtils from '../scene/3D/THREEUtils';
 import GeoSurface from '../scene/Model/Geometry/GeoSurface';
 import Structure, { StType } from '../scene/Model/Home/Structure';
@@ -177,7 +179,7 @@ class LianBoTest {
     // this.testrenderHome();
     // this.renderTest();
 
-    this.testRenderSimple();
+    this.testRenderStructure();
   }
 
   testAdsorption() {
@@ -1085,7 +1087,7 @@ class LianBoTest {
   }
 
   private test3dResize() {
-    Scene3D.getInstance().resize();
+    // Scene3D.getInstance().resize();
   }
 
   private testCreateThreeBox() {
@@ -1198,7 +1200,7 @@ class LianBoTest {
     return { mat: face.mat, locals: face.toLocalVertices(vertices) };
   }
 
-  private testRenderStructure() {
+  public testRenderStructure() {
     console.log('test!');
     const res = require('../../devTools/P000001-B0006-F0006.json');
     const revitObj = res.data.geometries;
@@ -1257,9 +1259,9 @@ class LianBoTest {
     const edgesToVector3 = (face: any) => {
       return face.map((item: any) => {
         return new Vector3(
-          item.X - firstP.X,
-          item.Y - firstP.Y,
-          item.Z - firstP.Z
+          (item.X - firstP.X) / 10,
+          (item.Y - firstP.Y) / 10,
+          (item.Z - firstP.Z) / 10
         );
       });
     };
@@ -1293,7 +1295,7 @@ class LianBoTest {
       // const matTmp = new Matrix4().makeTranslation( 100, 100, 100 );
       mesh.applyMatrix(matrixWorld);
       // mesh.updateMatrix();
-      Scene3D.getInstance().getScene().add(mesh);
+      Scene3D.getInstance().add(mesh);
     };
     // renderEdge(revitObj[0].solids[0].faces[0].edges[0]);
     // renderEdge(revitObj[0].solids[0].faces[1].edges[0]);
