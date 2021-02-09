@@ -1,3 +1,10 @@
+<!--
+ * @Author: lianbo
+ * @Date: 2021-02-08 21:49:12
+ * @LastEditors: lianbo
+ * @LastEditTime: 2021-02-09 20:53:10
+ * @Description: 
+-->
 <template>
   <div class="container3d">
     <div ref="container3d" class="canvas3d"></div>
