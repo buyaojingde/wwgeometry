@@ -1,4 +1,4 @@
-# fms_map_edit
+# geometry_algorithm
 
 ## Project setup
 ```
