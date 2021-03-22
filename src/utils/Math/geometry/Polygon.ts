@@ -695,4 +695,47 @@ export default class Polygon {
     });
     return ps;
   }
+
+  /**
+   * @Author: lianbo
+   * @Date: 2021-03-23 00:05:58
+   * @LastEditors: lianbo
+   * @Description: 多边形变换成到卧倒的姿势
+   * @param {number} scale
+   * @return {*}
+   */
+  public calcMat(scale: number): Matrix3x3 {
+    const mat = new Matrix3x3();
+    mat.scale(scale, scale);
+    const angle = this.calcAngle();
+    mat.rotate(angle);
+    const rotatePolygon = new Polygon(
+      this.vertices.map((item) => mat.apply(item))
+    );
+    const rotateBox = rotatePolygon.box;
+    mat.translate(rotateBox.min.x, rotateBox.max.y);
+
+    return mat;
+  }
+
+  /**
+   * @Author: lianbo
+   * @Date: 2021-03-23 00:05:09
+   * @LastEditors: lianbo
+   * @Description: 计算多边形的角度，用最长边和X轴的角度表示
+   * @param {*}
+   * @return {*}
+   */
+  public calcAngle(): number {
+    let longN = Number.MIN_VALUE;
+    let longEdge = this.edges[0];
+    for (let i = 0; i < this.edges.length; i++) {
+      const edgeLength = this.edges[i].length;
+      if (edgeLength > longN) {
+        longEdge = this.edges[i];
+        longN = edgeLength;
+      }
+    }
+    return longEdge.dir.slope;
+  }
 }

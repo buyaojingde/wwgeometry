@@ -229,4 +229,23 @@ export default class Matrix3x3 {
     this.m01 = dt;
     return this;
   }
+
+  public static xAxisRelection(): Matrix3x3 {
+    const mat = new Matrix3x3();
+    mat.m11 = -1;
+    return mat;
+  }
+
+  public static yAxisRelection(): Matrix3x3 {
+    const mat = new Matrix3x3();
+    mat.m00 = -1;
+    return mat;
+  }
+
+  public static xyAxisRelection(): Matrix3x3 {
+    const mat = new Matrix3x3();
+    mat.m00 = -1;
+    mat.m11 = -1;
+    return mat;
+  }
 }
