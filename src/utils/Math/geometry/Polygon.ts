@@ -44,6 +44,9 @@ import Segment from './Segment';
  *
  */
 export default class Polygon {
+  polygonRotate(angleRad: number, origin: any): Polygon {
+    throw new Error('Method not implemented.');
+  }
   polygonRayCast(origOrigin: any, angleRad: number): any {
     throw new Error('Method not implemented.');
   }
