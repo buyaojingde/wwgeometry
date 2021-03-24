@@ -44,6 +44,9 @@ import Segment from './Segment';
  *
  */
 export default class Polygon {
+  polygonRayCast(origOrigin: any, angleRad: number): any {
+    throw new Error('Method not implemented.');
+  }
   public vertices: Point[];
   public edges!: Segment[];
 
