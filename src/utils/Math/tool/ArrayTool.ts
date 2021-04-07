@@ -1,4 +1,5 @@
 import Polygon from '../geometry/Polygon';
+import Point from '../geometry/Point';
 
 /*
  * @Author: lianbo

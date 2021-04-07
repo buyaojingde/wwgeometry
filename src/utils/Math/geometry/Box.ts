@@ -1,6 +1,7 @@
 import MathUtils from '../math/MathUtils';
 import Point from './Point';
 import Segment from './Segment';
+import GeometryTool from '../tool/GeometryTool';
 
 export default class Box {
   public min: Point;
@@ -207,5 +208,24 @@ export default class Box {
     //   if (MathUtils.greater(other.max.y, this.min.y, 1)) return true;
     // }
     // return false;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-07 21:30:09
+   * @Description: 绕axis轴旋转alpha角度
+   */
+  public rotateAround(axis: any, alpha: number): any[] {
+    const vs = this.points
+      .map((item) => {
+        return { x: item.x - axis.x, y: item.y - axis.y };
+      })
+      .map((item) => {
+        return GeometryTool.rotationTransform(item, alpha);
+      })
+      .map((item) => {
+        return { x: item.x + axis.x, y: item.y + axis.y };
+      });
+    return vs;
   }
 }

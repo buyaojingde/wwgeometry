@@ -267,7 +267,7 @@ export default class Polygon {
    * @Description: 完全包含，包括线 p内切或者内离
    */
   public insidePolygon(p: Polygon): boolean {
-    return p.vertices.every((item) => !this.outside(item));
+    return p.edges.every((item) => this.insideSeg(item));
   }
 
   /**
@@ -277,14 +277,22 @@ export default class Polygon {
    */
   public noIntersect(p: Polygon): boolean {
     if (this.box.noIntersect(p.box)) return true;
-    return !(
-      (
-        p.vertices.some((item) => this.inside(item)) || // 点在多边形内
-        p.edges.some((item) => this.inside(item.center)) || // 线段在多边形内
-        this.edges.some((item) => p.inside(item.center)) || // 所有的线段都不能在P内，因为这种情况可能出现内切P，切P被包含的情况
-        this.segIntersection(p)
-      ) // 没有交的线段
-    );
+    if (this.segIntersection(p)) return false;
+    if (this.insidePs(p.vertices)) return false;
+    if (p.insidePs(this.vertices)) return false;
+    return true;
+  }
+
+  /**
+   * @author lianbo 所有的点都在多边形内
+   * @date 2021-04-07 21:51:52
+   * @Description:
+   */
+  public insidePs(ps: Point[]): boolean {
+    for (let i = 0; i < ps.length; i++) {
+      if (this.outside(ps[i])) return false;
+    }
+    return true;
   }
 
   /**
