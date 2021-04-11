@@ -168,8 +168,10 @@ export default class GraphicsTool {
     const lineWidth = MathUtils.isNum(options.lineWidth)
       ? options.lineWidth
       : 1;
-    const color = MathUtils.isNum(options.color) ? options.color : 0x0000000;
-    const alpha = MathUtils.isNum(options.alpha) ? options.alpha : 1;
+    const color = MathUtils.isNum(options.color)
+      ? options.color
+      : Constant.colorRandom();
+    const alpha = MathUtils.isNum(options.alpha) ? options.alpha : 0.6;
     return { lineWidth, color, alpha };
   }
 
