@@ -4,6 +4,8 @@ import Box from './Box';
 import Matrix3x3 from './Matrix3x3';
 import Point from './Point';
 import Segment from './Segment';
+import Line2 from './Line2';
+import Vector2 from './Vector2';
 
 /**
  * @author lianbo
@@ -44,11 +46,61 @@ import Segment from './Segment';
  *
  */
 export default class Polygon {
-  polygonRotate(angleRad: number, origin: any): Polygon {
-    throw new Error('Method not implemented.');
+  /**
+   * @author lianbo
+   * @date 2021-04-11 11:22:28
+   * @Description: 绕origin 旋转angleRad角度
+   */
+  polygonRotate(angleRad: number, origin: Point): Point[] {
+    const mat = new Matrix3x3();
+    mat.translate(origin.x, origin.y);
+    mat.rotate(angleRad);
+    const vs = this.vertices
+      .map((item) => mat.applyInverse(item))
+      .map((item) => new Point(item.x + origin.x, item.y + origin.y));
+    return vs;
   }
-  polygonRayCast(origOrigin: any, angleRad: number): any {
-    throw new Error('Method not implemented.');
+  /**
+   * @author lianbo
+   * @date 2021-04-11 10:34:17
+   * @Description: 多边形内的一点在一定角度的直线与多边形的最近的交点
+   */
+  polygonRayCast(origOrigin: Point, holes: Polygon[], angleRad = 0): any {
+    const alpha = angleRad;
+    const vector = new Vector2(Math.cos(alpha), Math.sin(alpha));
+    const normal = vector.ccwNormal;
+    const line = new Line2(origOrigin, normal);
+    const idx = MathUtils.equal(alpha, Math.PI / 2) ? 1 : 0;
+    const originValue = idx === 0 ? origOrigin.x : origOrigin.y;
+    let minSqDistLeft = Number.MAX_VALUE;
+    let minSqDistRight = Number.MAX_VALUE;
+    let closestPointLeft = null;
+    let closestPointRight = null;
+    const edges = this.edges.concat(...holes.map((item) => item.edges));
+    for (let i = 0; i < edges.length; i++) {
+      const edge = edges[i];
+      const p = line.intersectSeg(edge);
+
+      if (p) {
+        const sqDist = origOrigin.distanceToPointSquared(p);
+        const pValue = idx === 0 ? p.x : p.y;
+        if (idx === 0) {
+          if (pValue < originValue) {
+            if (sqDist < minSqDistLeft) {
+              minSqDistLeft = sqDist;
+              closestPointLeft = p;
+            }
+          } else if (pValue > originValue) {
+            if (sqDist < minSqDistRight) {
+              minSqDistRight = sqDist;
+              closestPointRight = p;
+            }
+          }
+        }
+      }
+    }
+
+    return [closestPointLeft, closestPointRight];
   }
   public vertices: Point[];
   public edges!: Segment[];

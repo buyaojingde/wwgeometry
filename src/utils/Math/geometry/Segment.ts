@@ -13,6 +13,10 @@ export default class Segment {
   public dy: number;
   public dx: number;
 
+  public get line(): Line2 {
+    return new Line2(this.start, this.end);
+  }
+
   public constructor(start: Point, end: Point) {
     this.start = start;
     this.end = end;

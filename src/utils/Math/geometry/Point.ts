@@ -92,7 +92,7 @@ export default class Point {
     return this;
   }
 
-  public toArray(): number[] {
+  public get toArray(): number[] {
     return [this.x, this.y];
   }
 

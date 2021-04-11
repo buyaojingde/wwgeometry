@@ -1,4 +1,4 @@
-import ArrayTool from '../../tool/ArrayTool';
+import ArrayUtils from '../../tool/ArrayUtils';
 import SimplifyTool from '../../tool/SimplifyTool';
 import Point from '../Point';
 import Polygon from '../Polygon';
@@ -15,21 +15,12 @@ export default class LargestRect {
   public static aspectRatioStep = 0.5; // step size for the aspect ratio
   public static largestRectWithHole(
     poly: Polygon,
-    ...args: any[]
+    holes: Polygon[],
+    options?: any
   ): Polygon | null {
-    let options = args.length > 0 && args[0] !== undefined ? args[0] : {};
-
-    if (poly.length < 3) {
-      if (options.verbose)
-        console.error('polygon has to have at least 3 points', poly);
-      return null;
-    } // For visualization debugging purposes
-
-    const events = []; // User's input normalization
-
     options = Object.assign(
       {
-        angle: ArrayTool.range(
+        angle: ArrayUtils.range(
           -90,
           90 + LargestRect.angleStep,
           LargestRect.angleStep
@@ -75,13 +66,13 @@ export default class LargestRect {
       return null;
     } // get the width of the bounding box of the original polygon to determine tolerance
 
-    const _extent = ArrayTool.extent(poly.vertices, function (d) {
+    const _extent = ArrayUtils.extent(poly.vertices, function (d: any) {
       return d.x;
     });
     let minx = _extent[0],
       maxx = _extent[1];
 
-    const _extent3 = ArrayTool.extent(poly.vertices, function (d) {
+    const _extent3 = ArrayUtils.extent(poly.vertices, function (d: any) {
       return d.y;
     });
     let miny = _extent3[0],
@@ -90,14 +81,14 @@ export default class LargestRect {
     const tolerance = Math.min(maxx - minx, maxy - miny) * options.tolerance;
     if (tolerance > 0) poly = SimplifyTool.simplify(poly, tolerance);
 
-    const _extent5 = ArrayTool.extent(poly.vertices, function (d) {
+    const _extent5 = ArrayUtils.extent(poly.vertices, function (d: any) {
       return d.x;
     });
 
     minx = _extent5[0];
     maxx = _extent5[1];
 
-    const _extent7 = ArrayTool.extent(poly.vertices, function (d) {
+    const _extent7 = ArrayUtils.extent(poly.vertices, function (d: any) {
       return d.y;
     });
 
@@ -143,12 +134,17 @@ export default class LargestRect {
       for (let i = 0; i < origins.length; i++) {
         const origOrigin = origins[i]; // generate improved origins
 
-        const _polygonRayCast = poly.polygonRayCast(origOrigin, angleRad),
+        const _polygonRayCast = poly.polygonRayCast(
+            origOrigin,
+            holes,
+            angleRad
+          ),
           p1W = _polygonRayCast[0],
           p2W = _polygonRayCast[1];
 
         const _polygonRayCast3 = poly.polygonRayCast(
             origOrigin,
+            holes,
             angleRad + Math.PI / 2
           ),
           p1H = _polygonRayCast3[0],
@@ -168,7 +164,7 @@ export default class LargestRect {
         for (let _i2 = 0; _i2 < modifOrigins.length; _i2++) {
           const origin = modifOrigins[_i2];
 
-          const _polygonRayCast5 = poly.polygonRayCast(origin, angleRad),
+          const _polygonRayCast5 = poly.polygonRayCast(origin, holes, angleRad),
             _p1W = _polygonRayCast5[0],
             _p2W = _polygonRayCast5[1];
 
@@ -181,6 +177,7 @@ export default class LargestRect {
 
           const _polygonRayCast7 = poly.polygonRayCast(
               origin,
+              holes,
               angleRad + Math.PI / 2
             ),
             _p1H = _polygonRayCast7[0],
@@ -206,7 +203,7 @@ export default class LargestRect {
               maxWidth / options.minHeight,
               (maxWidth * maxWidth) / maxArea
             );
-            aRatios = ArrayTool.range(
+            aRatios = ArrayUtils.range(
               minAspectRatio,
               maxAspectRatio + LargestRect.aspectRatioStep,
               LargestRect.aspectRatioStep
@@ -233,22 +230,15 @@ export default class LargestRect {
                 [cx + width / 2, cy + height / 2],
                 [cx - width / 2, cy + height / 2],
               ]);
-              rectPoly = rectPoly.polygonRotate(angleRad, origin);
+              const vs = rectPoly.polygonRotate(angleRad, origin);
+              rectPoly = new Polygon(vs);
               const insidePoly = poly.insidePolygon(rectPoly);
 
               if (insidePoly) {
                 // we know that the area is already greater than the maxArea found so far
                 maxArea = width * height;
                 rectPoly.vertices.push(rectPoly.vertices[0]);
-                maxRect = {
-                  area: maxArea,
-                  cx: cx,
-                  cy: cy,
-                  width: width,
-                  height: height,
-                  angle: -angle,
-                  points: rectPoly,
-                };
+                maxRect = rectPoly;
                 left = width; // increase the width in the binary search
               } else {
                 right = width; // decrease the width in the binary search
@@ -258,7 +248,6 @@ export default class LargestRect {
         }
       }
     }
-
-    return maxRect.points;
+    return maxRect;
   }
 }

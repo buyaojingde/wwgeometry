@@ -1,6 +1,7 @@
 import MathUtils from '../math/MathUtils';
 import Point from './Point';
 import Vector2 from './Vector2';
+import Segment from './Segment';
 
 /**
  * @author lianbo
@@ -89,6 +90,18 @@ export default class Line2 {
       return new Point(x, y);
     }
     return null; // 平行
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-11 10:40:48
+   * @Description: 直线与线段的交点
+   */
+  public intersectSeg(seg: Segment): Point | null {
+    const intersectP = this.intersectLine(seg.line);
+    if (!intersectP) return null;
+    if (!seg.contain(intersectP)) return null;
+    return intersectP;
   }
 
   /**
