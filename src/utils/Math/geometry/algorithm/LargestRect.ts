@@ -170,8 +170,8 @@ export default class LargestRect {
 
           if (_p1W === null || _p2W === null) continue;
           const minSqDistW = Math.min(
-            origin.distanceToPointSquared(_p1W),
-            origin.distanceToPointSquared(_p2W)
+            LargestRect.distanceToPointSquared(origin, _p1W),
+            LargestRect.distanceToPointSquared(origin, _p2W)
           );
           const maxWidth = 2 * Math.sqrt(minSqDistW);
 
@@ -185,8 +185,8 @@ export default class LargestRect {
 
           if (_p1H === null || _p2H === null) continue;
           const minSqDistH = Math.min(
-            origin.distanceToPointSquared(_p1H),
-            origin.distanceToPointSquared(_p2H)
+            LargestRect.distanceToPointSquared(origin, _p1H),
+            LargestRect.distanceToPointSquared(origin, _p2H)
           );
           const maxHeight = 2 * Math.sqrt(minSqDistH);
           if (maxWidth * maxHeight < maxArea) continue;
@@ -225,10 +225,10 @@ export default class LargestRect {
                 cy = origin.y;
 
               let rectPoly = new Polygon([
-                [cx - width / 2, cy - height / 2],
-                [cx + width / 2, cy - height / 2],
-                [cx + width / 2, cy + height / 2],
-                [cx - width / 2, cy + height / 2],
+                { x: cx - width / 2, y: cy - height / 2 },
+                { x: cx + width / 2, y: cy - height / 2 },
+                { x: cx + width / 2, y: cy + height / 2 },
+                { x: cx - width / 2, y: cy + height / 2 },
               ]);
               const vs = rectPoly.polygonRotate(angleRad, origin);
               rectPoly = new Polygon(vs);
@@ -237,7 +237,6 @@ export default class LargestRect {
               if (insidePoly) {
                 // we know that the area is already greater than the maxArea found so far
                 maxArea = width * height;
-                rectPoly.vertices.push(rectPoly.vertices[0]);
                 maxRect = rectPoly;
                 left = width; // increase the width in the binary search
               } else {
@@ -249,5 +248,10 @@ export default class LargestRect {
       }
     }
     return maxRect;
+  }
+  static distanceToPointSquared(origin: any, p: any): number {
+    const dx = origin.x - p[0];
+    const dy = origin.y - p[1];
+    return dx * dx + dy * dy;
   }
 }

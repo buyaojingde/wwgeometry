@@ -65,7 +65,7 @@ export default class Polygon {
    * @date 2021-04-11 10:34:17
    * @Description: 多边形内的一点在一定角度的直线与多边形的最近的交点
    */
-  polygonRayCast(origOrigin: Point, holes: Polygon[], angleRad = 0): any {
+  polygonRayCast(origOrigin: Point, holes: Polygon[], angleRad = 0): any[] {
     const alpha = angleRad;
     const vector = new Vector2(Math.cos(alpha), Math.sin(alpha));
     const normal = vector.ccwNormal;
@@ -84,22 +84,23 @@ export default class Polygon {
       if (p) {
         const sqDist = origOrigin.distanceToPointSquared(p);
         const pValue = idx === 0 ? p.x : p.y;
-        if (idx === 0) {
-          if (pValue < originValue) {
-            if (sqDist < minSqDistLeft) {
-              minSqDistLeft = sqDist;
-              closestPointLeft = p;
-            }
-          } else if (pValue > originValue) {
-            if (sqDist < minSqDistRight) {
-              minSqDistRight = sqDist;
-              closestPointRight = p;
-            }
+
+        if (pValue < originValue) {
+          if (sqDist < minSqDistLeft) {
+            minSqDistLeft = sqDist;
+            closestPointLeft = p;
+          }
+        } else if (pValue > originValue) {
+          if (sqDist < minSqDistRight) {
+            minSqDistRight = sqDist;
+            closestPointRight = p;
           }
         }
       }
     }
-
+    if (closestPointLeft && closestPointRight) {
+      return [closestPointLeft.toArray, closestPointRight.toArray];
+    }
     return [closestPointLeft, closestPointRight];
   }
   public vertices: Point[];
