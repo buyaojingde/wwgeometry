@@ -10,7 +10,7 @@ import HomeConvert from '../utils/HomeConvert';
 const scene2D = require('../scene/2D').default;
 
 class HomeTypeData {
-  public gottenHome!: Home;
+  public gottenHome: Home = new Home();
 
   private version: any;
 

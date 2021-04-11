@@ -2,62 +2,9 @@
   <div id="container2d" class="container2d">
     <div class="map-edit-menu">
       <div class="map-edit-button">
-        <el-button @click="obstacle"> OBSTACLE </el-button>
-        <el-button @click="endEdit"> end-edit </el-button>
+        <el-button @click="gan"> 干 </el-button>
+        <el-button @click="gao"> 搞 </el-button>
       </div>
-
-      <div class="map-edit-input" style="display: -webkit-flex; display: flex">
-        <div class="edit-input" style="display: -webkit-flex; display: flex">
-          x:
-          <el-input
-            @change="syncSt"
-            v-model="vm.structureVec3.x"
-            type="number"
-            style="width: 200px"
-          />
-          y:
-          <el-input
-            @change="syncSt"
-            v-model="vm.structureVec3.y"
-            type="number"
-            style="width: 200px"
-          />
-          radians:
-          <el-input
-            @change="syncSt"
-            v-model="vm.radians"
-            type="number"
-            style="width: 200px"
-          />
-        </div>
-        <el-button @click="changeV"> submit </el-button>
-        <el-button @click="reRender"> render </el-button>
-        <el-button @click="testClick">
-          {{ testText }}
-        </el-button>
-        <el-input
-          @change="rotateSubject"
-          v-model="vm.subjectVec3.z"
-          type="number"
-        ></el-input>
-        <el-input @change="searchStructure" v-model="searchRvtId"></el-input>
-        <el-checkbox v-model="vm.showAxis">显示轴网</el-checkbox>
-      </div>
-    </div>
-    <div class="map-tree">
-      <el-tree
-        ref="mapTree"
-        :default-expanded-keys="expandedKeys"
-        :default-checked-keys="checkedKeys"
-        node-key="id"
-        :data="treeData"
-        :props="defaultProps"
-        highlight-current
-        render-after-expand
-        show-checkbox
-        @node-click="handleNodeClick"
-        @check-change="handleCheck"
-      />
     </div>
     <div
       ref="container2d"
@@ -198,11 +145,7 @@ export default observer({
       setTimeout(async () => {
         await this.scene2d.bindVue(this);
         this.isLoading = false;
-        this.eleList = [
-          ...this.$refs.mapTree.$el.querySelectorAll(
-            'span.el-tree-node__label'
-          ),
-        ];
+        this.eleList = [];
       });
     },
     checkIsEmpty() {
@@ -253,6 +196,12 @@ export default observer({
     obstacle() {
       Model2DActive.setNewStructure(ObstacleFactory.createObstacle());
     },
+    gan() {
+      alert('xxxxxxxxx');
+    },
+    gao() {
+      alert('gao');
+    },
   },
 });
 </script>
@@ -268,26 +217,9 @@ export default observer({
   /*align-items: center;*/
 }
 
-.map-edit-menu {
-  position: absolute;
-  background: #ffffff;
-  width: 100%;
-  height: 10%;
-  left: 20%;
-}
-
 .map-edit-button {
   float: left;
   background: #af5b5e;
-}
-
-.map-tree {
-  overflow: auto;
-  background: #ffffff;
-  height: 100%;
-  width: 20%;
-  position: fixed;
-  bottom: 1px;
 }
 
 .scene-container {
@@ -297,13 +229,4 @@ export default observer({
   top: 5%;
   left: 20%;
 }
-
-/*canvas {*/
-/*    !*pointer-events: none;*!*/
-/*    position: absolute;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*}*/
 </style>

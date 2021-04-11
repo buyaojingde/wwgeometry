@@ -8,7 +8,7 @@ export default class Home extends ObjectNamed {
 
   constructor() {
     super();
-    this._levels = [];
+    this._levels = [new Level()];
     this._textureIDs = [];
     this._levelIdx = 0;
   }
