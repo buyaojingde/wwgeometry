@@ -79,7 +79,7 @@ export default class Matrix3x3 {
    * @date 2020-11-19 09:44:56
    * @Description: 左乘向量
    */
-  public apply(p: Point) {
+  public apply(p: any) {
     const x1 = this.m00 * p.x + this.m01 * p.y + this.m02;
     const y1 = this.m10 * p.x + this.m11 * p.y + this.m12;
     return new Point(x1, y1);
@@ -200,6 +200,25 @@ export default class Matrix3x3 {
     this.m11 = a1 / n;
     this.m02 = (c1 * this.m12 - d1 * tx1) / n;
     this.m12 = -(a1 * this.m12 - b1 * tx1) / n;
+    return this;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-16 00:07:47
+   * @Description: 转置
+   */
+  public transpose(): Matrix3x3 {
+    let tmp;
+    tmp = this.m01;
+    this.m01 = this.m10;
+    this.m10 = tmp;
+    tmp = this.m02;
+    this.m02 = this.m20;
+    this.m20 = tmp;
+    tmp = this.m12;
+    this.m12 = this.m21;
+    this.m21 = tmp;
     return this;
   }
 

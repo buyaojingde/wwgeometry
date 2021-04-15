@@ -333,6 +333,49 @@ export default class Polygon {
     if (this.segIntersection(p)) return false;
     if (this.insidePs(p.vertices)) return false;
     if (p.insidePs(this.vertices)) return false;
+    for (const edge of p.edges) {
+      if (this.insideSeg(edge)) {
+        if (!this.boundaryContainSeg(edge)) {
+          return false;
+        }
+      }
+    }
+    for (const edge of this.edges) {
+      if (p.insideSeg(edge)) {
+        if (!p.boundaryContainSeg(edge)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-15 23:35:28
+   * @Description: 线段在边界上
+   */
+  public boundaryContainSeg(seg: Segment): boolean {
+    if (!this.onEdge(seg.start)) {
+      return false;
+    }
+    if (!this.onEdge(seg.end)) {
+      return false;
+    }
+    const ps = this.intersectionSeg(seg);
+    let i = 0;
+    while (i < ps.length - 1) {
+      const prev = ps[i];
+      const next = ps[i + 1];
+      i++;
+      const center = new Point(
+        (prev.x + next.x) * 0.5,
+        (prev.y + next.y) * 0.5
+      );
+      if (!this.onEdge(center)) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -357,9 +400,8 @@ export default class Polygon {
     const iEdges = this.edges;
     const otherEdges = p.edges;
     for (const iEdge of iEdges) {
-      const resultPs = iEdge.intersectSegs(otherEdges);
-      if (resultPs.length > 0) {
-        return true;
+      for (const otherEdge of otherEdges) {
+        if (iEdge.isIntersect(otherEdge)) return true;
       }
     }
     return false;
@@ -804,5 +846,26 @@ export default class Polygon {
       }
     }
     return longEdge.dir.slope;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-15 23:40:20
+   * @Description: 带洞的多边形判断
+   */
+  public insidePolygonWithHoles(rectPoly: Polygon, holes: Polygon[]) {
+    if (!this.insidePolygon(rectPoly)) return false;
+    for (let i = 0; i < holes.length; i++) {
+      if (!holes[i].noIntersect(rectPoly)) return false;
+    }
+    return true;
+  }
+
+  public insideWithHoles(centroid: Point, holes: Polygon[]) {
+    if (!this.inside(centroid)) return false;
+    for (let i = 0; i < holes.length; i++) {
+      if (holes[i].inside(centroid)) return false;
+    }
+    return true;
   }
 }

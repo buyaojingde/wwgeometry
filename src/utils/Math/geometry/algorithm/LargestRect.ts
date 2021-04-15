@@ -17,7 +17,7 @@ export default class LargestRect {
     poly: Polygon,
     holes: Polygon[],
     options?: any
-  ): Polygon | null {
+  ): any {
     options = Object.assign(
       {
         angle: ArrayUtils.range(
@@ -52,12 +52,7 @@ export default class LargestRect {
         : typeof options.aspectRatio === 'string' && !isNaN(options.aspectRatio)
         ? [Number(options.aspectRatio)]
         : [];
-    const origins =
-      options.origin && options.origin instanceof Array
-        ? options.origin[0] instanceof Array
-          ? options.origin
-          : [options.origin]
-        : [];
+    const origins = options.origi ? options.origin : [];
 
     const area = Math.abs(poly.area()); // take absolute value of the signed area
 
@@ -108,7 +103,7 @@ export default class LargestRect {
         return null;
       }
 
-      if (poly.inside(centroid)) origins.push(centroid);
+      if (poly.insideWithHoles(centroid, holes)) origins.push(centroid);
       let nTries = options.nTries; // get few more points inside the polygon
 
       while (nTries) {
@@ -116,7 +111,7 @@ export default class LargestRect {
         const rndY = Math.random() * boxHeight + miny;
         const rndPoint = new Point(rndX, rndY);
 
-        if (poly.inside(rndPoint)) {
+        if (poly.insideWithHoles(rndPoint, holes)) {
           origins.push(rndPoint);
         }
 
@@ -232,12 +227,20 @@ export default class LargestRect {
               ]);
               const vs = rectPoly.polygonRotate(angleRad, origin);
               rectPoly = new Polygon(vs);
-              const insidePoly = poly.insidePolygon(rectPoly);
+              const insidePoly = poly.insidePolygonWithHoles(rectPoly, holes);
 
               if (insidePoly) {
                 // we know that the area is already greater than the maxArea found so far
                 maxArea = width * height;
-                maxRect = rectPoly;
+                maxRect = {
+                  area: maxArea,
+                  cx: cx,
+                  cy: cy,
+                  width: width,
+                  height: height,
+                  angle: angle,
+                  poly: rectPoly,
+                };
                 left = width; // increase the width in the binary search
               } else {
                 right = width; // decrease the width in the binary search
