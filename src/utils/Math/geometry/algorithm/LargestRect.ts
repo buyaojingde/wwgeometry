@@ -54,7 +54,7 @@ export default class LargestRect {
         : [];
     const origins = options.origi ? options.origin : [];
 
-    const area = Math.abs(poly.area()); // take absolute value of the signed area
+    const area = Math.abs(poly.area); // take absolute value of the signed area
 
     if (area === 0) {
       if (options.verbose) console.error('polygon has 0 area', poly);

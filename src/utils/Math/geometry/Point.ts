@@ -66,7 +66,7 @@ export default class Point {
    * @date 2020-09-30 18:47:24
    * @Description: 点按向量转换成另一个点
    */
-  public translate(v: Vector2): Point {
+  public translate(v: any): Point {
     return new Point(this.x + v.x, this.y + v.y);
   }
 

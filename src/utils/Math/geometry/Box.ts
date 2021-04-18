@@ -2,6 +2,7 @@ import MathUtils from '../math/MathUtils';
 import Point from './Point';
 import Segment from './Segment';
 import GeometryTool from '../tool/GeometryTool';
+import Vector2 from './Vector2';
 
 export default class Box {
   public min: Point;
@@ -10,20 +11,17 @@ export default class Box {
   public constructor(min: Point, max: Point) {
     this.min = min;
     this.max = max;
-    this._width = this.max.x - this.min.x;
-    this._height = this.max.y - this.min.y;
   }
 
-  private _width: number;
-
+  public get area(): number {
+    return this.width * this.height;
+  }
   get width(): number {
-    return this._width;
+    return this.max.x - this.min.x;
   }
-
-  private _height: number;
 
   get height(): number {
-    return this._height;
+    return this.max.y - this.min.y;
   }
 
   get center() {
@@ -227,5 +225,29 @@ export default class Box {
         return { x: item.x + axis.x, y: item.y + axis.y };
       });
     return vs;
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-18 23:42:32
+   * @Description: 将矩形的边收缩膨胀
+   */
+  public expand(i: number, tolerance: number) {
+    if (i === 0) {
+      this.min.translate(new Vector2(-tolerance, 0));
+    }
+    if (i === 1) {
+      this.min.translate(new Vector2(0, -tolerance));
+    }
+    if (i === 2) {
+      this.max.translate(new Vector2(tolerance, 0));
+    }
+    if (i === 3) {
+      this.max.translate(new Vector2(0, tolerance));
+    }
+  }
+
+  public get boundary(): number[] {
+    return [this.min.x, this.min.y, this.max.x, this.max.y];
   }
 }

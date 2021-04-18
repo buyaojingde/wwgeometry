@@ -657,7 +657,7 @@ export default class Polygon {
    * @date 2020-11-24 10:16:43
    * @Description: 多边形面积
    */
-  public area(): number {
+  public get area(): number {
     let fArea = 0;
     const N = this.vertices.length;
     if (N == 0) return 0;
@@ -677,7 +677,7 @@ export default class Polygon {
    * @Description: 是否是顺时针
    */
   public isClockwise(): boolean {
-    return this.area() < 0;
+    return this.area < 0;
   }
 
   /**
@@ -853,7 +853,8 @@ export default class Polygon {
    * @date 2021-04-15 23:40:20
    * @Description: 带洞的多边形判断
    */
-  public insidePolygonWithHoles(rectPoly: Polygon, holes: Polygon[]) {
+  public insidePolygonWithHoles(poly: Polygon | Box, holes: Polygon[]) {
+    let rectPoly = poly instanceof Polygon ? poly : new Polygon(poly.points);
     if (!this.insidePolygon(rectPoly)) return false;
     for (let i = 0; i < holes.length; i++) {
       if (!holes[i].noIntersect(rectPoly)) return false;
@@ -867,5 +868,28 @@ export default class Polygon {
       if (holes[i].inside(centroid)) return false;
     }
     return true;
+  }
+
+  public expand(box: Box, holes: Polygon[]): Box {
+    const width = box.width;
+    const height = box.height;
+    const landBox = this.box;
+    const tolerance = Math.min(width, height) * 0.01;
+    for (let i = 0; i < 4; i++) {
+      const leftStart = box.boundary[i];
+      let left = leftStart;
+      let right = landBox.boundary[i];
+      while (!MathUtils.equal(left, right, tolerance)) {
+        const mid = (left + right) / 2;
+        box.expand(i, left - mid);
+        const inside = this.insidePolygonWithHoles(box, holes);
+        if (inside) {
+          left = mid;
+        } else {
+          right = mid;
+        }
+      }
+    }
+    return box;
   }
 }
