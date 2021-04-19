@@ -137,8 +137,8 @@ export default class GeometryTool {
    * @Description: p2 p3在以p0,p1为分割线的同侧(严格的，不包括在分割线上）
    */
   public static sameSide(p0: any, p1: any, p2: any, p3: any): boolean {
-    const b2 = GeometryTool.isLeftSign(p1, p1, p2);
-    const b3 = GeometryTool.isLeftSign(p1, p1, p3);
+    const b2 = GeometryTool.isLeftSign(p0, p1, p2);
+    const b3 = GeometryTool.isLeftSign(p0, p1, p3);
     return b2 * b3 > 0;
   }
 
@@ -148,8 +148,8 @@ export default class GeometryTool {
    * @Description: p2 p3在以p0,p1为分割线的同侧(不严格的，包括在分割线上）
    */
   public static sameSideSim(p0: any, p1: any, p2: any, p3: any): boolean {
-    const b2 = GeometryTool.isLeftSign(p1, p1, p2);
-    const b3 = GeometryTool.isLeftSign(p1, p1, p3);
+    const b2 = GeometryTool.isLeftSign(p0, p1, p2);
+    const b3 = GeometryTool.isLeftSign(p0, p1, p3);
     return b2 * b3 >= 0;
   }
 
