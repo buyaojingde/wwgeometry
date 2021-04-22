@@ -881,7 +881,7 @@ export default class Polygon {
       let right = landBox.boundary[i];
       while (!MathUtils.equal(left, right, tolerance)) {
         const mid = (left + right) / 2;
-        box.expand(i, left - mid);
+        box.expand(i, mid);
         const inside = this.insidePolygonWithHoles(box, holes);
         if (inside) {
           left = mid;
@@ -889,6 +889,7 @@ export default class Polygon {
           right = mid;
         }
       }
+      box.expand(i, left);
     }
     return box;
   }

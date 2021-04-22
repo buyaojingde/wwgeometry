@@ -232,22 +232,46 @@ export default class Box {
    * @date 2021-04-18 23:42:32
    * @Description: 将矩形的边收缩膨胀
    */
-  public expand(i: number, tolerance: number) {
+  public expand(i: number, target: number) {
     if (i === 0) {
-      this.min.translate(new Vector2(-tolerance, 0));
+      this.min.x = target;
     }
     if (i === 1) {
-      this.min.translate(new Vector2(0, -tolerance));
+      this.min.y = target;
     }
     if (i === 2) {
-      this.max.translate(new Vector2(tolerance, 0));
+      this.max.x = target;
     }
     if (i === 3) {
-      this.max.translate(new Vector2(0, tolerance));
+      this.max.y = target;
     }
   }
 
   public get boundary(): number[] {
     return [this.min.x, this.min.y, this.max.x, this.max.y];
+  }
+
+  /**
+   * @author lianbo
+   * @date 2021-04-21 00:19:31
+   * @Description: 在X轴上的投影有交集
+   */
+  public overlapX(other: Box): boolean {
+    if (MathUtils.greater(this.min.x, other.max.x)) return false;
+    if (MathUtils.less(this.max.x, other.min.x)) return false;
+    return true;
+  }
+
+  public get left(): number {
+    return this.min.x;
+  }
+  public get right(): number {
+    return this.max.x;
+  }
+  public get top(): number {
+    return this.max.y;
+  }
+  public get bottom(): number {
+    return this.min.y;
   }
 }
