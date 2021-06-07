@@ -241,4 +241,21 @@ export default class GeometryTool {
   static distance(v: any): number {
     return Math.sqrt(v.x * v.x + v.y * v.y);
   }
+
+  /**
+   * @author lianbo
+   * @date 2021-06-07 22:44:13
+   * @Description: 最小的x和y
+   */
+  static minXY(vs: any[]): any {
+    const minXFun = (v: any, v1: any) => {
+      if (v.x < v1.x) return -1;
+    };
+    const minYFun = (v: any, v1: any) => {
+      if (v.y < v1.y) return -1;
+    };
+    const minX = MathUtils.getMinItem(vs, minXFun).x;
+    const minY = MathUtils.getMinItem(vs, minYFun).y;
+    return { minX, minY };
+  }
 }
