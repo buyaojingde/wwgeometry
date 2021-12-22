@@ -48,7 +48,7 @@ export default class MathUtils {
     b: number,
     epsilon: number = MathUtils.Epsilon
   ) {
-    return this.greater(b, a, epsilon);
+    return MathUtils.greater(b, a, epsilon);
   }
 
   public static lessEqual(
